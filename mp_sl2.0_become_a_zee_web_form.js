@@ -1,12 +1,12 @@
     /**
-                     
-                     *@NApiVersion 2.x
-                     *@NScriptType Suitelet
+                                         
+                                         *@NApiVersion 2.x
+                                         *@NScriptType Suitelet
 
-                    */
+                                        */
 
-    define(['N/runtime', 'N/https', 'N/log', 'N/url', 'N/email', 'N/record', 'N/format'],
-        function(runtime, https, log, url, email, record, format) {
+    define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email', 'N/record', 'N/format'],
+        function(runtime, http, https, log, url, email, record, format) {
             function onRequest(context) {
 
                 var role = runtime.getCurrentUser().role;
@@ -55,7 +55,7 @@
 
                 var from = 112209; //MailPlus team
                 var to;
-                var cc = ['ankith.ravindran@mailplus.com.au'];
+                var cc = ['ankith.ravindran@mailplus.com.au', 'michael.mcdaid@mailplus.com.au'];
                 var subject = 'Become a Franchisee Lead';
                 var body = 'New Franchisee Enquiry from website';
                 body += 'First Name: ' + first_name + '\n';
@@ -64,18 +64,32 @@
                 body += 'Phone Number: ' + phone_number + '\n';
                 body += 'Postcode: ' + postcode + '\n';
                 body += 'Comments: ' + comments + '\n';
-                
+
                 email.send({
                     author: 112209,
                     body: body,
-                    recipients: 'ankith.ravindran@mailplus.com.au', 
+                    recipients: 'greg.hart@mailplus.com.au',
                     subject: subject,
                     cc: cc
                 });
 
+                var returnObj = {
+                    success: true,
+                    message: '',
+                    result: 'Email Sent'
+                };
 
-                // return JSON.parse(dataOut);
+                context.response.setHeader({
+                    name: 'Content-Type',
+                    value: 'application/json'
+                });
+                var callbackFcn = context.request.parameters.jsoncallback || context.request.parameters.callback;
+                if (callbackFcn) {
+                    context.response.writeLine(callbackFcn + "(" + JSON.stringify(returnObj) + ");")
+                } else context.response.writeLine(JSON.stringify(returnObj))
+
             }
+
 
             /**
              *  retrieve date

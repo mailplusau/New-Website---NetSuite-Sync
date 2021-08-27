@@ -1,9 +1,9 @@
     /**
-     
-     *@NApiVersion 2.x
-     *@NScriptType Suitelet
+                                 
+                                 *@NApiVersion 2.x
+                                 *@NScriptType Suitelet
 
-    */
+                                */
 
     define(['N/runtime', 'N/https', 'N/log', 'N/url', 'N/email', 'N/record', 'N/format'],
         function(runtime, https, log, url, email, record, format) {
@@ -104,8 +104,8 @@
                 } else {
                     customerRecord.setValue({
                         fieldId: 'leadsource',
-                        value: 249135
-                    }); //Inbound - Landing Page
+                        value: 254557
+                    }); //Inbound - New Website
                 }
                 customerRecord.setValue({
                     fieldId: 'entitystatus',
@@ -130,6 +130,11 @@
                 customerRecord.setValue({
                     fieldId: 'custentity_lead_entered_by',
                     value: 585236 //Portal
+                });
+
+                customerRecord.setValue({
+                    fieldId: 'custentity_industry_category',
+                    value: 19 //Other
                 });
 
                 if (avg_daily_shipments == '1') {
@@ -181,25 +186,58 @@
                     });
                 }
 
-                //ADDRESS
-                //
-                // customerRecord.selectNewLine({
-                //     sublistId: 'addressbook'
-                // });
-                // customerRecord.setCurrentSublistValue({
-                //     sublistId: 'addressbook',
-                //     fieldId: 'country',
-                //     value: 'AU'
-                // });
-                // customerRecord.setCurrentSublistValue({
-                //     sublistId: 'addressbook',
-                //     fieldId: 'zip',
-                //     value: postcode
-                // });
+                if (services_of_interest == '1') {
+                    customerRecord.setValue({
+                        fieldId: 'custentity_services_of_interest',
+                        value: 1
+                    });
+                } else if (services_of_interest == '2') {
+                    customerRecord.setValue({
+                        fieldId: 'custentity_services_of_interest',
+                        value: 2
+                    });
+                }
 
-                // customerRecord.commitLine({
-                //     sublistId: 'addressbook'
-                // });
+                //ADDRESS
+
+                customerRecord.selectNewLine({
+                    sublistId: 'addressbook'
+                });
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'country',
+                    value: 'AU'
+                });
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'addr1',
+                    value: ' '
+                });
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'addressee',
+                    value: business_name
+                });
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'city',
+                    value: ' '
+                });
+
+
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'zip',
+                    value: postcode
+                });
+                customerRecord.setCurrentSublistValue({
+                    sublistId: 'addressbook',
+                    fieldId: 'state',
+                    value: formatStateName(postcode)
+                });
+                customerRecord.commitLine({
+                    sublistId: 'addressbook'
+                });
 
                 var customerRecordId = customerRecord.save({
                     enableSourcing: true,
@@ -572,6 +610,32 @@
                 // nlapiLogExecution('DEBUG', 'dataOut', dataOut);
 
                 return JSON.parse(dataOut);
+            }
+
+            function formatStateName(postcode) {
+                var stateName;
+                if ((postcode >= 3000 && postcode <= 3999)) {
+                    stateName = 'vic';
+                } else if (postcode >= 5000 && postcode <= 5999) {
+                    stateName = 'sa';
+                } else if (postcode >= 7000 && postcode <= 7999) {
+                    stateName = 'tas';
+                } else if (postcode >= 4000 && postcode <= 4999) {
+                    stateName = 'qld';
+                } else if (postcode >= 800 && postcode <= 999) {
+                    stateName = 'nt';
+                } else if (postcode >= 6000 && postcode <= 6999) {
+                    stateName = 'wa';
+                } else if (postcode >= 2000 && postcode <= 2999) {
+                    if ((postcode >= 2600 && postcode <= 2618) || (postcode == 2900) || (postcode == 2920)) {
+                        stateName = 'act';
+                    } else {
+                        stateName = 'nsw';
+                    }
+
+                }
+
+                return stateName.toUpperCase();
             }
 
             /**
