@@ -21,7 +21,7 @@ if (role == 1000) { //Role is Franchisee
 function leadForm(request, response) {
     if (request.getMethod() == "GET") {
 
-        nlapiLogExecution('DEBUG', 'request.getParameter', request.getParameter);
+        nlapiLogExecution('DEBUG', 'request.getParameter', request);
 
         var business_name = request.getParameter('business_name');
         var full_name = request.getParameter('full_name');
@@ -31,6 +31,8 @@ function leadForm(request, response) {
         var avg_daily_shipments = request.getParameter('avg_daily_shipments');
         var services_of_interest = request.getParameter('services_of_interest');
         var how_did_you_hear_about_us = request.getParameter('how_did_you_hear_about_us');
+        var pageURL = request.getParameter('pageURL');
+        var subscribe = request.getParameter('subscribe');
 
         var avg_daily_shipments_text;
         var services_of_interest_text;
@@ -44,6 +46,13 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'avg_daily_shipments', avg_daily_shipments);
         nlapiLogExecution('DEBUG', 'services_of_interest', services_of_interest);
         nlapiLogExecution('DEBUG', 'how_did_you_hear_about_us', how_did_you_hear_about_us);
+        nlapiLogExecution('DEBUG', 'pageURL', pageURL);
+        nlapiLogExecution('DEBUG', 'subscribe', subscribe);
+
+        var splitPageURL = pageURL.split('https://mailplus.com.au/');
+
+        nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
+        nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
 
         var params = {
             business_name: business_name,
@@ -94,21 +103,50 @@ function leadForm(request, response) {
                 avg_daily_shipments_text = '100+ per Week';
             }
 
+            if(splitPageURL[1] == '10-off-first-invoice/'){
+                customerRecord.setFieldValue('custentity_pop_up_discount', 1);
+            }
+
+            /*
+            Form Selection
+            <option value="1">Social Media</option>
+            <option value="2">Word of Mouth</option> -> Article
+            <option value="3">Referral</option> -> Word of Mouth
+            <option value="4">Forum</option> -> Search Engine (Google)
+            <option value="5">Google</option> -> Online Forum
+            <option value="6">Van signage</option> -> Other
+             */
+
+            /*
+            NetSuite List 
+                Social Media (e.g. Facebook)    1    
+                Article 2    
+                Word of Mouth   3    
+                Search Engine (e.g. Google) 4    
+                Online Forum    5    
+                Other   6    
+                Van Signage 7    
+                Referral    8
+             */
+
             if (how_did_you_hear_about_us == '1') {
                 customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 1);
                 how_did_you_hear_about_us_text = 'Social Media (e.g. Facebook)';
             } else if (how_did_you_hear_about_us == '2') {
-                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 2);
-                how_did_you_hear_about_us_text = 'Article';
-            } else if (how_did_you_hear_about_us == '3') {
                 customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 3);
                 how_did_you_hear_about_us_text = 'Word of Mouth';
+            } else if (how_did_you_hear_about_us == '3') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 8);
+                how_did_you_hear_about_us_text = 'Referral';
             } else if (how_did_you_hear_about_us == '4') {
-                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 4);
-                how_did_you_hear_about_us_text = 'Search Engine (e.g. Google)';
-            } else if (how_did_you_hear_about_us == '5') {
                 customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 5);
-                how_did_you_hear_about_us_text = 'Online Forum';
+                how_did_you_hear_about_us_text = 'Forum';
+            } else if (how_did_you_hear_about_us == '5') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 4);
+                how_did_you_hear_about_us_text = 'Google';
+            } else if (how_did_you_hear_about_us == '6') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 7);
+                how_did_you_hear_about_us_text = 'Van Signage';
             } else {
                 customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 6);
                 how_did_you_hear_about_us_text = 'Other';
@@ -153,6 +191,9 @@ function leadForm(request, response) {
             contactRecord.setFieldValue('company', customerRecordId);
             contactRecord.setFieldValue('entityid', full_name);
             contactRecord.setFieldValue('contactrole', -10);
+            if(subscribe == 'true'){
+                contactRecord.setFieldValue('custentity_subscribe_list', 1);
+            }
             nlapiSubmitRecord(contactRecord);
 
             var customer_record = nlapiLoadRecord('customer', customerRecordId);
