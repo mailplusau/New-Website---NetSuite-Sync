@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-01-11T09:19:21+11:00
+ * @Last modified time: 2022-01-27T11:19:17+11:00
  */
 
 
@@ -76,10 +76,10 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 				value: experience
 			})
 		}
-		// zeeLeadRecord.setValue({
-		// 	fieldId: 'custrecord_comments',
-		// 	value: comments
-		// })
+		zeeLeadRecord.setValue({
+			fieldId: 'custrecord_survey_filled',
+			value: 1
+		})
 
 		zeeLeadRecord.save()
 
