@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2021-12-24T08:22:53+11:00
+ * @Last modified time: 2022-02-07T10:41:17+11:00
  */
 
 
@@ -222,9 +222,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			value: 5
 		})
 
-		zeeLeadRecord.save()
-
-
+		var newZeeLeadRecordNSID = zeeLeadRecord.save()
 
 		log.debug({
 			title: "params",
@@ -261,9 +259,21 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			returnExternalUrl: true
 		});
 
-		suiteletUrl += '&rectype=customer&template=122';
-		suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-			'&contactid=' + null + '&userid=' + userid;
+		if (investor_radio == "true") {
+			suiteletUrl += '&rectype=customer&template=129';
+			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+				'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
+				newZeeLeadRecordNSID;
+		} else if (owner_radio == "true") {
+			suiteletUrl += '&rectype=customer&template=128';
+			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+				'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
+				newZeeLeadRecordNSID;
+		} else if (seeking_employment_radio == "true") {
+			suiteletUrl += '&rectype=customer&template=127';
+			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+				'&contactid=' + null + '&userid=' + userid;
+		}
 
 		log.debug({
 			title: 'suiteletUrl',
@@ -276,11 +286,23 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		var emailHtml = response.body;
 
+		log.debug({
+			title: 'newZeeLeadRecordNSID',
+			details: newZeeLeadRecordNSID
+		});
+
+		emailHtml.toString().replace("zeeLeadNSID", newZeeLeadRecordNSID);
+
+		log.debug({
+			title: 'emailHtml',
+			details: emailHtml
+		});
+
 		var arrAttachments = [];
 
-		arrAttachments.push(file.load({
-			id: 5060506
-		}));
+		// arrAttachments.push(file.load({
+		// 	id: 5060506
+		// }));
 
 
 		email.send({

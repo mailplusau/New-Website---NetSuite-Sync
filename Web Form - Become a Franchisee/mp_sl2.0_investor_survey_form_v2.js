@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-01-27T11:19:17+11:00
+ * @Last modified time: 2022-02-07T10:40:42+11:00
  */
 
 
@@ -40,7 +40,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		var zeeLeadID = context.request.parameters.zeeleadid;
 		var investment = context.request.parameters.investment;
-		var finance = context.request.parameters.fianance;
+		var finance = context.request.parameters.finance;
 		var experience = context.request.parameters.experience;
 
 

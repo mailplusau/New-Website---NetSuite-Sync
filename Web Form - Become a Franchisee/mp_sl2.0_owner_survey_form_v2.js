@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-01-27T11:19:19+11:00
+ * @Last modified time: 2022-02-07T10:40:33+11:00
  */
 
 
@@ -40,7 +40,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		var zeeLeadID = context.request.parameters.zeeleadid;
 		var investment = context.request.parameters.investment;
-		var finance = context.request.parameters.fianance;
+		var finance = context.request.parameters.finance;
 		var experience = context.request.parameters.experience;
 		var vehicle = context.request.parameters.vehicle;
 
@@ -61,24 +61,40 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 		});
 
 		if (investment != '0' && !isNullorEmpty(investment)) {
+			log.debug({
+				title: "investment",
+				details: investment
+			});
 			zeeLeadRecord.setValue({
 				fieldId: 'custrecord_investment_bracket',
 				value: investment
 			})
 		}
 		if (finance != '0' && !isNullorEmpty(finance)) {
+			log.debug({
+				title: "finance",
+				details: finance
+			});
 			zeeLeadRecord.setValue({
 				fieldId: 'custrecord_finance_required',
 				value: finance
 			})
 		}
 		if (experience != '0' && !isNullorEmpty(experience)) {
+			log.debug({
+				title: "experience",
+				details: experience
+			});
 			zeeLeadRecord.setValue({
 				fieldId: 'custrecord_years_of_experience',
 				value: experience
 			})
 		}
 		if (vehicle != '0' && !isNullorEmpty(vehicle)) {
+			log.debug({
+				title: "vehicle",
+				details: vehicle
+			});
 			zeeLeadRecord.setValue({
 				fieldId: 'custrecord_own_a_vehicle',
 				value: vehicle
