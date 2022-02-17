@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-02-07T10:40:42+11:00
+ * @Last modified time: 2022-02-18T09:28:34+11:00
  */
 
 
@@ -58,6 +58,10 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			id: parseInt(zeeLeadID)
 		});
 
+		var email_address = zeeLeadRecord.getValue({
+			fieldId: 'custrecord_zee_lead_email'
+		})
+
 		if (investment != '0' && !isNullorEmpty(investment)) {
 			zeeLeadRecord.setValue({
 				fieldId: 'custrecord_investment_bracket',
@@ -83,41 +87,37 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		zeeLeadRecord.save()
 
-		// var suiteletUrl = url.resolveScript({
-		// 	scriptId: 'customscript_merge_email',
-		// 	deploymentId: 'customdeploy_merge_email',
-		// 	returnExternalUrl: true
-		// });
-		//
-		// suiteletUrl += '&rectype=customer&template=122';
-		// suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-		// 	'&contactid=' + null + '&userid=' + userid;
-		//
-		// log.debug({
-		// 	title: 'suiteletUrl',
-		// 	details: suiteletUrl
-		// });
-		//
-		// var response = https.get({
-		// 	url: suiteletUrl
-		// });
-		//
-		// var emailHtml = response.body;
-		//
-		// var arrAttachments = [];
-		//
-		// arrAttachments.push(file.load({
-		// 	id: 5060506
-		// }));
-		//
-		//
-		// email.send({
-		// 	author: 112209,
-		// 	body: emailHtml,
-		// 	recipients: email_address,
-		// 	subject: 'Thank you for your MailPlus enquiry!',
-		// 	attachments: arrAttachments
-		// });
+		var suiteletUrl = url.resolveScript({
+			scriptId: 'customscript_merge_email',
+			deploymentId: 'customdeploy_merge_email',
+			returnExternalUrl: true
+		});
+
+		suiteletUrl += '&rectype=customer&template=136';
+		suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+			'&contactid=' + null + '&userid=' + userid;
+
+		log.debug({
+			title: 'suiteletUrl',
+			details: suiteletUrl
+		});
+
+		var response = https.get({
+			url: suiteletUrl
+		});
+
+		var emailHtml = response.body;
+
+		var arrAttachments = [];
+
+
+		email.send({
+			author: 112209,
+			body: emailHtml,
+			recipients: email_address,
+			subject: 'MailPlus franchise brochure',
+			attachments: arrAttachments
+		});
 
 
 		var returnObj = {
