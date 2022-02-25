@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-02-07T10:41:17+11:00
+ * @Last modified time: 2022-02-26T10:22:15+11:00
  */
 
 
@@ -52,6 +52,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 		var experience = context.request.parameters.experience;
 		var employment_type = context.request.parameters.employment_type;
 		var suburb = context.request.parameters.suburb;
+		var pathname = context.request.parameters.pathname;
 
 		var params = {
 			first_name: first_name,
@@ -67,7 +68,8 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			vehicle: vehicle,
 			experience: experience,
 			employment_type: employment_type,
-			suburb: suburb
+			suburb: suburb,
+			pathname: pathname
 		};
 
 		/*
@@ -114,6 +116,10 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 		zeeLeadRecord.setValue({
 			fieldId: 'custrecord_zee_lead_stage',
 			value: 1
+		})
+		zeeLeadRecord.setValue({
+			fieldId: 'custrecord_website_page',
+			value: pathname
 		})
 
 		if (isNullorEmpty(postcode) && !isNullorEmpty(residentialpostcode)) {
