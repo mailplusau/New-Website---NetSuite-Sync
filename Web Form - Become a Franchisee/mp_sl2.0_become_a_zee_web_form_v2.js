@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-02-26T10:22:15+11:00
+ * @Last modified time: 2022-03-10T16:43:50+11:00
  */
 
 
@@ -238,7 +238,8 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 		var from = 112209; // MailPlus team
 		var to;
 		var cc = ['ankith.ravindran@mailplus.com.au',
-			'michael.mcdaid@mailplus.com.au'
+			'michael.mcdaid@mailplus.com.au', 'david.gdanski@mailplus.com.au',
+			'luke.forbes@mailplus.com.au'
 		];
 		var subject = 'Become a Franchisee Lead';
 		var body = 'New Franchisee Enquiry from website';
@@ -306,9 +307,9 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		var arrAttachments = [];
 
-		// arrAttachments.push(file.load({
-		// 	id: 5060506
-		// }));
+		arrAttachments.push(file.load({
+			id: 5543283
+		}));
 
 
 		email.send({
