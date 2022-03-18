@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-02-18T09:28:35+11:00
+ * @Last modified time: 2022-03-18T13:36:06+11:00
  */
 
 
@@ -119,7 +119,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 
 		suiteletUrl += '&rectype=customer&template=136';
 		suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-			'&contactid=' + null + '&userid=' + userid;
+			'&contactid=' + null + '&userid=' + 409635;
 
 		log.debug({
 			title: 'suiteletUrl',
