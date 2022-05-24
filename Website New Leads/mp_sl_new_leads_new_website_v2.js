@@ -3,7 +3,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl_new_leads_new_website_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-05-24T07:55:10+10:00
+ * @Last modified time: 2022-05-24T10:50:15+10:00
  */
 
 
@@ -173,6 +173,9 @@ function leadForm(request, response) {
       } else if (services_of_interest == '3') {
         customerRecord.setFieldValue('custentity_services_of_interest', 3);
         service_of_interest_text = 'Biodegradable satchel';
+      } else if (services_of_interest == '4') {
+        customerRecord.setFieldValue('custentity_services_of_interest', 4);
+        service_of_interest_text = 'API Solution';
       }
 
       //ADDRESS
@@ -257,7 +260,8 @@ function leadForm(request, response) {
 
       var postcode = parseInt(postcode);
 
-      if (splitPageURL[1] == 'api-integration-3pl/') {
+      if (splitPageURL[1] == 'api-integration-3pl/' || services_of_interest ==
+        '4') {
         to = ['lee.russell@mailplus.com.au'];
         body =
           'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
