@@ -11,6 +11,8 @@
     var investor_radio = false;
     var owner_radio = false;
     var seeking_employment_radio = false;
+    var nom_checkbox = false;
+    var ref_checkbox = false;
     (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({
@@ -203,6 +205,50 @@
         }).blur(function () {
             if (Input_del_res_postcode.val().length == 0) Input_del_res_postcode.val(default_value_del_res_postcode);
         });
+
+        var Input_ref_first_name = jQuery('input[id=ref_first_name]');
+        var default_value_ref_first_name = Input_ref_first_name.val();
+        Input_ref_first_name.focus(function () {
+            if (Input_ref_first_name.val() == default_value_ref_first_name) Input_ref_first_name.val("");
+        }).blur(function () {
+            if (Input_ref_first_name.val().length == 0) Input_ref_first_name.val(default_value_ref_first_name);
+        });
+
+        var Input_ref_last_name = jQuery('input[id=ref_last_name]');
+        var default_value_ref_last_name = Input_ref_last_name.val();
+        Input_ref_last_name.focus(function () {
+            if (Input_ref_last_name.val() == default_value_ref_last_name) Input_ref_last_name.val("");
+        }).blur(function () {
+            if (Input_ref_last_name.val().length == 0) Input_ref_last_name.val(default_value_ref_last_name);
+        });
+
+        var Input_ref_email = jQuery('input[id=ref_email]');
+        var default_value_ref_email = Input_ref_email.val();
+        Input_ref_email.focus(function () {
+            if (Input_ref_email.val() == default_value_ref_email) Input_ref_email.val("");
+        }).blur(function () {
+            if (Input_fref_emailval().length == 0) Input_ref_email.val(default_value_ref_email);
+        });
+
+        var Input_ref_phone_number = jQuery('input[id=ref_phone_number]');
+        var default_value_ref_phone_number = Input_ref_phone_number.val();
+        Input_ref_phone_number.focus(function () {
+            if (Input_ref_phone_number.val() == default_value_ref_phone_number) Input_ref_phone_number.val("");
+        }).blur(function () {
+            if (Input_ref_phone_number.val().length == 0) Input_ref_phone_number.val(default_value_ref_phone_number);
+        });
+
+        var Input_comments = jQuery('input[id=comments]');
+        var default_value_comments = Input_comments.val();
+        Input_comments.focus(function () {
+            if (Input_comments.val() == default_value_comments) Input_comments.val("");
+        }).blur(function () {
+            if (Input_comments.val().length == 0) Input_comments.val(default_value_comments);
+        });
+
+
+
+
         //On on change og send or receiver dropdown
         jQuery('#sender_or_receiver').change(function () {
             console.log(123)
@@ -580,6 +626,14 @@
             initAutocomplete();
         });
 
+        jQuery('#nom_checkbox').click(function () {
+            nom_checkbox = true;
+        });
+
+        jQuery('#ref_checkbox').click(function () {
+            ref_checkbox = true;
+        });
+
         jQuery('#investor').click(function () {
             jQuery('.seeking_employment_details_row ').addClass('hide');
             jQuery('.area_of_interest_details_row ').removeClass('hide');
@@ -800,6 +854,9 @@
             var input_error = false;
             var error_color = '#f4524d';
 
+            console.log('ref_checkbox ' + ref_checkbox)
+            console.log('nom_checkbox ' + nom_checkbox)
+
             var ref_first_name = jQuery('#ref_first_name').val();
             var ref_last_name = jQuery('#ref_last_name').val();
             var ref_email = jQuery('#ref_email').val();
@@ -817,6 +874,19 @@
             var vehicle = jQuery('#vehicle').val();
             var experience = jQuery('#experience').val();
             var employment_type = jQuery('#employment_type').val();
+
+            if (nom_checkbox == false && ref_checkbox == false) {
+                input_error = true;
+                jQuery('.form-check-nom').css("color", "red");;
+                setTimeout(function () {
+                    jQuery('.form-check-nom').css("color", "#103d39");;
+                }, 5000);
+
+                jQuery('.form-check-ref').css("color", "red");;
+                setTimeout(function () {
+                    jQuery('.form-check-ref').css("color", "#103d39");;
+                }, 5000);
+            }
 
 
             if (ref_first_name == " " || ref_first_name == "" || ref_first_name == "First Name*") {
@@ -917,46 +987,6 @@
                     setTimeout(function () {
                         jQuery('#address2').removeClass('input-field-error');
                         jQuery('#address2').addClass('input-field-default');
-                    }, 5000);
-                }
-            } else if (seeking_employment_radio == true) {
-                if (residentialpostcode == "" || residentialpostcode == "" || residentialpostcode == "Residential Postcode*" || validatePostcode(residentialpostcode) == false) {
-                    input_error = true;
-                    jQuery('#residentialpostcode').addClass('input-field-error');
-                    jQuery('#residentialpostcode').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#residentialpostcode').removeClass('input-field-error');
-                        jQuery('#residentialpostcode').addClass('input-field-default');
-                    }, 5000);
-                }
-
-                if (vehicle == "0") {
-                    input_error = true;
-                    jQuery('#vehicle').addClass('input-field-error');
-                    jQuery('#vehicle').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#vehicle').removeClass('input-field-error');
-                        jQuery('#vehicle').addClass('input-field-default');
-                    }, 5000);
-                }
-
-                if (experience == "0") {
-                    input_error = true;
-                    jQuery('#experience').addClass('input-field-error');
-                    jQuery('#experience').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#experience').removeClass('input-field-error');
-                        jQuery('#experience').addClass('input-field-default');
-                    }, 5000);
-                }
-
-                if (employment_type == "0") {
-                    input_error = true;
-                    jQuery('#employment_type').addClass('input-field-error');
-                    jQuery('#employment_type').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#employment_type').removeClass('input-field-error');
-                        jQuery('#employment_type').addClass('input-field-default');
                     }, 5000);
                 }
             }
