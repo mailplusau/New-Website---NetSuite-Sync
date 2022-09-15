@@ -353,6 +353,62 @@
                 // window.location.href = 'https://mailplus.com.au/status-confirmation-page/';
             }
         });
+
+        //Submit Expression of Interest
+        jQuery('.exp-interest-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var custInternalID = jQuery('#customerInternalId').val();
+            var campaign = jQuery('#campaign').val();
+            var custID = jQuery('#customer_id').val();
+            var custName = jQuery('#expInterestCustName').val();
+            var custEmail = jQuery('#expInterestCustEmail').val();
+
+            console.log('custInternalID ' + custInternalID);
+            console.log('campaign ' + campaign);
+            console.log('custID ' + custID)
+            console.log('custName ' + custName)
+            console.log('custEmail ' + custEmail)
+
+            
+            if (custEmail == " " || custEmail == "") {
+                input_error = true;
+                jQuery('#expInterestCustEmail').addClass('input-field-error');
+                jQuery('#expInterestCustEmail').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#expInterestCustEmail').removeClass('input-field-error');
+                    jQuery('#expInterestCustEmail').addClass('input-field-default');
+                }, 5000);
+            }
+
+
+            if (input_error == false) {
+                jQuery('.exp-interest-button-submit').html('Thank You!');
+                jQuery('.exp-interest-button-submit').attr('disabled', 'disabled');
+                var params = {
+                    custInternalID: custInternalID,
+                    campaign: campaign,
+                    custID: custID,
+                    custName: custName,
+                    custEmail: custEmail
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1620&deploy=1&compid=1048144&h=6c809cfde100ce827d71'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(123);
+                        // console.log(jResp);
+                        // window.location.href = 'https://mailplus.com.au/franchisee-confirmation-page/';
+                    }
+                });
+            }
+
+        });
+
+
+
         //On submit of create ticket page
         jQuery('.create-ticket-button-submit').click(function () {
             var input_error = false;
@@ -992,8 +1048,8 @@
             }
 
             if (input_error == false) {
-                jQuery('.become-a-franchisee-button-submit').html('Thank You!');
-                jQuery('.become-a-franchisee-button-submit').attr('disabled', 'disabled');
+                jQuery('.finder-fee-button-submit').html('Thank You!');
+                jQuery('.finder-fee-button-submit').attr('disabled', 'disabled');
                 var params = {
                     ref_first_name: ref_first_name,
                     ref_last_name: ref_last_name,
