@@ -3,7 +3,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl_new_leads_new_website_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-05-24T10:50:15+10:00
+ * @Last modified time: 2022-05-24T08:22:37+10:00
  */
 
 
@@ -176,6 +176,9 @@ function leadForm(request, response) {
       } else if (services_of_interest == '4') {
         customerRecord.setFieldValue('custentity_services_of_interest', 4);
         service_of_interest_text = 'API Solution';
+      }else if (services_of_interest == '5') {
+        customerRecord.setFieldValue('custentity_services_of_interest', 5);
+        service_of_interest_text = 'Standard parcel delivery';
       }
 
       //ADDRESS
@@ -260,8 +263,7 @@ function leadForm(request, response) {
 
       var postcode = parseInt(postcode);
 
-      if (splitPageURL[1] == 'api-integration-3pl/' || services_of_interest ==
-        '4') {
+      if (splitPageURL[1] == 'api-integration-3pl/' || services_of_interest == '4') {
         to = ['lee.russell@mailplus.com.au'];
         body =
           'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
@@ -350,11 +352,11 @@ function leadForm(request, response) {
         //Create Sales Record
         var salesRecord = nlapiCreateRecord('customrecord_sales');
         if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 5000 &&
-            postcode <= 5999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+          postcode <= 5999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
           var salesRep = 690145; //David Gdanski
           to = ['david.gdanski@mailplus.com.au']
         } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
-            postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+          postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
           var salesRep = 668711; //Lee Russell
           to = ['lee.russell@mailplus.com.au']
         } else { //Everything else
@@ -466,7 +468,7 @@ function geocodeAddress(address) {
   var geocode = new google.maps.Geocoder();
   geocoder.geocode({
     'address': address
-  }, function(results, status) {
+  }, function (results, status) {
     if (status === 'OK') {
       position = results[0].geometry.location;
     } else {
