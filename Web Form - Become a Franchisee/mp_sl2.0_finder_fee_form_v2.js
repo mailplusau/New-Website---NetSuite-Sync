@@ -51,6 +51,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
         var comments = context.request.parameters.comments;
         var investor_radio = context.request.parameters.investor_radio;
         var owner_radio = context.request.parameters.owner_radio;
+        owner_radio = "true";
         var seeking_employment_radio = context.request.parameters.seeking_employment_radio;
         var residentialpostcode = context.request.parameters.residentialpostcode;
         var vehicle = context.request.parameters.vehicle;
@@ -160,22 +161,12 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
             value: suburb
         })
 
-        if (investor_radio == "true") {
-            zeeLeadRecord.setValue({
-                fieldId: 'custrecord_type_of_owner',
-                value: 2
-            })
-        } else if (owner_radio == "true") {
-            zeeLeadRecord.setValue({
-                fieldId: 'custrecord_type_of_owner',
-                value: 3
-            })
-        } else if (seeking_employment_radio == "true") {
-            zeeLeadRecord.setValue({
-                fieldId: 'custrecord_type_of_owner',
-                value: 4
-            })
-        }
+
+        zeeLeadRecord.setValue({
+            fieldId: 'custrecord_type_of_owner',
+            value: 3
+        })
+
 
         if (vehicle != '0' && !isNullorEmpty(vehicle)) {
             zeeLeadRecord.setValue({
@@ -292,21 +283,12 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
             returnExternalUrl: true
         });
 
-        if (investor_radio == "true") {
-            suiteletUrl += '&rectype=customer&template=129';
-            suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-                '&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
-                newZeeLeadRecordNSID;
-        } else if (owner_radio == "true") {
-            suiteletUrl += '&rectype=customer&template=128';
-            suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-                '&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
-                newZeeLeadRecordNSID;
-        } else if (seeking_employment_radio == "true") {
-            suiteletUrl += '&rectype=customer&template=127';
-            suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-                '&contactid=' + null + '&userid=' + userid;
-        }
+
+        suiteletUrl += '&rectype=customer&template=128';
+        suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+            '&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
+            newZeeLeadRecordNSID;
+
 
         log.debug({
             title: 'suiteletUrl',
