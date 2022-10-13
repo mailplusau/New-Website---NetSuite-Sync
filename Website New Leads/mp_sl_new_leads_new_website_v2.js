@@ -176,7 +176,7 @@ function leadForm(request, response) {
       } else if (services_of_interest == '4') {
         customerRecord.setFieldValue('custentity_services_of_interest', 4);
         service_of_interest_text = 'API Solution';
-      }else if (services_of_interest == '5') {
+      } else if (services_of_interest == '5') {
         customerRecord.setFieldValue('custentity_services_of_interest', 5);
         service_of_interest_text = 'Standard parcel delivery';
       }
@@ -351,10 +351,13 @@ function leadForm(request, response) {
 
         //Create Sales Record
         var salesRecord = nlapiCreateRecord('customrecord_sales');
-        if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 5000 &&
-          postcode <= 5999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+        if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
           var salesRep = 690145; //David Gdanski
           to = ['david.gdanski@mailplus.com.au']
+        } else if ((postcode >= 5000 &&
+          postcode <= 5999)) {
+          var salesRep = 668712; //Belinda Urbani
+          to = ['belinda.urbani@mailplus.com.au'];
         } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
           postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
           var salesRep = 668711; //Lee Russell

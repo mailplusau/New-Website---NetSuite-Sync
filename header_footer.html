@@ -905,6 +905,94 @@
             }
         });
 
+
+        //On submit of grant portal access form
+        jQuery('.portal-access-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+
+            console.log('inside portal-access section')
+
+            var custInternalID = jQuery('#customerInternalId').val();
+            var custID = jQuery('#customer_id').val();
+            var custEmail = jQuery('#contactEmail').val();
+
+            var firstName = jQuery('#firstName').val();
+            var lastName = jQuery('#lastName').val();
+            var phone = jQuery('#phone').val();
+
+            console.log('custInternalID ' + custInternalID);
+            console.log('custID ' + custID)
+            console.log('custName ' + custName)
+            console.log('custEmail ' + custEmail)
+
+
+            if (custEmail == " " || custEmail == "") {
+                input_error = true;
+                jQuery('#contactEmail').addClass('input-field-error');
+                jQuery('#contactEmail').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#contactEmail').removeClass('input-field-error');
+                    jQuery('#contactEmail').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (firstName == " " || firstName == "") {
+                input_error = true;
+                jQuery('#firstName').addClass('input-field-error');
+                jQuery('#firstName').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#firstName').removeClass('input-field-error');
+                    jQuery('#firstName').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (lastName == " " || lastName == "") {
+                input_error = true;
+                jQuery('#lastName').addClass('input-field-error');
+                jQuery('#lastName').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#lastName').removeClass('input-field-error');
+                    jQuery('#lastName').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (phone == " " || phone == "") {
+                input_error = true;
+                jQuery('#phone').addClass('input-field-error');
+                jQuery('#phone').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#phone').removeClass('input-field-error');
+                    jQuery('#phone').addClass('input-field-default');
+                }, 5000);
+            }
+
+
+            if (input_error == false) {
+                jQuery('.portal-access-button-submit').html('Thank You!');
+                jQuery('.portal-access-button-submit').attr('disabled', 'disabled');
+                var params = {
+                    custInternalID: custInternalID,
+                    custID: custID,
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: phone,
+                    custEmail: custEmail
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1636&deploy=1&compid=1048144&h=ff4c817b13c86d672774'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(123);
+                        // console.log(jResp);
+                        // window.location.href = 'https://mailplus.com.au/franchisee-confirmation-page/';
+                    }
+                });
+            }
+        });
+
         //On submit of finder fee form
         jQuery('.finder-fee-button-submit').click(function () {
             var input_error = false;
