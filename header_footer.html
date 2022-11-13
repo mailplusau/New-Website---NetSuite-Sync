@@ -1651,6 +1651,105 @@
                 });
             }
         });
+
+
+        //On submit of create IT ticket page
+        jQuery('.create-portal-orientation-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+
+            var account_id = null;
+            var customerInternalId = null;
+
+            var from_email = jQuery('#from_email').val();
+
+            if(from_email == 'false'){
+                account_id = jQuery('#account_id').val();
+            } else if(from_email == 'true') {
+                customerInternalId = jQuery('#customerInternalId').val();
+            }
+
+            var company_name = jQuery('#company_name').val();
+            var first_name = jQuery('#first_name').val();
+            var last_name = jQuery('#last_name').val();
+            var email = jQuery('#email').val();
+            var phone_number = jQuery('#phone_number').val();
+
+            var timeVal = $("#booking_time").val();
+            var dateVal = $("#booking_date").val();
+
+            console.log(first_name.trim());
+            if (company_name.replace(/  +/g, ' ') == " " || company_name.trim == "" || company_name == "Company Name*") {
+                input_error = true;
+                jQuery('#company_name').addClass('input-field-error');
+                jQuery('#company_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#company_name').removeClass('input-field-error');
+                    jQuery('#company_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After business name ' + input_error);
+            if (first_name.replace(/  +/g, ' ') == " " || first_name.trim == "" || first_name == "First Name*") {
+                input_error = true;
+                jQuery('#first_name').addClass('input-field-error');
+                jQuery('#first_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#first_name').removeClass('input-field-error');
+                    jQuery('#first_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After first name ' + input_error);
+
+            if (email.replace(/  +/g, ' ') == " " || email.trim == "" || email == "Email Address*" || IsEmail(email)) {
+                input_error = true;
+                jQuery('#email').addClass('input-field-error');
+                jQuery('#email').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#email').removeClass('input-field-error');
+                    jQuery('#email').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After email ' + input_error);
+            if (phone_number.replace(/  +/g, ' ') == " " || phone_number.trim == "" || phone_number == "Phone Number*" || validatePhone(phone_number) == false) {
+                input_error = true;
+                jQuery('#phone_number').addClass('input-field-error');
+                jQuery('#phone_number').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#phone_number').removeClass('input-field-error');
+                    jQuery('#phone_number').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After phone_number ' + input_error);
+
+            if (input_error == false) {
+                var params = {
+                    account_id: account_id,
+                    customerInternalId: customerInternalId,
+                    company_name: company_name,
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    phone_number: phone_number,
+                    dateVal: dateVal,
+                    timeVal: timeVal
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1642&deploy=1&compid=1048144&h=99e5d2d1da816ec3d6db'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(jResp);
+                        // act on the results
+                    }
+                });
+                jQuery('.create-portal-orientation-button-submit').html('Thank You!');
+                jQuery('.create-portal-orientation-button-submit').attr('disabled', 'disabled');;
+                // window.location.href = 'https://mailplus.com.au/support-confirmation-page/';
+            }
+        });
+
+
         //On submit of create IT ticket page
         jQuery('.create-it-ticket-button-submit').click(function () {
             var input_error = false;

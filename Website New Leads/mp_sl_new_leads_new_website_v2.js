@@ -159,6 +159,9 @@ function leadForm(request, response) {
       } else if (how_did_you_hear_about_us == '6') {
         customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 7);
         how_did_you_hear_about_us_text = 'Van Signage';
+      } else if (how_did_you_hear_about_us == '9') {
+        customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 9);
+        how_did_you_hear_about_us_text = 'Creative Converters';
       } else {
         customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 6);
         how_did_you_hear_about_us_text = 'Other';
@@ -179,6 +182,9 @@ function leadForm(request, response) {
       } else if (services_of_interest == '5') {
         customerRecord.setFieldValue('custentity_services_of_interest', 5);
         service_of_interest_text = 'Standard parcel delivery';
+      } else if (services_of_interest == '6') {
+        customerRecord.setFieldValue('custentity_services_of_interest', 6);
+        service_of_interest_text = 'Starshipit integration';
       }
 
       //ADDRESS
