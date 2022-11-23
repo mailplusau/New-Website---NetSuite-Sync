@@ -1,0 +1,70 @@
+<script>
+
+    var mainURLSplit = window.location.href.split('?');
+    console.log(mainURLSplit)
+    console.log(mainURLSplit.length)
+    if (mainURLSplit.length == 1) {
+        $('.set_orientation').removeClass("hide")
+        $('#from_email').val("false")
+    } else if (mainURLSplit.length == 2) {
+        $('#from_email').val("true")
+        var urlParams = mainURLSplit[1].split('&');
+        console.log(urlParams)
+        var custInternalId = urlParams[0].split('=')
+        // var custId = urlParams[1].split('=')
+        var custName = urlParams[1].split('=')
+        var custEmail = urlParams[2].split('=')
+        var custPhone = urlParams[3].split('=')
+        var firstName = urlParams[4].split('=')
+
+        document.getElementById('customerInternalId').value = custInternalId[1].toString();
+        document.getElementById('company_name').value = decodeURIComponent(custName[1]);
+        document.getElementById('first_name').value = firstName[1];
+        document.getElementById('email').value = custEmail[1];
+        document.getElementById('phone_number').value = custPhone[1];
+
+        document.getElementById('customerInternalId').value = custInternalId[1].toString();
+        document.getElementById('company_name').setAttribute('readonly', true);
+        document.getElementById('first_name').setAttribute('readonly', true);
+        document.getElementById('email').setAttribute('readonly', true);
+
+        
+        // document.getElementById('phone_number').setAttribute('readonly', true);
+
+    }
+
+
+    var date = new Date();
+
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+
+    var today = year + "-" + month + "-" + day;
+
+    console.log('today: ' + today)
+
+    $("#booking_date").val(today);
+    $("#booking_date").prop("min", today);
+
+    var minTime = $('#booking_time').prop('min');
+    var maxTime = $('#booking_time').prop('max');
+
+    console.log('minTime: ' + minTime)
+    console.log('maxTime: ' + maxTime)
+
+    $('#booking_time').blur(function () {
+
+        var timeVal = $("#booking_time").val()
+        console.log('timeVal: ' + timeVal);
+
+        if ((timeVal > maxTime) || (timeVal < minTime)) {
+            alert('Please select time between 9AM - 1PM!');
+            $("#booking_time").val(null)
+        }
+    });
+
+</script>
