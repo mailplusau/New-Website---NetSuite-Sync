@@ -1,0 +1,1114 @@
+/**
+ * @Author: Ankith Ravindran <ankithravindran>
+ * @Date:   2021-09-15T17:02:45+10:00
+ * @Filename: mp_sl_new_leads_new_website_v2.js
+ * @Last modified by:   ankithravindran
+ * @Last modified time: 2022-05-24T08:22:37+10:00
+ */
+
+var ctx = nlapiGetContext();
+
+var zee = 0;
+var role = ctx.getRole();
+var row_count = 0;
+var customer_list_page = null;
+if (role == 1000) { //Role is Franchisee
+    zee = ctx.getUser(); //Get Franchisee ID
+} else {
+    zee = 0;
+}
+
+function leadForm(request, response) {
+    if (request.getMethod() == "GET") {
+
+        nlapiLogExecution('DEBUG', 'request.getParameter', request);
+
+        var business_name = request.getParameter('business_name');
+        var first_name = request.getParameter('first_name');
+        var last_name = request.getParameter('last_name');
+        var email = request.getParameter('email');
+        var phone_number = request.getParameter('phone_number');
+        var address1 = request.getParameter('address1');
+        var address2 = request.getParameter('address2');
+        var city = request.getParameter('city');
+        var state = request.getParameter('state');
+        var postcode = request.getParameter('postcode');
+        var lat = request.getParameter('lat');
+        var lng = request.getParameter('lng');
+        var avg_daily_shipments = request.getParameter('avg_daily_shipments');
+        var services_of_interest = request.getParameter('services_of_interest');
+        var how_did_you_hear_about_us = request.getParameter(
+            'how_did_you_hear_about_us');
+        var pageURL = request.getParameter('pageURL');
+
+        nlapiLogExecution('DEBUG', 'business_name', business_name);
+        nlapiLogExecution('DEBUG', 'full_name', first_name);
+        nlapiLogExecution('DEBUG', 'full_name', last_name);
+        nlapiLogExecution('DEBUG', 'email_address', email);
+        nlapiLogExecution('DEBUG', 'phone_number', phone_number);
+        nlapiLogExecution('DEBUG', 'address1', address1);
+        nlapiLogExecution('DEBUG', 'address2', address2);
+        nlapiLogExecution('DEBUG', 'city', city);
+        nlapiLogExecution('DEBUG', 'state', state);
+        nlapiLogExecution('DEBUG', 'postcode', postcode);
+        nlapiLogExecution('DEBUG', 'lat', lat);
+        nlapiLogExecution('DEBUG', 'lng', lng);
+        nlapiLogExecution('DEBUG', 'avg_daily_shipments', avg_daily_shipments);
+        nlapiLogExecution('DEBUG', 'pageURL', pageURL);
+
+        var avg_daily_shipments_text;
+        var services_of_interest_text;
+        var how_did_you_hear_about_us_text;
+
+        var state_id;
+
+        switch (state) {
+            case 'NSW':
+                state_id = 1;
+                break;
+            case 'QLD':
+                state_id = 2;
+                break;
+            case 'VIC':
+                state_id = 3;
+                break;
+            case 'SA':
+                state_id = 4;
+                break;
+            case 'TAS':
+                state_id = 5;
+                break;
+            case 'ACT':
+                state_id = 6;
+                break;
+            case 'WA':
+                state_id = 7;
+                break;
+            case 'NT':
+                state_id = 8;
+                break;
+            case 'NZ':
+                state_id = 9;
+                break;
+        }
+
+
+
+        var splitPageURL = pageURL.split('https://mailplus.com.au/');
+
+        nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
+        nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
+
+        var params = {
+            business_name: business_name,
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            phone_number: phone_number,
+            address1: address1,
+            address2: address2,
+            city: city,
+            state: state,
+            postcode: postcode,
+            avg_daily_shipments: avg_daily_shipments,
+            services_of_interest: services_of_interest,
+            how_did_you_hear_about_us: how_did_you_hear_about_us,
+            pageURL: pageURL
+        };
+
+        //NEW CUSTOMER RECORD
+        var dataOut = '{"dataOut":[';
+
+        //If Post code is empty, do not create a record on NetSuite
+        if (isNullorEmpty(postcode)) {
+            dataOut += '{"ns_id":"ADDRESS ERROR - Empty Post Code"},';
+        } else {
+
+            var zee_id;
+            var zeeCount = 0;
+
+            //Network Matrix - Franchisee - Auto Allocate
+            var zeeNetworkMatrixSearch = nlapiLoadSearch('partner', 'customsearch_networkmtrx_zee_suburb_2');
+
+            var filterExpression = [
+                ["entityid", "doesnotstartwith", "old"],
+                "AND",
+                ["entityid", "doesnotstartwith", "test"],
+                "AND",
+                ["custentity_network_matrix_json", "contains", city],
+                "AND",
+                ["custentity_network_matrix_json", "contains", state],
+                "AND",
+                ["custentity_network_matrix_json", "contains", postcode]
+            ];
+
+            zeeNetworkMatrixSearch.setFilterExpression(filterExpression);
+
+            var zeeNetworkMatrixSearchResults = zeeNetworkMatrixSearch.runSearch();
+
+            zeeNetworkMatrixSearchResults.forEachResult(function (searchResult) {
+
+                zee_id = searchResult.getValue('internalid');
+
+                zeeCount++;
+                return true;
+            });
+
+            nlapiLogExecution('DEBUG', 'zee_id', zee_id);
+
+            var customerRecord = nlapiCreateRecord('lead');
+
+            customerRecord.setFieldValue('companyname', business_name);
+            customerRecord.setFieldValue('custentity_email_service', email);
+            customerRecord.setFieldValue('phone', phone_number);
+
+            var quadient = business_name.substring(0, 10);
+            nlapiLogExecution('DEBUG', 'business_name', business_name);
+            if (quadient == 'Quadient -') {
+                customerRecord.setFieldValue('leadsource', 246616); //Quadient
+            } else {
+                customerRecord.setFieldValue('leadsource', 254557); //Inbound - New Website
+            }
+            customerRecord.setFieldValue('entitystatus', 57); //Suspect - Hot Lead
+            customerRecord.setFieldValue('custentity_hotleads', 'T');
+
+            customerRecord.setFieldValue('custentity_industry_category', 19); //Other services
+            customerRecord.setFieldValue('custentity_date_lead_entered', getDate());
+            customerRecord.setFieldValue('custentity_lead_entered_by', 585236); //Portal
+
+            customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 1);
+            how_did_you_hear_about_us_text = 'Social Media (e.g. Facebook)';
+
+            customerRecord.setFieldValue('custentity_mpex_customer', 1);
+            customerRecord.setFieldValue('custentity_portal_access', 1);
+
+
+            if (avg_daily_shipments == '1') {
+                customerRecord.setFieldValue('custentity_form_mpex_usage_per_week', 1);
+                avg_daily_shipments_text = '1 - 20 per Week';
+            } else if (avg_daily_shipments == '2') {
+                customerRecord.setFieldValue('custentity_form_mpex_usage_per_week', 2);
+                avg_daily_shipments_text = '21 - 100 per Week';
+            } else if (avg_daily_shipments == '3') {
+                customerRecord.setFieldValue('custentity_form_mpex_usage_per_week', 3);
+                avg_daily_shipments_text = '100+ per Week';
+            }
+
+            if (splitPageURL[1] == '10-off-first-invoice/') {
+                customerRecord.setFieldValue('custentity_pop_up_discount', 1);
+            }
+
+            customerRecord.setFieldValue('custentity_mpex_invoicing_cycle', 2);
+
+
+            if (isNullorEmpty(zee_id) || zeeCount > 1) {
+
+                customerRecord.setFieldValue('partner', 435);//MailPlus Pty Ltd
+
+                //Send Email to Laura/Fiona/Popie to confirm if the lead can be services by a franchisee or not
+                var from = 112209; //MailPlus team
+                var to = ['laura.busse@mailplus.com.au'];
+                var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                    'ankith.ravindran@mailplus.com.au'
+                ];
+                var subject = 'Sales Lead - ' + entity_id + ' ' + customer_name + '';
+                var cust_id_link =
+                    'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                    customerRecordId;
+                var body =
+                    'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
+                    entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+
+                nlapiSendEmail(from, to, subject, body, cc);
+
+            } else if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+                //Create suspect in NetSuite
+                //Assign lead to franchisee
+                //create sales record
+                //Send sign up email to customer
+
+                var serviceFuelSurchargeToBeApplied = 0;
+                var partner_record;
+                if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+                    partnerRecord = nlapiLoadRecord('partner', zee_id);
+                    serviceFuelSurchargeToBeApplied = partnerRecord.getFieldValue(
+                        'custentity_service_fuel_surcharge_apply');
+                }
+
+                customerRecord.setFieldValue('partner', zee_id);
+
+                if (serviceFuelSurchargeToBeApplied == 1 ||
+                    serviceFuelSurchargeToBeApplied == '1') {
+                    customerRecord.setFieldValue('custentity_service_fuel_surcharge', 1);
+                    if (zee_id == 218 || zee_id == 469) {
+                        customerRecord.setFieldValue('custentity_service_fuel_surcharge_percen',
+                            '5.3');
+                    } else {
+                        customerRecord.setFieldValue('custentity_service_fuel_surcharge_percen',
+                            '9.5');
+                    }
+
+                }
+
+
+            }
+
+            // if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+            //     customerRecord.setFieldValue('entitystatus', 13);
+
+            //     customerRecord.setFieldValue('custentity_mp_std_activate', 1);
+            //     customerRecord.setFieldValue('custentity_mpex_small_satchel', 1);
+
+            // }
+
+            // customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
+
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '19.7');
+            customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
+            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '7.05');
+
+            if (how_did_you_hear_about_us == '1') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 1);
+                how_did_you_hear_about_us_text = 'Social Media (e.g. Facebook)';
+            } else if (how_did_you_hear_about_us == '2') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 3);
+                how_did_you_hear_about_us_text = 'Word of Mouth';
+            } else if (how_did_you_hear_about_us == '3') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 8);
+                how_did_you_hear_about_us_text = 'Referral';
+            } else if (how_did_you_hear_about_us == '4') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 5);
+                how_did_you_hear_about_us_text = 'Forum';
+            } else if (how_did_you_hear_about_us == '5') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 4);
+                how_did_you_hear_about_us_text = 'Google';
+            } else if (how_did_you_hear_about_us == '6') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 7);
+                how_did_you_hear_about_us_text = 'Van Signage';
+            } else if (how_did_you_hear_about_us == '9') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 9);
+                how_did_you_hear_about_us_text = 'Creative Converters';
+            } else {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 6);
+                how_did_you_hear_about_us_text = 'Other';
+            }
+
+            if (services_of_interest == '1') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 1);
+                service_of_interest_text = 'MailPlus Express';
+            } else if (services_of_interest == '2') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 2);
+                service_of_interest_text = 'Post Office Services';
+            } else if (services_of_interest == '3') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 3);
+                service_of_interest_text = 'Biodegradable satchel';
+            } else if (services_of_interest == '4') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 4);
+                service_of_interest_text = 'API Solution';
+            } else if (services_of_interest == '5') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 5);
+                service_of_interest_text = 'Standard parcel delivery';
+            } else if (services_of_interest == '6') {
+                customerRecord.setFieldValue('custentity_services_of_interest', 6);
+                service_of_interest_text = 'Starshipit integration';
+            }
+
+            //ADDRESS
+            customerRecord.selectNewLineItem('addressbook');
+            customerRecord.setCurrentLineItemValue('addressbook', 'label',
+                'Site Address');
+            customerRecord.setCurrentLineItemValue('addressbook', 'country', 'AU');
+            customerRecord.setCurrentLineItemValue('addressbook', 'zip', postcode);
+            customerRecord.setCurrentLineItemValue('addressbook', 'addr1', address1);
+            customerRecord.setCurrentLineItemValue('addressbook', 'addr2', address2);
+            customerRecord.setCurrentLineItemValue('addressbook', 'addressee', business_name);
+            customerRecord.setCurrentLineItemValue('addressbook', 'city', city);
+            customerRecord.setCurrentLineItemValue('addressbook', 'state', state);
+            customerRecord.setCurrentLineItemValue('addressbook', 'defaultshipping', 'T');
+            customerRecord.setCurrentLineItemValue('addressbook', 'defaultbilling', 'T');
+            // customerRecord.setCurrentLineItemValue('custrecord_address_lat', lat);
+            // customerRecord.setCurrentLineItemValue('custrecord_address_lon', lng);
+            customerRecord.commitLineItem('addressbook');
+
+            var customerRecordId = nlapiSubmitRecord(customerRecord);
+
+
+            //Create CONTACT
+            var contactRecord = nlapiCreateRecord('contact');
+            contactRecord.setFieldValue('firstname', first_name);
+            contactRecord.setFieldValue('lastname', last_name);
+            contactRecord.setFieldValue('email', email);
+            contactRecord.setFieldValue('phone', phone_number);
+            contactRecord.setFieldValue('company', customerRecordId);
+
+            contactRecord.setFieldValue('custentity_connect_admin', 1);
+            contactRecord.setFieldValue('custentity_connect_user', 1);
+            contactRecord.setFieldValue('entityid', first_name + ' ' + last_name);
+            contactRecord.setFieldValue('contactrole', -10);
+
+            var contactId = nlapiSubmitRecord(contactRecord);
+
+
+            var customer_record = nlapiLoadRecord('customer', customerRecordId);
+            var entity_id = customer_record.getFieldValue('entityid');
+            var customer_name = customer_record.getFieldValue('companyname');
+            var usage_per_week = customer_record.getFieldText(
+                'custentity_form_mpex_usage_per_week');
+            var hear_about_us = customer_record.getFieldText(
+                'custentity_how_did_you_hear_about_us');
+            var interests = customer_record.getFieldText(
+                'custentity_services_of_interest');
+
+
+
+            var note_value = '';
+            note_value += 'Average Daily Shipment: ' + usage_per_week + '/\n';
+            note_value += 'How did you hear about us: ' + hear_about_us + '/\n';
+            note_value += 'Service of Interest: ' + interests + '/\n';
+
+            var userNoteRecord = nlapiCreateRecord('note');
+            userNoteRecord.setFieldValue('title', 'New Lead');
+            userNoteRecord.setFieldValue('entity', customerRecordId);
+
+            // userNoteRecord.setFieldValue('direction', $('#direction option:selected').val());
+            // userNoteRecord.setFieldValue('notetype', $('#notetype option:selected').val());
+            userNoteRecord.setFieldValue('note', note_value);
+            userNoteRecord.setFieldValue('author', nlapiGetUser());
+            userNoteRecord.setFieldValue('notedate', getDate());
+
+            nlapiSubmitRecord(userNoteRecord);
+
+            //Create SALES REP
+            var from = 112209; //MailPlus team
+            var to;
+            var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                'ankith.ravindran@mailplus.com.au'
+            ];
+            var subject = 'Sales HOT Lead - ' + entity_id + ' ' + customer_name + '';
+            var cust_id_link =
+                'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                customerRecordId;
+            var body =
+                'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
+                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+
+            var postcode = parseInt(postcode);
+
+            var salesRep = 112209;
+
+            if (isNullorEmpty(zee_id) || zeeCount > 1) {
+                if (postcode >= 2000 && postcode <= 2999) {
+                    //ACT & NSW Postcodes
+                    var postcode = parseInt(postcode);
+                    //Byron Bay Postcodes
+                    if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
+                        postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
+                        2479) {
+
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 668711; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        var sales_record_id = nlapiSubmitRecord(salesRecord);
+                    } else if (postcode == 2481) { //Albury
+
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 690145; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        var sales_record_id = nlapiSubmitRecord(salesRecord);
+                    } else {
+                        //ACT Post Codes
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 696160; //Kerina Helliwell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        var sales_record_id = nlapiSubmitRecord(salesRecord);
+
+                    }
+
+                } else { //Everything else
+
+                    //Create Sales Record
+                    var salesRecord = nlapiCreateRecord('customrecord_sales');
+                    if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+                        var salesRep = 690145; //David Gdanski
+                    } else if ((postcode >= 5000 &&
+                        postcode <= 5999)) {
+                        var salesRep = 668712; //Belinda Urbani
+                    } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
+                        postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+                        var salesRep = 668711; //Lee Russell
+                    } else { //Everything else
+                        var salesRep = 668712; //Belinda Urbani
+                    }
+
+                    nlapiSendEmail(from, to, subject, body, cc);
+
+                    salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                    salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                    salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                    salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                    salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                    var date = new Date();
+                    salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                        nlapiDateToString(date, 'timeofday'));
+                    var sales_record_id = nlapiSubmitRecord(salesRecord);
+                }
+            }
+
+
+            // if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+            //     customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
+            //     customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
+            //     customer_comm_reg.setFieldValue('custrecord_comm_date', getDate());
+            //     customer_comm_reg.setFieldValue('custrecord_comm_date_signup', getDate());
+            //     customer_comm_reg.setFieldValue('custrecord_customer', customerRecordId);
+            //     customer_comm_reg.setFieldValue('custrecord_salesrep', salesRep);
+            //     customer_comm_reg.setFieldValue('custrecord_franchisee', zee_id);
+            //     customer_comm_reg.setFieldValue('custrecord_wkly_svcs', '5');
+            //     customer_comm_reg.setFieldValue('custrecord_in_out', 1);
+            //     customer_comm_reg.setFieldValue('custrecord_trial_status', 2);
+            //     customer_comm_reg.setFieldValue('custrecord_state', state_id);
+            //     customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
+            //     customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
+            //     customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
+            //     customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
+            //         sales_record_id);
+
+            //     var commRegId = nlapiSubmitRecord(customer_comm_reg);
+
+
+            //     var phonecall = nlapiCreateRecord('phonecall');
+            //     phonecall.setFieldValue('assigned', zee_id);
+            //     phonecall.setFieldValue('custevent_organiser', 112209);
+            //     phonecall.setFieldValue('startdate', getDate());
+            //     phonecall.setFieldValue('company', customerRecordId);
+            //     phonecall.setFieldValue('status', 'COMPLETE');
+            //     phonecall.setFieldValue('custevent_call_outcome', 16);
+            //     phonecall.setFieldValue('title', 'X Sale - Website Lead - Signed');
+            //     nlapiSubmitRecord(phonecall);
+
+            //     var new_service_record = nlapiCreateRecord('customrecord_service', {
+            //         recordmode: 'dynamic'
+            //     });
+            //     new_service_record.setFieldValue('custrecord_service', 24);
+            //     new_service_record.setFieldValue('name', 'MPEX Pickup');
+            //     new_service_record.setFieldValue('custrecord_service_price', 0);
+            //     new_service_record.setFieldValue('custrecord_service_customer', customerRecordId);
+            //     new_service_record.setFieldValue('custrecord_service_comm_reg', commRegId);
+            //     new_service_record.setFieldValue('custrecord_service_day_adhoc', 'T');
+            //     var new_service_id = nlapiSubmitRecord(new_service_record);
+
+            //     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', getDate());
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_status', 2);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', zee_id);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_new_price', 0);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegId);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_created', 112209);
+            //     new_service_change_record.setFieldValue('custrecord_servicechg_type', 'MPEX Customer');
+            //     new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+            //     nlapiSubmitRecord(new_service_change_record);
+
+            //
+            var sendleZoneIDSearch = nlapiLoadSearch('customrecord_dom_zones', 'customsearch_sendle_dom_zones');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custrecord_dom_zones_postcode', null, 'is', postcode);
+            sendleZoneIDSearch.addFilters(newFilters);
+
+            var sendleZoneIDSearchResult = sendleZoneIDSearch.runSearch();
+
+            var nsZoneID = 4;
+            sendleZoneIDSearchResult.forEachResult(function (sendleZoneIDSearchResultSet) {
+                nsZoneID = sendleZoneIDSearchResultSet.getValue('custrecord_dom_zones_ns_zones')
+
+            });
+
+            nlapiLogExecution('DEBUG', 'nsZoneID', nsZoneID);
+
+            /*
+            5Kg	    1
+            3Kg	    2
+            1Kg	    3
+            500g	4
+            B4	    5
+            10Kg	8
+            25Kg	9
+            250g	10
+            */
+
+            var std250gGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 10);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std250gGoldItemPricingSearch.addFilters(newFilters);
+
+            nlapiLogExecution('DEBUG', 'newFilters', newFilters);
+
+
+            var std250gGoldItemPricingSearchResult = std250gGoldItemPricingSearch.runSearch();
+
+            nlapiLogExecution('DEBUG', 'std250gGoldItemPricingSearchResult', std250gGoldItemPricingSearchResult);
+
+            var itemInternalstd250gID = null;
+            std250gGoldItemPricingSearchResult.forEachResult(function (std250gGoldItemPricingSearchResultSet) {
+                itemInternalstd250gID = std250gGoldItemPricingSearchResultSet.getValue('internalid');
+
+                return true;
+            });
+
+            var std500gGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 4);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std500gGoldItemPricingSearch.addFilters(newFilters);
+
+            var std500gGoldItemPricingSearchResult = std500gGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd500gID = null;
+            std500gGoldItemPricingSearchResult.forEachResult(function (std500gGoldItemPricingSearchResultSet) {
+                itemInternalstd500gID = std500gGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var std1kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 3);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std1kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std1kgGoldItemPricingSearchResult = std1kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd1kgID = null;
+            std1kgGoldItemPricingSearchResult.forEachResult(function (std1kgGoldItemPricingSearchResultSet) {
+                itemInternalstd1kgID = std1kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var std3kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std3kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std3kgGoldItemPricingSearchResult = std3kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd3kgID = null;
+            std3kgGoldItemPricingSearchResult.forEachResult(function (std3kgGoldItemPricingSearchResultSet) {
+                itemInternalstd3kgID = std3kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var std5kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 1);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+
+            std5kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std5kgGoldItemPricingSearchResult = std5kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd5kgID = null;
+            std5kgGoldItemPricingSearchResult.forEachResult(function (std5kgGoldItemPricingSearchResultSet) {
+                itemInternalstd5kgID = std5kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var std10kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 8);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std10kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std10kgGoldItemPricingSearchResult = std10kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd10kgID = null;
+            std10kgGoldItemPricingSearchResult.forEachResult(function (std10kgGoldItemPricingSearchResultSet) {
+                itemInternalstd10kgID = std10kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var std25kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std25kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std25kgGoldItemPricingSearchResult = std25kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd25kgID = null;
+            std25kgGoldItemPricingSearchResult.forEachResult(function (std25kgGoldItemPricingSearchResultSet) {
+                itemInternalstd25kgID = std25kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var prodPricingRecord = nlapiCreateRecord('customrecord_product_pricing');
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_last_update', getDate());
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_customer', customerRecordId);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_delivery_speeds', 1);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_250g', itemInternalstd250gID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_10kg', itemInternalstd10kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_25kg', itemInternalstd25kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_500g', itemInternalstd500gID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_1kg', itemInternalstd1kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_3kg', itemInternalstd3kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalstd5kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
+            prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 13);
+            } else {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 14);
+            }
+            nlapiSubmitRecord(prodPricingRecord);
+
+            /*
+            5Kg	    1
+            3Kg	    2
+            1Kg	    3
+            500g	4
+            B4	    5
+            10Kg	8
+            25Kg	9
+            250g	10
+            */
+            var expB4ItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 5);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 15);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 16);
+            }
+
+            expB4ItemPricingSearch.addFilters(newFilters);
+
+            var expB4ItemPricingSearchResult = expB4ItemPricingSearch.runSearch();
+
+            var itemInternalexpB4ID = null;
+            expB4ItemPricingSearchResult.forEachResult(function (expB4ItemPricingSearchResultSet) {
+                itemInternalexpB4ID = expB4ItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var exp500gItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 4);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 15);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 16);
+            }
+
+            exp500gItemPricingSearch.addFilters(newFilters);
+
+            var exp500gItemPricingSearchResult = exp500gItemPricingSearch.runSearch();
+
+            var itemInternalexp500gID = null;
+            exp500gItemPricingSearchResult.forEachResult(function (exp500gItemPricingSearchResultSet) {
+                itemInternalexp500gID = exp500gItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var exp1kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 3);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 15);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 16);
+            }
+
+            exp1kgItemPricingSearch.addFilters(newFilters);
+
+            var exp1kgItemPricingSearchResult = exp1kgItemPricingSearch.runSearch();
+
+            var itemInternalexp1kgID = null;
+            exp1kgItemPricingSearchResult.forEachResult(function (exp1kgItemPricingSearchResultSet) {
+                itemInternalexp1kgID = exp1kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var exp3kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 2);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 15);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 16);
+            }
+
+            exp3kgItemPricingSearch.addFilters(newFilters);
+
+            var exp3kgItemPricingSearchResult = exp3kgItemPricingSearch.runSearch();
+
+            var itemInternalexp3kgID = null;
+            exp3kgItemPricingSearchResult.forEachResult(function (exp3kgItemPricingSearchResultSet) {
+                itemInternalexp3kgID = exp3kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var exp5kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 2);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 15);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 16);
+            }
+
+            exp5kgItemPricingSearch.addFilters(newFilters);
+
+            var exp5kgItemPricingSearchResult = exp5kgItemPricingSearch.runSearch();
+
+            var itemInternalexp5kgID = null;
+            exp5kgItemPricingSearchResult.forEachResult(function (exp5kgItemPricingSearchResultSet) {
+                itemInternalexp5kgID = exp5kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var prodPricingRecord = nlapiCreateRecord('customrecord_product_pricing');
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_last_update', getDate());
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_customer', customerRecordId);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_delivery_speeds', 2);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_b4', itemInternalexpB4ID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_500g', itemInternalexp500gID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_1kg', itemInternalexp1kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_3kg', itemInternalexp3kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalexp5kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
+            prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
+            } else {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 16);
+            }
+            nlapiSubmitRecord(prodPricingRecord);
+
+            dataOut += '{"ns_id":"' + customerRecordId + '"},';
+
+            dataOut = dataOut.substring(0, dataOut.length - 1);
+            dataOut += ']}';
+            nlapiLogExecution('DEBUG', 'dataOut', dataOut);
+            // dataOut = JSON.parse(dataOut);
+            // response.addHeader("Access-Control-Allow-Origin", "*");
+            // response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            // response.write(dataOut);
+            //
+            var returnObj = {
+                success: true,
+                message: '',
+                result: dataOut
+            };
+
+            _sendJSResponse(request, response, returnObj);
+
+            if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+                //Send Email to Customer who filled out the Landing Page Form
+                var url =
+                    'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+                var template_id = 148;
+                var newLeadEmailTemplateRecord = nlapiLoadRecord(
+                    'customrecord_camp_comm_template', template_id);
+                var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+                    'custrecord_camp_comm_subject');
+                var emailAttach = new Object();
+                emailAttach['entity'] = customerRecordId;
+
+                url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+                    salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
+                    encodeURIComponent(nlapiGetContext().getUser());;
+                urlCall = nlapiRequestURL(url);
+                var emailHtml = urlCall.getBody();
+
+                nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
+                    null, emailAttach)
+            }
+
+        }
+    }
+}
+
+function _sendJSResponse(request, response, respObject) {
+    response.setContentType('JAVASCRIPT');
+    // response.setHeader('Access-Control-Allow-Origin', '*');
+    var callbackFcn = request.getParameter("jsoncallback") || request.getParameter(
+        'callback');
+    if (callbackFcn) {
+        response.writeLine(callbackFcn + "(" + JSON.stringify(respObject) + ");");
+    } else response.writeLine(JSON.stringify(respObject));
+}
+
+function formatStateName(stateName) {
+    stateName = stateName.toLowerCase();
+    nlapiLogExecution('DEBUG', 'stateName', stateName);
+    switch (stateName) {
+        case 'new south wales':
+            stateName = 'nsw';
+            break;
+        case 'victoria':
+            stateName = 'vic';
+            break;
+        case 'queensland':
+            stateName = 'qld';
+            break;
+        case 'northern territory':
+            stateName = 'nt';
+            break;
+        case 'south australia':
+            stateName = 'sa';
+            break;
+        case 'western australia':
+            stateName = 'wa';
+            break;
+        case 'australian capital territory':
+            stateName = 'act';
+            break;
+        case 'tasmania':
+            stateName = 'tas';
+            break;
+    }
+    return stateName.toUpperCase();
+}
+
+function geocodeAddress(address) {
+    var position;
+    var geocode = new google.maps.Geocoder();
+    geocoder.geocode({
+        'address': address
+    }, function (results, status) {
+        if (status === 'OK') {
+            position = results[0].geometry.location;
+        } else {
+            alert('Geocode was not successful for the following reason: ' +
+                status);
+        }
+    });
+    return position
+}
+
+function getTerritory(lat, lng) {
+    var territory = [];
+    var file = nlapiLoadFile(3772482);
+    var data = file.getValue();
+    nlapiLogExecution('DEBUG', 'data', data);
+    data = JSON.parse(data);
+    nlapiLogExecution('DEBUG', 'data', data);
+    var territories = data.features;
+    for (k = 0; k < territories.length; k++) {
+        var polygon_array = territories[k].geometry.coordinates;
+        var polygon = [];
+        if (polygon_array.length > 1) {
+            for (i = 0; i < polygon_array.length; i++) {
+                polygon = polygon.concat(polygon_array[i][0]);
+            }
+        } else {
+            polygon = polygon_array[0];
+        }
+        nlapiLogExecution('DEBUG', 'polygon' + territories[k].properties.Territory + '',
+            polygon);
+        nlapiLogExecution('DEBUG', 'polygon.length' + territories[k].properties.Territory +
+            '', polygon.length);
+        var isInTerritory = inside([lng, lat], polygon);
+        nlapiLogExecution('DEBUG', 'isInTerritory' + territories[k].properties.Territory +
+            '', isInTerritory);
+        if (isInTerritory == true) {
+            territory[territory.length] = territories[k].properties.Territory;
+            nlapiLogExecution('DEBUG', 'territories[k].properties.Territory', territories[k].properties.Territory);
+            nlapiLogExecution('DEBUG', 'territory', territory);
+            break;
+        }
+    }
+    return territory;
+}
+
+function inside(point, polygon) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+    var x = point[0],
+        y = point[1];
+    var inside = false;
+    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        var xi = polygon[i][0],
+            yi = polygon[i][1];
+        var xj = polygon[j][0],
+            yj = polygon[j][1];
+
+        var intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+};
+
+function getDate() {
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date);
+    return date;
+}
