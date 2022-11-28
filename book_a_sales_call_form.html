@@ -1,0 +1,91 @@
+<h2 class="display-12 text-center text-md-center main-text-form"
+    style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;">Book a Sales Call</h2>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">Please select a convenient time for our onboarding team to
+    walk through the shipping portal via a Teams session. We will do our best to accommodate your requested time slot.
+</h4>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">It's all part of our 5-Star MailPlus service.</h4>
+<input id="from_email" class="form-control form-control-flush input-field-alignment input-field-default"
+    style="display: none;" type="text" value="" />
+<div class="set_orientation hide">
+    <div class="row">
+        <div class="col-12 col-md-12" style="padding-right: 0px !important;">
+            <div style="text-align: center;"></div>
+            <div class="form-label-group">
+
+                <label class="input-field-label">Account ID*</label>
+                <input id="account_id" class="form-control form-control-flush input-field-alignment input-field-default"
+                    required="" type="text" value="" />
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="orientation_from_email">
+    <div class="row">
+        <div class="col-12 col-md-12" style="padding-right: 0px !important;">
+            <!-- COMPANY NAME -->
+            <div style="text-align: center;"></div>
+            <div class="form-label-group"><label class="input-field-label">Company Name*</label>
+                <input id="company_name"
+                    class="form-control form-control-flush input-field-alignment input-field-default" required=""
+                    type="text" value="" />
+            </div>
+            <input id="customerInternalId"
+                class="form-control form-control-flush input-field-alignment input-field-default" style="display: none;"
+                readonly="readonly" required="" type="text" value="" />
+
+        </div>
+    </div>
+</div>
+<div class="row contact_details_row ">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;">
+        <!-- COMPANY NAME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label">Name*</label>
+            <input id="first_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="" />
+        </div>
+    </div>
+</div>
+<div class="row contact_details_row ">
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;">
+        <!-- EMAIL ADDRESS-->
+        <div class="form-label-group"><label class="input-field-label">Email Address*</label>
+            <input id="email" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="" />
+        </div>
+    </div>
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;">
+        <!-- PHONE NUMBER -->
+        <div class="form-label-group"><label class="input-field-label">Phone Number*</label>
+            <input id="phone_number" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6 col-md-6" style="padding-right: 0px !important;">
+        <!-- DATE & TIME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label">Date*</label>
+            <input id="booking_date" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="date" />
+        </div>
+    </div>
+    <div class="col-6 col-md-6" style="padding-right: 0px !important;">
+        <!-- DATE & TIME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label">Time (9AM - 5PM AEST)*</label>
+            <input id="booking_time" class="form-control form-control-flush input-field-alignment input-field-default"
+                max="16:00" min="09:00" required="required" type="time" />
+        </div>
+    </div>
+</div>
+<h4 style="text-align: center;">
+    <!-- Submit -->
+    <button class="btn btn-block-form btn-primary mt-3 lift get-in-touch-button book-sales-call-button-submit"
+        style="margin-top: 0.75rem !important; width: 100%;">Book a Call
+    </button>
+</h4>

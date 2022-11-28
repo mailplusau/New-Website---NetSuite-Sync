@@ -1,0 +1,60 @@
+<script>
+    $(document).on('focus', '#del_address2', function (event) {
+        // alert('onfocus')
+        initAutocomplete();
+    });
+
+    function initAutocomplete() {
+        // Create the autocomplete object, restricting the search to geographical location types.
+        // types is empty to get all places, not only address. Previously it was types: ['geocode']
+        var options = {
+            types: [],
+            componentRestrictions: {
+                country: 'au'
+            }
+        }
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById(
+            'del_address2')), options);
+
+        // When the user selects an address from the dropdown, populate the address fields in the form.
+        autocomplete.addListener('place_changed', fillInAddress);
+    }
+
+    function setupClickListener(id, types) {
+        // var radioButton = document.getElementById(id);
+        // radioButton.addEventListener('click', function() {
+        autocomplete.setTypes([]);
+        // });
+    }
+
+    //Fill the Street No. & Street Name after selecting an address from the dropdown
+    function fillInAddress() {
+
+        // Get the place details from the autocomplete object.
+        var place = autocomplete.getPlace();
+
+        $('#del_lat').val(place.geometry.location.lat());
+        $('#del_lng').val(place.geometry.location.lng());
+
+        // Get each component of the address from the place details and fill the corresponding field on the form.
+        var addressComponent = "";
+
+        for (var i = 0; i < place.address_components.length; i++) {
+
+            if (place.address_components[i].types[0] == 'street_number' || place.address_components[
+                i].types[0] == 'route') {
+                addressComponent += place.address_components[i]['short_name'] + " ";
+                $('#del_address2').val(addressComponent);
+            }
+            if (place.address_components[i].types[0] == 'postal_code') {
+                $('#del_postcode').val(place.address_components[i]['short_name']);
+            }
+            if (place.address_components[i].types[0] == 'administrative_area_level_1') {
+                $('#del_state').val(place.address_components[i]['short_name']);
+            }
+            if (place.address_components[i].types[0] == 'locality') {
+                $('#del_city').val(place.address_components[i]['short_name']);
+            }
+        }
+    }
+</script>

@@ -120,12 +120,19 @@
             if (Input_del_phone_number.val().length == 0) Input_del_phone_number.val(default_value_phone_number);
         });
         //On blur/focus postcode field
-        var Input_postcode = jQuery('input[id=postcode]');
-        var default_value_postcode = Input_postcode.val();
-        Input_postcode.focus(function () {
-            if (Input_postcode.val() == default_value_postcode) Input_postcode.val("");
+        var Input_del_add1 = jQuery('input[id=del_add1]');
+        var default_value_del_add1 = Input_del_add1.val();
+        Input_del_add1.focus(function () {
+            if (Input_del_add1.val() == default_value_del_add1) Input_del_add1.val("");
         }).blur(function () {
-            if (Input_postcode.val().length == 0) Input_postcode.val(default_value_postcode);
+            if (Input_del_add1.val().length == 0) Input_del_add1.val(default_value_del_add1);
+        });
+        var Input_del_add2 = jQuery('input[id=del_address2]');
+        var default_value_del_add2 = Input_del_add2.val();
+        Input_del_add2.focus(function () {
+            if (Input_del_add2.val() == default_value_del_add2) Input_del_add2.val("");
+        }).blur(function () {
+            if (Input_del_add2.val().length == 0) Input_del_add2.val(default_value_del_add2);
         });
         //On blur/focus business name field
         var Input_business_name = jQuery('input[id=business_name]');
@@ -246,7 +253,15 @@
             if (Input_comments.val().length == 0) Input_comments.val(default_value_comments);
         });
 
+        jQuery('#services_of_interest').change(function () {
+            var services_of_interest = jQuery('#services_of_interest').val();
 
+            if (services_of_interest == '6' || services_of_interest == '2' || services_of_interest == '4') {
+
+            } else {
+
+            }
+        });
 
 
         //On on change og send or receiver dropdown
@@ -407,7 +422,331 @@
 
         });
 
+        jQuery('.not-interested-submit').click(function () {
 
+            var input_error = false;
+            var error_color = '#f4524d';
+            var customer_internal_id = jQuery('#customer_internal_id').val();
+            var business_name = jQuery('#company_name').val();
+            var feedback = jQuery('#feedback').val();
+
+            console.log('customer_internal_id: ' + customer_internal_id)
+            var pageURL = jQuery(location).attr("href");
+            if (business_name == " " || business_name == "") {
+                input_error = true;
+                jQuery('#business_name').addClass('input-field-error');
+                jQuery('#business_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#business_name').removeClass('input-field-error');
+                    jQuery('#business_name').addClass('input-field-default');
+                }, 5000);
+            }
+            if (feedback == " " || feedback == "") {
+                input_error = true;
+                jQuery('#feedback').addClass('input-field-error');
+                jQuery('#feedback').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#feedback').removeClass('input-field-error');
+                    jQuery('#feedback').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After feedback ' + input_error);
+
+
+            if (input_error == false) {
+                jQuery('.not-interested-submit').html('Thank You!');
+                jQuery('.not-interested-submit').attr('disabled', 'disabled');
+                var params = {
+                    customer_internal_id: customer_internal_id,
+                    company_name: business_name,
+                    feedback: feedback
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1655&deploy=1&compid=1048144&h=be9f921093448f5c7ec1'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(123);
+                        console.log(jResp);
+                        // window.location.href = 'https://mailplus.com.au/sign-up-confirmation/';
+                    }
+                });
+
+            }
+
+        });
+
+        jQuery('#create-signup-button-submit').click(function () {
+
+            var input_error = false;
+            var error_color = '#f4524d';
+            var customer_internal_id = jQuery('#customer_internal_id').val();
+            var business_name = jQuery('#company_name').val();
+            var abn = jQuery('#abn').val();
+            var first_name = jQuery('#first_name').val();
+            var last_name = jQuery('#last_name').val();
+            var email = jQuery('#email').val();
+            var phone_number = jQuery('#phone_number').val();
+            var address1 = jQuery('#del_add1').val();
+            var address2 = jQuery('#del_address2').val();
+            var city = jQuery('#del_city').val();
+            var state = jQuery('#del_state').val();
+            var postcode = jQuery('#del_postcode').val();
+            var lat = jQuery('#del_lat').val();
+            var lng = jQuery('#del_lng').val();
+            var avg_daily_shipments = jQuery('#avg_daily_shipments').val();
+            // var services_of_interest = jQuery('#services_of_interest').val();
+            // var how_did_you_hear_about_us = jQuery('#how_did_you_hear_about_us').val();
+            // var subscribe = false;
+            // if (jQuery('.subscribe').prop("checked") == true) {
+            //     var subscribe = true;
+            // } else if (jQuery('.subscribe').prop("checked") == false) {
+            //     var subscribe = false
+            // }
+
+            console.log('customer_internal_id: ' + customer_internal_id)
+            var pageURL = jQuery(location).attr("href");
+            if (business_name == " " || business_name == "") {
+                input_error = true;
+                jQuery('#business_name').addClass('input-field-error');
+                jQuery('#business_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#business_name').removeClass('input-field-error');
+                    jQuery('#business_name').addClass('input-field-default');
+                }, 5000);
+            }
+            if (abn == " " || abn == "") {
+                input_error = true;
+                jQuery('#abn').addClass('input-field-error');
+                jQuery('#abn').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#abn').removeClass('input-field-error');
+                    jQuery('#abn').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After business name ' + input_error);
+            if (first_name == " " || first_name == "") {
+                input_error = true;
+                jQuery('#first_name').addClass('input-field-error');
+                jQuery('#first_name').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#first_name').removeClass('input-field-error');
+                    jQuery('#first_name').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (last_name == " " || last_name == "") {
+                input_error = true;
+                jQuery('#last_name').addClass('input-field-error');
+                jQuery('#last_name').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#last_name').removeClass('input-field-error');
+                    jQuery('#last_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After full name ' + input_error);
+            if (email == " " || email == "" || IsEmail(email)) {
+                input_error = true;
+                jQuery('#email').addClass('input-field-error');
+                jQuery('#email').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#email').removeClass('input-field-error');
+                    jQuery('#email').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After email ' + input_error);
+            if (phone_number == " " || phone_number == "" || validatePhone(phone_number) == false) {
+                input_error = true;
+                jQuery('#phone_number').addClass('input-field-error');
+                jQuery('#phone_number').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#phone_number').removeClass('input-field-error');
+                    jQuery('#phone_number').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After phone number ' + input_error);
+            if (postcode == " " || postcode == "" || validatePostcode(postcode) == false) {
+                input_error = true;
+                jQuery('#postcode').addClass('input-field-error');
+                jQuery('#postcode').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#postcode').removeClass('input-field-error');
+                    jQuery('#postcode').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After postcode ' + input_error);
+
+            if (input_error == false) {
+                var modal = document.getElementById("myModal");
+                modal.style.display = "block";
+
+            }
+
+        });
+
+        jQuery('.create-signup-button-submit').click(function () {
+
+
+            // if (input_error == false) {
+            jQuery('.create-signup-button-submit').html('Thank You!');
+            jQuery('.create-signup-button-submit').attr('disabled', 'disabled');
+            var params = {
+                customer_internal_id: customer_internal_id,
+                business_name: business_name,
+                abn: abn,
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                phone_number: phone_number,
+                state: state,
+                pageURL: pageURL
+            };
+            var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1653&deploy=1&compid=1048144&h=9e7b3139156348a7edac'
+            jQuery.ajax({
+                url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                cache: false,
+                dataType: 'json',
+                success: function (jResp) {
+                    console.log(123);
+                    console.log(jResp);
+                    window.location.href = 'https://mailplus.com.au/sign-up-confirmation/';
+                }
+            });
+            // }
+        });
+
+
+        //On submit of Enquire Now button
+        jQuery('.create-auto-lead-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var business_name = jQuery('#company_name').val();
+            var first_name = jQuery('#first_name').val();
+            var last_name = jQuery('#last_name').val();
+            var email = jQuery('#email').val();
+            var phone_number = jQuery('#phone_number').val();
+            var address1 = jQuery('#del_add1').val();
+            var address2 = jQuery('#del_address2').val();
+            var city = jQuery('#del_city').val();
+            var state = jQuery('#del_state').val();
+            var postcode = jQuery('#del_postcode').val();
+            var lat = jQuery('#del_lat').val();
+            var lng = jQuery('#del_lng').val();
+            var avg_daily_shipments = jQuery('#avg_daily_shipments').val();
+            // var services_of_interest = jQuery('#services_of_interest').val();
+            // var how_did_you_hear_about_us = jQuery('#how_did_you_hear_about_us').val();
+            // var subscribe = false;
+            // if (jQuery('.subscribe').prop("checked") == true) {
+            //     var subscribe = true;
+            // } else if (jQuery('.subscribe').prop("checked") == false) {
+            //     var subscribe = false
+            // }
+            var pageURL = jQuery(location).attr("href");
+            if (business_name == " " || business_name == "") {
+                input_error = true;
+                jQuery('#business_name').addClass('input-field-error');
+                jQuery('#business_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#business_name').removeClass('input-field-error');
+                    jQuery('#business_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After business name ' + input_error);
+            if (first_name == " " || first_name == "") {
+                input_error = true;
+                jQuery('#first_name').addClass('input-field-error');
+                jQuery('#first_name').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#first_name').removeClass('input-field-error');
+                    jQuery('#first_name').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (last_name == " " || last_name == "") {
+                input_error = true;
+                jQuery('#last_name').addClass('input-field-error');
+                jQuery('#last_name').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#last_name').removeClass('input-field-error');
+                    jQuery('#last_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After full name ' + input_error);
+            if (email == " " || email == "" || IsEmail(email)) {
+                input_error = true;
+                jQuery('#email').addClass('input-field-error');
+                jQuery('#email').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#email').removeClass('input-field-error');
+                    jQuery('#email').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After email ' + input_error);
+            if (phone_number == " " || phone_number == "" || validatePhone(phone_number) == false) {
+                input_error = true;
+                jQuery('#phone_number').addClass('input-field-error');
+                jQuery('#phone_number').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#phone_number').removeClass('input-field-error');
+                    jQuery('#phone_number').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After phone number ' + input_error);
+            if (postcode == " " || postcode == "" || validatePostcode(postcode) == false) {
+                input_error = true;
+                jQuery('#postcode').addClass('input-field-error');
+                jQuery('#postcode').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#postcode').removeClass('input-field-error');
+                    jQuery('#postcode').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After postcode ' + input_error);
+            if (avg_daily_shipments == "0") {
+                input_error = true;
+                jQuery('#avg_daily_shipments').addClass('input-field-error');
+                jQuery('#avg_daily_shipments').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#avg_daily_shipments').removeClass('input-field-error');
+                    jQuery('#avg_daily_shipments').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After daily shipments ' + input_error);
+
+            if (input_error == false) {
+                jQuery('.create-auto-lead-button-submit').html('Thank You!');
+                jQuery('.create-auto-lead-button-submit').attr('disabled', 'disabled');
+                var params = {
+                    business_name: business_name,
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    phone_number: phone_number,
+                    address1: address1,
+                    address2: address2,
+                    city: city,
+                    state: state,
+                    postcode: postcode,
+                    lat: lat,
+                    lng: lng,
+                    avg_daily_shipments: avg_daily_shipments,
+                    pageURL: pageURL
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(123);
+                        console.log(jResp);
+                        window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                        // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                    }
+                });
+            }
+        });
 
         //On submit of create ticket page
         jQuery('.create-ticket-button-submit').click(function () {
@@ -1324,18 +1663,29 @@
             var full_name = jQuery('#full_name').val();
             var email = jQuery('#email').val();
             var phone_number = jQuery('#phone_number').val();
-            var postcode = jQuery('#postcode').val();
             var avg_daily_shipments = jQuery('#avg_daily_shipments').val();
             var services_of_interest = jQuery('#services_of_interest').val();
             var how_did_you_hear_about_us = jQuery('#how_did_you_hear_about_us').val();
             var subscribe = false;
-            // if (jQuery('.subscribe').prop("checked") == true) {
-            //     var subscribe = true;
-            // } else if (jQuery('.subscribe').prop("checked") == false) {
-            //     var subscribe = false
-            // }
+            if (jQuery('.subscribe').prop("checked") == true) {
+                var subscribe = true;
+            } else if (jQuery('.subscribe').prop("checked") == false) {
+                var subscribe = false
+            }
             var pageURL = jQuery(location).attr("href");
-            if (business_name == " " || business_name == "" || business_name == "Store/Business Name*") {
+            var address1 = jQuery('#del_add1').val();
+            var address2 = jQuery('#del_address2').val();
+            var city = jQuery('#del_city').val();
+            var state = jQuery('#del_state').val();
+            if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
+                var postcode = jQuery('#del_postcode').val();
+            } else {
+                var postcode = jQuery('#postcode').val();
+            }
+
+            var lat = jQuery('#del_lat').val();
+            var lng = jQuery('#del_lng').val();
+            if (business_name == " " || business_name == "") {
                 input_error = true;
                 jQuery('#business_name').addClass('input-field-error');
                 jQuery('#business_name').removeClass('input-field-default')
@@ -1345,7 +1695,7 @@
                 }, 5000);
             }
             console.log('After business name ' + input_error);
-            if (full_name == " " || full_name == "" || full_name == "Full Name*") {
+            if (full_name == " " || full_name == "") {
                 input_error = true;
                 jQuery('#full_name').addClass('input-field-error');
                 jQuery('#full_name').removeClass('input-field-default');
@@ -1355,7 +1705,7 @@
                 }, 5000);
             }
             console.log('After full name ' + input_error);
-            if (email == " " || email == "" || email == "Email Address*" || IsEmail(email)) {
+            if (email == " " || email == "" || IsEmail(email)) {
                 input_error = true;
                 jQuery('#email').addClass('input-field-error');
                 jQuery('#email').removeClass('input-field-default');
@@ -1365,7 +1715,7 @@
                 }, 5000);
             }
             console.log('After email ' + input_error);
-            if (phone_number == " " || phone_number == "" || phone_number == "Phone Number*" || validatePhone(phone_number) == false) {
+            if (phone_number == " " || phone_number == "" || validatePhone(phone_number) == false) {
                 input_error = true;
                 jQuery('#phone_number').addClass('input-field-error');
                 jQuery('#phone_number').removeClass('input-field-default');
@@ -1375,7 +1725,7 @@
                 }, 5000);
             }
             console.log('After phone number ' + input_error);
-            if (postcode == " " || postcode == "" || postcode == "Postcode*" || validatePostcode(postcode) == false) {
+            if (postcode == " " || postcode == "" || validatePostcode(postcode) == false) {
                 input_error = true;
                 jQuery('#postcode').addClass('input-field-error');
                 jQuery('#postcode').removeClass('input-field-default');
@@ -1414,33 +1764,100 @@
                     jQuery('#how_did_you_hear_about_us').addClass('input-field-default');
                 }, 5000);
             }
+
+
             console.log('After how did you hear about us ' + input_error);
             if (input_error == false) {
                 jQuery('.get-in-touch-button-submit').html('Thank You!');
                 jQuery('.get-in-touch-button-submit').attr('disabled', 'disabled');
-                var params = {
-                    business_name: business_name,
-                    full_name: full_name,
-                    email: email,
-                    phone_number: phone_number,
-                    postcode: postcode,
-                    avg_daily_shipments: avg_daily_shipments,
-                    services_of_interest: services_of_interest,
-                    how_did_you_hear_about_us: how_did_you_hear_about_us,
-                    pageURL: pageURL
-                };
-                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1253&deploy=1&compid=1048144&h=fb05cab392c498f5829c'
-                jQuery.ajax({
-                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
-                    cache: false,
-                    dataType: 'json',
-                    success: function (jResp) {
-                        console.log(123);
-                        console.log(jResp);
-                        window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                        // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+
+                if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
+                    if (services_of_interest == '6' || services_of_interest == '2' || services_of_interest == '4') {
+                        var params = {
+                            business_name: business_name,
+                            full_name: full_name,
+                            email: email,
+                            phone_number: phone_number,
+                            postcode: postcode,
+                            avg_daily_shipments: avg_daily_shipments,
+                            services_of_interest: services_of_interest,
+                            how_did_you_hear_about_us: how_did_you_hear_about_us,
+                            pageURL: pageURL
+                        };
+                        var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1253&deploy=1&compid=1048144&h=fb05cab392c498f5829c'
+                        jQuery.ajax({
+                            url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                            cache: false,
+                            dataType: 'json',
+                            success: function (jResp) {
+                                console.log(123);
+                                console.log(jResp);
+                                window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                                // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                            }
+                        });
+                    } else {
+                        var fullNameSplit = full_name.split(" ");
+                        var params = {
+                            business_name: business_name,
+                            first_name: fullNameSplit[0],
+                            last_name: fullNameSplit[1],
+                            email: email,
+                            phone_number: phone_number,
+                            address1: address1,
+                            address2: address2,
+                            city: city,
+                            state: state,
+                            postcode: postcode,
+                            lat: lat,
+                            lng: lng,
+                            avg_daily_shipments: avg_daily_shipments,
+                            services_of_interest: services_of_interest,
+                            how_did_you_hear_about_us: how_did_you_hear_about_us,
+                            pageURL: pageURL
+                        };
+                        var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
+                        jQuery.ajax({
+                            url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                            cache: false,
+                            dataType: 'json',
+                            success: function (jResp) {
+                                console.log(123);
+                                console.log(jResp);
+                                window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                                // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                            }
+                        });
                     }
-                });
+
+                } else {
+                    var params = {
+                        business_name: business_name,
+                        full_name: full_name,
+                        email: email,
+                        phone_number: phone_number,
+                        postcode: postcode,
+                        avg_daily_shipments: avg_daily_shipments,
+                        services_of_interest: services_of_interest,
+                        how_did_you_hear_about_us: how_did_you_hear_about_us,
+                        pageURL: pageURL
+                    };
+                    var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1253&deploy=1&compid=1048144&h=fb05cab392c498f5829c'
+                    jQuery.ajax({
+                        url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                        cache: false,
+                        dataType: 'json',
+                        success: function (jResp) {
+                            console.log(123);
+                            console.log(jResp);
+                            window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                            // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                        }
+                    });
+                }
+
+
+
             }
         });
 
@@ -1652,6 +2069,91 @@
             }
         });
 
+        //On submit of create IT ticket page
+        jQuery('.book-sales-call-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var customerInternalId = jQuery('#customerInternalId').val();
+            var company_name = jQuery('#company_name').val();
+            var first_name = jQuery('#first_name').val();
+            var last_name = jQuery('#last_name').val();
+            var email = jQuery('#email').val();
+            var phone_number = jQuery('#phone_number').val();
+
+            var timeVal = $("#booking_time").val();
+            var dateVal = $("#booking_date").val();
+
+            console.log(first_name.trim());
+            if (company_name.replace(/  +/g, ' ') == " " || company_name.trim == "" || company_name == "Company Name*") {
+                input_error = true;
+                jQuery('#company_name').addClass('input-field-error');
+                jQuery('#company_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#company_name').removeClass('input-field-error');
+                    jQuery('#company_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After business name ' + input_error);
+            if (first_name.replace(/  +/g, ' ') == " " || first_name.trim == "" || first_name == "First Name*") {
+                input_error = true;
+                jQuery('#first_name').addClass('input-field-error');
+                jQuery('#first_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#first_name').removeClass('input-field-error');
+                    jQuery('#first_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After first name ' + input_error);
+
+            if (email.replace(/  +/g, ' ') == " " || email.trim == "" || email == "Email Address*" || IsEmail(email)) {
+                input_error = true;
+                jQuery('#email').addClass('input-field-error');
+                jQuery('#email').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#email').removeClass('input-field-error');
+                    jQuery('#email').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After email ' + input_error);
+            if (phone_number.replace(/  +/g, ' ') == " " || phone_number.trim == "" || phone_number == "Phone Number*" || validatePhone(phone_number) == false) {
+                input_error = true;
+                jQuery('#phone_number').addClass('input-field-error');
+                jQuery('#phone_number').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#phone_number').removeClass('input-field-error');
+                    jQuery('#phone_number').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After phone_number ' + input_error);
+
+            if (input_error == false) {
+                jQuery('.book-sales-call-button-submit').html('Thank You!');
+                jQuery('.book-sales-call-button-submit').attr('disabled', 'disabled');;
+                var params = {
+                    customerInternalId: customerInternalId,
+                    company_name: company_name,
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    phone_number: phone_number,
+                    dateVal: dateVal,
+                    timeVal: timeVal
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1654&deploy=1&compid=1048144&h=16acce30d56dc8396cd6'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(jResp);
+                        // act on the results
+                    }
+                });
+
+                window.location.href = 'https://mailplus.com.au/book-a-call-confirmation/?date=' + dateVal + '&time=' + timeVal;
+            }
+        });
+
 
         //On submit of create IT ticket page
         jQuery('.create-portal-orientation-button-submit').click(function () {
@@ -1663,9 +2165,9 @@
 
             var from_email = jQuery('#from_email').val();
 
-            if(from_email == 'false'){
+            if (from_email == 'false') {
                 account_id = jQuery('#account_id').val();
-            } else if(from_email == 'true') {
+            } else if (from_email == 'true') {
                 customerInternalId = jQuery('#customerInternalId').val();
             }
 
@@ -1882,6 +2384,7 @@
         }
         //Postcode validation
         function validatePostcode(val) {
+            console.log('postcode validate val: ' + val)
             var digits = val.replace(/[^0-9]/g, '');
             var australiaPostcodeFormat = /^(0[289][0-9]{2})|([1-9][0-9]{3})$/;
             var phoneFirst6 = digits.substring(0, 6);
@@ -1926,4 +2429,66 @@
             return barcodeFormat.test(selector_number);
         }
     });
+
+    $(document).on('focus', '#del_address2', function (event) {
+        // alert('onfocus')
+        initAutocomplete2();
+    });
+
+    function initAutocomplete2() {
+        // Create the autocomplete object, restricting the search to geographical location types.
+        // types is empty to get all places, not only address. Previously it was types: ['geocode']
+        var options = {
+            types: [],
+            componentRestrictions: {
+                country: 'au'
+            }
+        }
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById(
+            'del_address2')), options);
+
+        // When the user selects an address from the dropdown, populate the address fields in the form.
+        autocomplete.addListener('place_changed', fillInAddress2);
+    }
+
+    function setupClickListener(id, types) {
+        // var radioButton = document.getElementById(id);
+        // radioButton.addEventListener('click', function() {
+        autocomplete.setTypes([]);
+        // });
+    }
+
+    //Fill the Street No. & Street Name after selecting an address from the dropdown
+    function fillInAddress2() {
+
+        // Get the place details from the autocomplete object.
+        var place = autocomplete.getPlace();
+
+        console.log('Lat:' + place.geometry.location.lat())
+        console.log('Lng:' + place.geometry.location.lng())
+
+        $('#del_lat').val(place.geometry.location.lat());
+        $('#del_lng').val(place.geometry.location.lng());
+
+        // Get each component of the address from the place details and fill the corresponding field on the form.
+        var addressComponent = "";
+
+        for (var i = 0; i < place.address_components.length; i++) {
+
+            if (place.address_components[i].types[0] == 'street_number' || place.address_components[
+                i].types[0] == 'route') {
+                addressComponent += place.address_components[i]['short_name'] + " ";
+                $('#del_address2').val(addressComponent);
+            }
+            if (place.address_components[i].types[0] == 'postal_code') {
+                $('#del_postcode').val(place.address_components[i]['short_name']);
+            }
+            if (place.address_components[i].types[0] == 'administrative_area_level_1') {
+                $('#del_state').val(place.address_components[i]['short_name']);
+            }
+            if (place.address_components[i].types[0] == 'locality') {
+                $('#del_city').val(place.address_components[i]['short_name']);
+            }
+        }
+    }
 </script>

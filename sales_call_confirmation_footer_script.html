@@ -1,0 +1,86 @@
+<script>
+    var icsFile = null;
+    var mainURLSplit = window.location.href.split('?');
+    console.log(mainURLSplit)
+    var urlParams = mainURLSplit[1].split('&');
+    console.log(urlParams)
+    var date = urlParams[0].split('=')
+    var time = urlParams[1].split('=')
+
+    var dateArray = date[1].split('-');
+    var timeArray = time[1].split(':')
+
+    var myStartdate = new Date();
+    myStartdate.setFullYear(dateArray[0]);
+    myStartdate.setMonth(dateArray[1] - 1);
+    myStartdate.setDate(dateArray[2]);
+    myStartdate.setHours(timeArray[0]);
+    myStartdate.setMinutes(timeArray[1]);
+    myStartdate.setSeconds(00);
+
+    var myEnddate = new Date(myStartdate);
+    myEnddate.setMinutes(myStartdate.getMinutes() + 30);
+
+    console.log('myStartdate: ' + myStartdate)
+    console.log('myEnddate: ' + myEnddate)
+
+    var test =
+        "BEGIN:VCALENDAR\n" +
+        "VERSION:2.0\n" +
+        "BEGIN:VEVENT\n" +
+        "DTSTART;TZID=Australia/Sydney:" +
+        convertDate(myStartdate) +
+        "\n" +
+        "DTEND;TZID=Australia/Sydney:" +
+        convertDate(myEnddate) +
+        "\n" +
+        "SUMMARY:Your MailPlus Sales Call\n" +
+        "END:VEVENT\n" +
+        "END:VCALENDAR";
+
+    var data = new File([test], { type: "text/plain" });
+
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (icsFile !== null) {
+        window.URL.revokeObjectURL(icsFile);
+    }
+
+    icsFile = window.URL.createObjectURL(data);
+
+    var link = document.querySelector("#addToCalendar");
+    link.href = icsFile;
+
+    function convertDate(date) {
+        var event = toISOStringWithTimezone(date)
+        // var event = new Date(date).toISOString();
+        console.log("event: " + event)
+        var event1 = event.split("T")[0];
+        event1 = event1.split("-");
+        event1 = event1.join("");
+
+        var event2 = event.split("T")[1]
+        event2 = event2.split(":");
+        event2 = event2.join("");
+
+        var finalEvent = event1.split('+')[0] + 'T' + event2.split('+')[0] + 'Z';
+        console.log("main event: " + finalEvent)
+        return finalEvent;
+    }
+
+    function toISOStringWithTimezone(date) {
+        const tzOffset = -date.getTimezoneOffset();
+        const diff = tzOffset >= 0 ? '+' : '-';
+        const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+        return date.getFullYear() +
+            '-' + pad(date.getMonth() + 1) +
+            '-' + pad(date.getDate()) +
+            'T' + pad(date.getHours()) +
+            ':' + pad(date.getMinutes()) +
+            ':' + pad(date.getSeconds()) +
+            diff + pad(tzOffset / 60) +
+            ':' + pad(tzOffset % 60);
+    }
+
+
+</script>
