@@ -104,6 +104,8 @@ function leadForm(request, response) {
       customerRecord.setFieldValue('custentity_industry_category', 19); //Other services
       customerRecord.setFieldValue('custentity_date_lead_entered', getDate());
       customerRecord.setFieldValue('custentity_lead_entered_by', 585236); //Portal
+      customerRecord.setFieldValue('custentity_website_page_url', pageURL);
+
       if (avg_daily_shipments == '1') {
         customerRecord.setFieldValue('custentity_form_mpex_usage_per_week', 1);
         avg_daily_shipments_text = '1 - 20 per Week';

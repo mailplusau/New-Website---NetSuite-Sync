@@ -34,6 +34,7 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'request.getParameter', request);
 
         var customerRecordId = request.getParameter('customer_internal_id');
+        var contactid = request.getParameter('contactid');
         var abn = request.getParameter('abn');
         var business_name = request.getParameter('business_name');
         var first_name = request.getParameter('first_name');
@@ -41,8 +42,6 @@ function leadForm(request, response) {
         var email = request.getParameter('email');
         var phone_number = request.getParameter('phone_number');
         var state = request.getParameter('state');
-
-
         var pageURL = request.getParameter('pageURL');
 
         nlapiLogExecution('DEBUG', 'customerRecordId', customerRecordId);
@@ -53,12 +52,6 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'email_address', email);
         nlapiLogExecution('DEBUG', 'phone_number', phone_number);
         nlapiLogExecution('DEBUG', 'pageURL', pageURL);
-
-        var splitPageURL = pageURL.split('https://mailplus.com.au/');
-
-        nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
-        nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
-
 
         var state_id;
 
@@ -92,6 +85,15 @@ function leadForm(request, response) {
                 break;
         }
 
+        nlapiLogExecution('DEBUG', 'state', state);
+        nlapiLogExecution('DEBUG', 'state_id]', state_id);
+
+
+        var splitPageURL = pageURL.split('https://mailplus.com.au/');
+
+        nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
+        nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
+
         var params = {
             business_name: business_name,
             first_name: first_name,
@@ -108,266 +110,323 @@ function leadForm(request, response) {
 
         var customerRecord = nlapiLoadRecord('customer', customerRecordId);
         var entity_id = customerRecord.getFieldValue('entityid');
-        var zee_id = customerRecord.getFieldValue('partner');
-        var partner_text = customerRecord.getFieldText('partner');
 
-        customerRecord.setFieldValue('companyname', business_name);
-        customerRecord.setFieldValue('vatregnumber', abn);
-        customerRecord.setFieldValue('custentity_email_service', email);
-        customerRecord.setFieldValue('phone', phone_number);
+        var intitial_customer_status = customerRecord.getFieldValue('entitystatus');
 
-        var quadient = business_name.substring(0, 10);
-        nlapiLogExecution('DEBUG', 'business_name', business_name);
-        if (quadient == 'Quadient -') {
-            customerRecord.setFieldValue('leadsource', 246616); //Quadient
-        } else {
-            customerRecord.setFieldValue('leadsource', 254557); //Inbound - New Website
+        if (intitial_customer_status != 13) {
+            var zee_id = customerRecord.getFieldValue('partner');
+            var partner_text = customerRecord.getFieldText('partner');
+
+            var partner_id = customerRecord.getFieldValue('partner');
+
+            var partner_record = nlapiLoadRecord('partner', partner_id);
+            var mp_std_activated = partner_record.getFieldValue('custentity_zee_mp_std_activated');
+            var zee_email = partner_record.getFieldValue('email');
+
+            customerRecord.setFieldValue('companyname', business_name);
+            customerRecord.setFieldValue('vatregnumber', abn);
+            customerRecord.setFieldValue('custentity_email_service', email);
+            customerRecord.setFieldValue('phone', phone_number);
+
+            var quadient = business_name.substring(0, 10);
+            nlapiLogExecution('DEBUG', 'business_name', business_name);
+            if (quadient == 'Quadient -') {
+                customerRecord.setFieldValue('leadsource', 246616); //Quadient
+            } else {
+                customerRecord.setFieldValue('leadsource', 254557); //Inbound - New Website
+            }
+
+            customerRecord.setFieldValue('custentity_mpex_customer', 1);
+            customerRecord.setFieldValue('custentity_portal_access', 1);
+            customerRecord.setFieldValue('custentity_mpex_invoicing_cycle', 2);
+
+            customerRecord.setFieldValue('entitystatus', 13);
+
+            if (mp_std_activated == 1 || mp_std_activated == '1') {
+                customerRecord.setFieldValue('custentity_mp_std_activate', 1);
+            }
+            
+            customerRecord.setFieldValue('custentity_mpex_small_satchel', 1);
+
+            customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
+            customerRecord.setFieldValue('custentity_date_prospect_opportunity',
+                getDate());
+
+
+            var finacnial_tab_size = customerRecord.getLineItemCount('itempricing');
+            var old_financial_tab_size = finacnial_tab_size;
+            old_financial_tab_size++;
+            customerRecord.setLineItemValue('itempricing', 'item', old_financial_tab_size, 8981);
+            customerRecord.setLineItemValue('itempricing', 'level', old_financial_tab_size, -1);
+            customerRecord.setLineItemValue('itempricing', 'price', old_financial_tab_size, 0);
+
+
+            var customerRecordId = nlapiSubmitRecord(customerRecord);
+
+            var recContact = nlapiLoadRecord('contact', contactid);
+            var contactEmail = recContact.getFieldValue('email');
+
+            if (contactEmail == email) {
+                recContact.setFieldValue('firstname', first_name);
+                recContact.setFieldValue('lastname', last_name);
+                recContact.setFieldValue('email', email);
+                recContact.setFieldValue('phone', phone_number);
+                contactid = nlapiSubmitRecord(recContact);
+            } else {
+                var contactRecordNew = nlapiCreateRecord('contact');
+                contactRecordNew.setFieldValue('firstname', first_name);
+                contactRecordNew.setFieldValue('lastname', last_name);
+                contactRecordNew.setFieldValue('email', email);
+                contactRecordNew.setFieldValue('phone', phone_number);
+                contactRecordNew.setFieldValue('company', customerRecordId);
+
+                contactRecordNew.setFieldValue('custentity_connect_admin', 1);
+                contactRecordNew.setFieldValue('custentity_connect_user', 1);
+                contactRecordNew.setFieldValue('entityid', first_name + ' ' + last_name);
+                contactRecordNew.setFieldValue('contactrole', -10);
+
+                try {
+                    contactid = nlapiSubmitRecord(contactRecordNew);
+                } catch (error) {
+                    var email_body =
+                        'New Lead trying to sign up but contact already exists in NetSuite. </br></br>';
+                    email_body += '<u><b>Contact Details</b></u> </br>';
+                    email_body += 'First Name: ' + first_name + '</br>';
+                    email_body += 'Last Name: ' + last_name + '</br>';
+                    email_body += 'Email: ' + email + '</br>';
+                    email_body += 'Phone: ' + phone_number + '</br></br>';
+                    email_body +=
+                        '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+                        customerRecordId + '</br>';
+                    email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
+                        '</br>';
+                    email_body += 'Franchisee: ' + partner_text + '</br></br>';
+
+                    var email_subject = 'Auto Sign Up - Contact Exists - ' +
+                        entity_id + ' ' + business_name;
+
+                    var records = new Array();
+                    records['entity'] = customerRecordId;
+
+                    nlapiSendEmail(112209, ['laura.busse@mailplus.com.au'],
+                        email_subject, email_body, ['popie.popie@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'
+                    ], null, records, null, true);
+                }
+
+            }
+
+
+
+            //Create SALES REP
+            var from = 112209; //MailPlus team
+            var to;
+            var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                'ankith.ravindran@mailplus.com.au'
+            ];
+            var subject = 'Sales HOT Lead - ' + entity_id + ' ' + business_name + '';
+            var cust_id_link =
+                'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                customerRecordId;
+            var body =
+                'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
+                entity_id + ' ' + business_name + '\nLink: ' + cust_id_link;
+
+            var postcode = parseInt(postcode);
+
+
+            var salesRecord = nlapiCreateRecord('customrecord_sales');
+            var salesRep = 112209; //MailPlus team
+
+            salesRecord.setFieldValue('custrecord_sales_customer',
+                customerRecordId);
+            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+            var date = new Date();
+            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                nlapiDateToString(date, 'timeofday'));
+            var sales_record_id = nlapiSubmitRecord(salesRecord);
+
+            customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
+            customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
+            customer_comm_reg.setFieldValue('custrecord_comm_date', getDate());
+            customer_comm_reg.setFieldValue('custrecord_comm_date_signup', getDate());
+            customer_comm_reg.setFieldValue('custrecord_customer', customerRecordId);
+            customer_comm_reg.setFieldValue('custrecord_salesrep', salesRep);
+            customer_comm_reg.setFieldValue('custrecord_franchisee', zee_id);
+            customer_comm_reg.setFieldValue('custrecord_wkly_svcs', '5');
+            customer_comm_reg.setFieldValue('custrecord_in_out', 1);
+            customer_comm_reg.setFieldValue('custrecord_trial_status', 2);
+            customer_comm_reg.setFieldValue('custrecord_state', state_id);
+            customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
+            customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
+            customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
+            customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
+                sales_record_id);
+
+            var commRegId = nlapiSubmitRecord(customer_comm_reg);
+
+
+            var phonecall = nlapiCreateRecord('phonecall');
+            phonecall.setFieldValue('assigned', zee_id);
+            phonecall.setFieldValue('custevent_organiser', 112209);
+            phonecall.setFieldValue('startdate', getDate());
+            phonecall.setFieldValue('company', customerRecordId);
+            phonecall.setFieldValue('status', 'COMPLETE');
+            phonecall.setFieldValue('custevent_call_outcome', 16);
+            phonecall.setFieldValue('title', 'X Sale - Website Lead - Signed');
+            nlapiSubmitRecord(phonecall);
+
+            var freqArray = [];
+            freqArray[freqArray.length] = 6;
+
+
+            var new_service_record = nlapiCreateRecord('customrecord_service', {
+                recordmode: 'dynamic'
+            });
+            new_service_record.setFieldValue('custrecord_service', 24);
+            new_service_record.setFieldValue('name', 'MPEX Pickup');
+            new_service_record.setFieldValue('custrecord_service_price', 0);
+            new_service_record.setFieldValue('custrecord_service_customer', customerRecordId);
+            new_service_record.setFieldValue('custrecord_service_comm_reg', commRegId);
+
+            new_service_record.setFieldValue('custrecord_service_day_adhoc', 'T');
+
+            var new_service_id = nlapiSubmitRecord(new_service_record);
+
+            var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
+            new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', getDate());
+            new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
+            new_service_change_record.setFieldValue('custrecord_servicechg_status', 2);
+            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', zee_id);
+            new_service_change_record.setFieldValue('custrecord_servicechg_new_price', 0);
+            new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegId);
+            new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
+            new_service_change_record.setFieldValue('custrecord_servicechg_created', 112209);
+            new_service_change_record.setFieldValue('custrecord_servicechg_type', 'MPEX Customer');
+            new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+            nlapiSubmitRecord(new_service_change_record);
+
+            dataOut += '{"ns_id":"' + customerRecordId + '"},';
+
+            dataOut = dataOut.substring(0, dataOut.length - 1);
+            dataOut += ']}';
+            nlapiLogExecution('DEBUG', 'dataOut', dataOut);
+
+            var returnObj = {
+                success: true,
+                message: '',
+                result: dataOut
+            };
+
+            _sendJSResponse(request, response, returnObj);
+
+            var email_body =
+                'Please link the USER to the below CUSTOMER details </br></br>';
+            email_body += '<u><b>User Details</b></u> </br>';
+            email_body += 'First Name: ' + first_name + '</br>';
+            email_body += 'Last Name: ' + last_name + '</br>';
+            email_body += 'Email: ' + email + '</br>';
+            email_body += 'Phone: ' + phone_number + '</br></br>';
+            email_body +=
+                '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+                customerRecordId + '</br>';
+            email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
+                '</br>';
+            email_body += 'Franchisee: ' + partner_text + '</br></br>';
+
+            var email_subject = 'MP Portal - Link User to Customer - ' +
+                entity_id + ' ' + business_name;
+
+            var records = new Array();
+            records['entity'] = customerRecordId;
+
+            nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
+                email_subject, email_body, ['mj@roundtableapps.com',
+                'ankith.ravindran@mailplus.com.au'
+            ], null, records, null, true);
+
+            var userJSON = '{';
+            userJSON += '"customer_ns_id" : "' + customerRecordId + '",'
+            userJSON += '"first_name" : "' + first_name + '",'
+            userJSON += '"last_name" : "' + last_name + '",'
+            userJSON += '"email" : "' + email + '",'
+            userJSON += '"phone" : "' + phone_number + '"'
+            userJSON += '}';
+            var headers = {};
+            headers['Content-Type'] = 'application/json';
+            headers['Accept'] = 'application/json';
+            headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
+
+            nlapiRequestURL('https://mpns.protechly.com/new_staff', userJSON,
+                headers);
+
+
+            //Send Email to Customer who filled out the Landing Page Form
+            var url =
+                'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+            var template_id = 59;
+            var newLeadEmailTemplateRecord = nlapiLoadRecord(
+                'customrecord_camp_comm_template', template_id);
+            var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+                'custrecord_camp_comm_subject');
+            var emailAttach = new Object();
+            emailAttach['entity'] = customerRecordId;
+
+
+            url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+                salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
+                encodeURIComponent(nlapiGetContext().getUser());;
+            urlCall = nlapiRequestURL(url);
+            var emailHtml = urlCall.getBody();
+
+            var attachments = [];
+            attachments.push(nlapiLoadFile(6000513))
+            attachments.push(nlapiLoadFile(6000512))
+            attachments.push(nlapiLoadFile(5044913))
+            attachments.push(nlapiLoadFile(6000511))
+
+            nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
+                null, emailAttach, attachments, true)
+            
+            
+            //Send Email to franchisee about new customer
+            var url =
+                'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+            var template_id = 150;
+            var newLeadEmailTemplateRecord = nlapiLoadRecord(
+                'customrecord_camp_comm_template', template_id);
+            var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+                'custrecord_camp_comm_subject');
+            var emailAttach = new Object();
+            emailAttach['entity'] = partner_id;
+
+
+            url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+                salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
+                encodeURIComponent(nlapiGetContext().getUser());;
+            urlCall = nlapiRequestURL(url);
+            var emailHtml = urlCall.getBody();
+
+
+
+            nlapiSendEmail(112209, zee_email, templateSubject, emailHtml, null,
+                null, emailAttach, null, true)
+
+            if (mp_std_activated == 1 || mp_std_activated == '1') {
+                var status = nlapiScheduleScript(
+                    'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', null
+                );
+                nlapiLogExecution('DEBUG', 'status', status);
+            } else {
+                var status = nlapiScheduleScript(
+                    'customscript_ss_exp_prod_sync_map', 'customdeploy2', null
+                );
+                nlapiLogExecution('DEBUG', 'status', status);
+            }
         }
-        customerRecord.setFieldValue('entitystatus', 13); //Suspect - Hot Lead
-
-        customerRecord.setFieldValue('custentity_mpex_customer', 1);
-        customerRecord.setFieldValue('custentity_portal_access', 1);
-        customerRecord.setFieldValue('custentity_mpex_invoicing_cycle', 2);
-
-        customerRecord.setFieldValue('entitystatus', 13);
-
-        customerRecord.setFieldValue('custentity_mp_std_activate', 1);
-        customerRecord.setFieldValue('custentity_mpex_small_satchel', 1);
-
-        customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
-
-        var customerRecordId = nlapiSubmitRecord(customerRecord);
-
-
-        // //Create CONTACT
-
-        // var contactRecord = nlapiCreateRecord('contact');
-        // contactRecord.setFieldValue('firstname', first_name);
-        // contactRecord.setFieldValue('lastname', last_name);
-        // contactRecord.setFieldValue('email', email);
-        // contactRecord.setFieldValue('phone', phone_number);
-        // contactRecord.setFieldValue('company', customerRecordId);
-        // contactRecord.setFieldValue('entityid', first_name + ' ' + last_name);
-        // contactRecord.setFieldValue('contactrole', -10);
-        // // if (subscribe == 'true') {
-        // //     contactRecord.setFieldValue('custentity_subscribe_list', 1);
-        // // }
-        // nlapiSubmitRecord(contactRecord);
-
-
-        // var note_value = '';
-        // note_value += 'Average Daily Shipment: ' + usage_per_week + '/\n';
-        // note_value += 'How did you hear about us: ' + hear_about_us + '/\n';
-        // note_value += 'Service of Interest: ' + interests + '/\n';
-
-        // var userNoteRecord = nlapiCreateRecord('note');
-        // userNoteRecord.setFieldValue('title', 'New Lead');
-        // userNoteRecord.setFieldValue('entity', customerRecordId);
-
-        // // userNoteRecord.setFieldValue('direction', $('#direction option:selected').val());
-        // // userNoteRecord.setFieldValue('notetype', $('#notetype option:selected').val());
-        // userNoteRecord.setFieldValue('note', note_value);
-        // userNoteRecord.setFieldValue('author', nlapiGetUser());
-        // userNoteRecord.setFieldValue('notedate', getDate());
-
-        // nlapiSubmitRecord(userNoteRecord);
-
-        //Create SALES REP
-        var from = 112209; //MailPlus team
-        var to;
-        var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
-            'ankith.ravindran@mailplus.com.au'
-        ];
-        var subject = 'Sales HOT Lead - ' + entity_id + ' ' + business_name + '';
-        var cust_id_link =
-            'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-            customerRecordId;
-        var body =
-            'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
-            entity_id + ' ' + business_name + '\nLink: ' + cust_id_link;
-
-        var postcode = parseInt(postcode);
-
-
-        var salesRecord = nlapiCreateRecord('customrecord_sales');
-        var salesRep = 112209; //MailPlus team
-
-        salesRecord.setFieldValue('custrecord_sales_customer',
-            customerRecordId);
-        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-        var date = new Date();
-        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-            nlapiDateToString(date, 'timeofday'));
-        var sales_record_id = nlapiSubmitRecord(salesRecord);
-
-        customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
-        customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
-        customer_comm_reg.setFieldValue('custrecord_comm_date', getDate());
-        customer_comm_reg.setFieldValue('custrecord_comm_date_signup', getDate());
-        customer_comm_reg.setFieldValue('custrecord_customer', customerRecordId);
-        customer_comm_reg.setFieldValue('custrecord_salesrep', salesRep);
-        customer_comm_reg.setFieldValue('custrecord_franchisee', zee_id);
-        customer_comm_reg.setFieldValue('custrecord_wkly_svcs', '5');
-        customer_comm_reg.setFieldValue('custrecord_in_out', 1);
-        customer_comm_reg.setFieldValue('custrecord_trial_status', 2);
-        customer_comm_reg.setFieldValue('custrecord_state', state_id);
-        customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
-        customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
-        customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
-        customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
-            sales_record_id);
-
-        var commRegId = nlapiSubmitRecord(customer_comm_reg);
-
-
-        var phonecall = nlapiCreateRecord('phonecall');
-        phonecall.setFieldValue('assigned', zee_id);
-        phonecall.setFieldValue('custevent_organiser', 112209);
-        phonecall.setFieldValue('startdate', getDate());
-        phonecall.setFieldValue('company', customerRecordId);
-        phonecall.setFieldValue('status', 'COMPLETE');
-        phonecall.setFieldValue('custevent_call_outcome', 16);
-        phonecall.setFieldValue('title', 'X Sale - Website Lead - Signed');
-        nlapiSubmitRecord(phonecall);
-
-        var new_service_record = nlapiCreateRecord('customrecord_service', {
-            recordmode: 'dynamic'
-        });
-        new_service_record.setFieldValue('custrecord_service', 24);
-        new_service_record.setFieldValue('name', 'MPEX Pickup');
-        new_service_record.setFieldValue('custrecord_service_price', 0);
-        new_service_record.setFieldValue('custrecord_service_customer', customerRecordId);
-        new_service_record.setFieldValue('custrecord_service_comm_reg', commRegId);
-        new_service_record.setFieldValue('custrecord_service_day_adhoc', 'T');
-        var new_service_id = nlapiSubmitRecord(new_service_record);
-
-        var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
-        new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', getDate());
-        new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
-        new_service_change_record.setFieldValue('custrecord_servicechg_status', 2);
-        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', zee_id);
-        new_service_change_record.setFieldValue('custrecord_servicechg_new_price', 0);
-        new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegId);
-        new_service_change_record.setFieldValue('custrecord_servicechg_created', 112209);
-        new_service_change_record.setFieldValue('custrecord_servicechg_type', 'MPEX Customer');
-        new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
-        nlapiSubmitRecord(new_service_change_record);
-
-
-
-        dataOut += '{"ns_id":"' + customerRecordId + '"},';
-
-        dataOut = dataOut.substring(0, dataOut.length - 1);
-        dataOut += ']}';
-        nlapiLogExecution('DEBUG', 'dataOut', dataOut);
-        // dataOut = JSON.parse(dataOut);
-        // response.addHeader("Access-Control-Allow-Origin", "*");
-        // response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        // response.write(dataOut);
-        //
-        var returnObj = {
-            success: true,
-            message: '',
-            result: dataOut
-        };
-
-        _sendJSResponse(request, response, returnObj);
-
-        var email_body =
-            'Please link the USER to the below CUSTOMER details </br></br>';
-        email_body += '<u><b>User Details</b></u> </br>';
-        email_body += 'First Name: ' + first_name + '</br>';
-        email_body += 'Last Name: ' + last_name + '</br>';
-        email_body += 'Email: ' + email + '</br>';
-        email_body += 'Phone: ' + phone_number + '</br></br>';
-        email_body +=
-            '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
-            customerRecordId + '</br>';
-        email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
-            '</br>';
-        email_body += 'Franchisee: ' + partner_text + '</br></br>';
-
-        var email_subject = 'MP Portal - Link User to Customer - ' +
-            entity_id + ' ' + business_name;
-
-        var records = new Array();
-        records['entity'] = customerRecordId;
-
-        nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
-            email_subject, email_body, ['mj@roundtableapps.com',
-            'ankith.ravindran@mailplus.com.au'
-        ], null, records, null, true);
-
-        var userJSON = '{';
-        userJSON += '"customer_ns_id" : "' + customerRecordId + '",'
-        userJSON += '"first_name" : "' + first_name + '",'
-        userJSON += '"last_name" : "' + last_name + '",'
-        userJSON += '"email" : "' + email + '",'
-        userJSON += '"phone" : "' + phone_number + '"'
-        userJSON += '}';
-        var headers = {};
-        headers['Content-Type'] = 'application/json';
-        headers['Accept'] = 'application/json';
-        headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
-
-        nlapiRequestURL('https://mpns.protechly.com/new_staff', userJSON,
-            headers);
-
-
-        //Search for Contacts
-        var searchedContacts = nlapiLoadSearch('contact',
-            'customsearch_salesp_contacts');
-
-        var newFilters = new Array();
-        newFilters[newFilters.length] = new nlobjSearchFilter('company', null, 'is',
-            customerRecordId);
-        newFilters[newFilters.length] = new nlobjSearchFilter('email', null, 'is',
-            email);
-
-        searchedContacts.addFilters(newFilters);
-
-        var resultSetContacts = searchedContacts.runSearch();
-
-        var contact_id = null;
-        resultSetContacts.forEachResult(function (searchResultContacts) {
-            contact_id = searchResultContacts.getValue('internalid');
-
-            return true;
-        });
-
-        //Send Email to Customer who filled out the Landing Page Form
-        var url =
-            'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
-        var template_id = 59;
-        var newLeadEmailTemplateRecord = nlapiLoadRecord(
-            'customrecord_camp_comm_template', template_id);
-        var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
-            'custrecord_camp_comm_subject');
-        var emailAttach = new Object();
-        emailAttach['entity'] = customerRecordId;
-
-        url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
-            salesRep + '&dear=' + first_name + '&contactid=' + contact_id + '&userid=' +
-            encodeURIComponent(nlapiGetContext().getUser());;
-        urlCall = nlapiRequestURL(url);
-        var emailHtml = urlCall.getBody();
-
-        nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
-            null, emailAttach)
-
-
-        var status = nlapiScheduleScript(
-            'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', null
-        );
-        nlapiLogExecution('DEBUG', 'status', status);
-        if (status == 'QUEUED') {
-            return false;
-        }
-
-
     }
 }
 

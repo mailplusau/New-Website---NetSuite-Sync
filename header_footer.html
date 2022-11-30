@@ -479,31 +479,20 @@
 
         jQuery('#create-signup-button-submit').click(function () {
 
+            console.log('inside function after clicking the 1st sign up button')
+
             var input_error = false;
             var error_color = '#f4524d';
             var customer_internal_id = jQuery('#customer_internal_id').val();
-            var business_name = jQuery('#company_name').val();
+            var contactid = jQuery('#contactid').val();
+            var business_name = jQuery('#company_name_signup').val();
             var abn = jQuery('#abn').val();
-            var first_name = jQuery('#first_name').val();
-            var last_name = jQuery('#last_name').val();
-            var email = jQuery('#email').val();
-            var phone_number = jQuery('#phone_number').val();
-            var address1 = jQuery('#del_add1').val();
-            var address2 = jQuery('#del_address2').val();
-            var city = jQuery('#del_city').val();
-            var state = jQuery('#del_state').val();
-            var postcode = jQuery('#del_postcode').val();
-            var lat = jQuery('#del_lat').val();
-            var lng = jQuery('#del_lng').val();
-            var avg_daily_shipments = jQuery('#avg_daily_shipments').val();
-            // var services_of_interest = jQuery('#services_of_interest').val();
-            // var how_did_you_hear_about_us = jQuery('#how_did_you_hear_about_us').val();
-            // var subscribe = false;
-            // if (jQuery('.subscribe').prop("checked") == true) {
-            //     var subscribe = true;
-            // } else if (jQuery('.subscribe').prop("checked") == false) {
-            //     var subscribe = false
-            // }
+            var first_name = jQuery('#first_name_signup').val();
+            var last_name = jQuery('#last_name_signup').val();
+            var email = jQuery('#email_signup').val();
+            var phone_number = jQuery('#phone_number_signup').val();
+        
+            
 
             console.log('customer_internal_id: ' + customer_internal_id)
             var pageURL = jQuery(location).attr("href");
@@ -566,16 +555,7 @@
                 }, 5000);
             }
             console.log('After phone number ' + input_error);
-            if (postcode == " " || postcode == "" || validatePostcode(postcode) == false) {
-                input_error = true;
-                jQuery('#postcode').addClass('input-field-error');
-                jQuery('#postcode').removeClass('input-field-default');
-                setTimeout(function () {
-                    jQuery('#postcode').removeClass('input-field-error');
-                    jQuery('#postcode').addClass('input-field-default');
-                }, 5000);
-            }
-            console.log('After postcode ' + input_error);
+            
 
             if (input_error == false) {
                 var modal = document.getElementById("myModal");
@@ -586,6 +566,19 @@
         });
 
         jQuery('.create-signup-button-submit').click(function () {
+
+            var input_error = false;
+            var error_color = '#f4524d';
+            var customer_internal_id = jQuery('#customer_internal_id').val();
+            var contactid = jQuery('#contactid').val();
+            var business_name = jQuery('#company_name_signup').val();
+            var abn = jQuery('#abn').val();
+            var first_name = jQuery('#first_name_signup').val();
+            var last_name = jQuery('#last_name_signup').val();
+            var email = jQuery('#email_signup').val();
+            var phone_number = jQuery('#phone_number_signup').val();
+            var state = jQuery('#state').val();
+            var pageURL = jQuery(location).attr("href");
 
 
             // if (input_error == false) {
@@ -599,9 +592,10 @@
                 last_name: last_name,
                 email: email,
                 phone_number: phone_number,
-                state: state,
-                pageURL: pageURL
-            };
+                contactid:contactid,
+                pageURL: pageURL,
+                state: state
+            }
             var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1653&deploy=1&compid=1048144&h=9e7b3139156348a7edac'
             jQuery.ajax({
                 url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
@@ -616,6 +610,65 @@
             // }
         });
 
+        jQuery('#adhoc').click(function () {
+            if (jQuery('input.adhoc').is(':checked')) {
+                jQuery('#daily').prop('checked', false);
+                jQuery('#monday').prop('checked', false);
+                jQuery('#daily').prop('disabled', true);
+                jQuery('#monday').prop('disabled', true);
+                jQuery('#tuesday').prop('checked', false);
+                jQuery('#tuesday').prop('disabled', true);
+                jQuery('#wednesday').prop('checked', false);
+                jQuery('#wednesday').prop('disabled', true);
+                jQuery('#thursday').prop('checked', false);
+                jQuery('#thursday').prop('disabled', true);
+                jQuery('#friday').prop('checked', false);
+                jQuery('#friday').prop('disabled', true);
+            } else {
+                jQuery('#daily').prop('checked', false);
+                jQuery('#monday').prop('checked', false);
+                jQuery('#daily').prop('disabled', false);
+                jQuery('#monday').prop('disabled', false);
+                jQuery('#tuesday').prop('checked', false);
+                jQuery('#tuesday').prop('disabled', false);
+                jQuery('#wednesday').prop('checked', false);
+                jQuery('#wednesday').prop('disabled', false);
+                jQuery('#thursday').prop('checked', false);
+                jQuery('#thursday').prop('disabled', false);
+                jQuery('#friday').prop('checked', false);
+                jQuery('#friday').prop('disabled', false);
+            }
+        });
+
+        jQuery('#daily').click(function () {
+            if (jQuery('input.daily').is(':checked')) {
+                jQuery('#monday').prop('checked', true);
+                jQuery('#monday').prop('disabled', true);
+                jQuery('#tuesday').prop('checked', true);
+                jQuery('#tuesday').prop('disabled', true);
+                jQuery('#wednesday').prop('checked', true);
+                jQuery('#wednesday').prop('disabled', true);
+                jQuery('#thursday').prop('checked', true);
+                jQuery('#thursday').prop('disabled', true);
+                jQuery('#friday').prop('checked', true);
+                jQuery('#adhoc').prop('checked', false);
+                jQuery('#friday').prop('disabled', true);
+                jQuery('#adhoc').prop('disabled', true);
+            } else {
+                jQuery('#monday').prop('checked', false);
+                jQuery('#monday').prop('disabled', false);
+                jQuery('#tuesday').prop('checked', false);
+                jQuery('#tuesday').prop('disabled', false);
+                jQuery('#wednesday').prop('checked', false);
+                jQuery('#wednesday').prop('disabled', false);
+                jQuery('#thursday').prop('checked', false);
+                jQuery('#thursday').prop('disabled', false);
+                jQuery('#friday').prop('checked', false);
+                jQuery('#adhoc').prop('checked', false);
+                jQuery('#friday').prop('disabled', false);
+                jQuery('#adhoc').prop('disabled', false);
+            }
+        });
 
         //On submit of Enquire Now button
         jQuery('.create-auto-lead-button-submit').click(function () {
@@ -634,15 +687,8 @@
             var lat = jQuery('#del_lat').val();
             var lng = jQuery('#del_lng').val();
             var avg_daily_shipments = jQuery('#avg_daily_shipments').val();
-            // var services_of_interest = jQuery('#services_of_interest').val();
-            // var how_did_you_hear_about_us = jQuery('#how_did_you_hear_about_us').val();
-            // var subscribe = false;
-            // if (jQuery('.subscribe').prop("checked") == true) {
-            //     var subscribe = true;
-            // } else if (jQuery('.subscribe').prop("checked") == false) {
-            //     var subscribe = false
-            // }
             var pageURL = jQuery(location).attr("href");
+
             if (business_name == " " || business_name == "") {
                 input_error = true;
                 jQuery('#business_name').addClass('input-field-error');
@@ -769,6 +815,7 @@
             var comments = jQuery('#comments').val();
             var issues = jQuery('#issues').val();
             var sender_or_receiver = jQuery('#sender_or_receiver').val();
+
             if (sender_or_receiver == 0) {
                 input_error = true;
                 jQuery('#sender_or_receiver').addClass('input-field-error');
@@ -1755,16 +1802,18 @@
                 }, 5000);
             }
             console.log('After Service of interest ' + input_error);
-            if (how_did_you_hear_about_us == "0") {
-                input_error = true;
-                jQuery('#how_did_you_hear_about_us').addClass('input-field-error');
-                jQuery('#how_did_you_hear_about_us').removeClass('input-field-default');
-                setTimeout(function () {
-                    jQuery('#how_did_you_hear_about_us').removeClass('input-field-error');
-                    jQuery('#how_did_you_hear_about_us').addClass('input-field-default');
-                }, 5000);
-            }
 
+            if (pageURL != 'https://mailplus.com.au/about-mailplus/') {
+                if (how_did_you_hear_about_us == "0") {
+                    input_error = true;
+                    jQuery('#how_did_you_hear_about_us').addClass('input-field-error');
+                    jQuery('#how_did_you_hear_about_us').removeClass('input-field-default');
+                    setTimeout(function () {
+                        jQuery('#how_did_you_hear_about_us').removeClass('input-field-error');
+                        jQuery('#how_did_you_hear_about_us').addClass('input-field-default');
+                    }, 5000);
+                }
+            }
 
             console.log('After how did you hear about us ' + input_error);
             if (input_error == false) {
@@ -1772,63 +1821,38 @@
                 jQuery('.get-in-touch-button-submit').attr('disabled', 'disabled');
 
                 if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
-                    if (services_of_interest == '6' || services_of_interest == '2' || services_of_interest == '4') {
-                        var params = {
-                            business_name: business_name,
-                            full_name: full_name,
-                            email: email,
-                            phone_number: phone_number,
-                            postcode: postcode,
-                            avg_daily_shipments: avg_daily_shipments,
-                            services_of_interest: services_of_interest,
-                            how_did_you_hear_about_us: how_did_you_hear_about_us,
-                            pageURL: pageURL
-                        };
-                        var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1253&deploy=1&compid=1048144&h=fb05cab392c498f5829c'
-                        jQuery.ajax({
-                            url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
-                            cache: false,
-                            dataType: 'json',
-                            success: function (jResp) {
-                                console.log(123);
-                                console.log(jResp);
-                                window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                                // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                            }
-                        });
-                    } else {
-                        var fullNameSplit = full_name.split(" ");
-                        var params = {
-                            business_name: business_name,
-                            first_name: fullNameSplit[0],
-                            last_name: fullNameSplit[1],
-                            email: email,
-                            phone_number: phone_number,
-                            address1: address1,
-                            address2: address2,
-                            city: city,
-                            state: state,
-                            postcode: postcode,
-                            lat: lat,
-                            lng: lng,
-                            avg_daily_shipments: avg_daily_shipments,
-                            services_of_interest: services_of_interest,
-                            how_did_you_hear_about_us: how_did_you_hear_about_us,
-                            pageURL: pageURL
-                        };
-                        var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
-                        jQuery.ajax({
-                            url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
-                            cache: false,
-                            dataType: 'json',
-                            success: function (jResp) {
-                                console.log(123);
-                                console.log(jResp);
-                                window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                                // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                            }
-                        });
-                    }
+                    var fullNameSplit = full_name.split(" ");
+                    var params = {
+                        business_name: business_name,
+                        first_name: fullNameSplit[0],
+                        last_name: fullNameSplit[1],
+                        email: email,
+                        phone_number: phone_number,
+                        address1: address1,
+                        address2: address2,
+                        city: city,
+                        state: state,
+                        postcode: postcode,
+                        lat: lat,
+                        lng: lng,
+                        avg_daily_shipments: avg_daily_shipments,
+                        services_of_interest: services_of_interest,
+                        how_did_you_hear_about_us: how_did_you_hear_about_us,
+                        pageURL: pageURL
+                    };
+                    var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
+                    jQuery.ajax({
+                        url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                        cache: false,
+                        dataType: 'json',
+                        success: function (jResp) {
+                            console.log(123);
+                            console.log(jResp);
+                            window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                            // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                        }
+                    });
+
 
                 } else {
                     var params = {

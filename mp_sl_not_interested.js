@@ -32,14 +32,17 @@ function notInterested(request, response) {
         var userNoteRecord = nlapiCreateRecord('note');
         userNoteRecord.setFieldValue('title', 'Not Interested Reason');
         userNoteRecord.setFieldValue('entity', customerRecordId);
-
-        // userNoteRecord.setFieldValue('direction', $('#direction option:selected').val());
-        // userNoteRecord.setFieldValue('notetype', $('#notetype option:selected').val());
         userNoteRecord.setFieldValue('note', feedback);
         userNoteRecord.setFieldValue('author', nlapiGetUser());
         userNoteRecord.setFieldValue('notedate', getDate());
 
         nlapiSubmitRecord(userNoteRecord);
+
+        var customerRecord = nlapiLoadRecord('customer', customerRecordId);
+        customerRecord.getFieldValue('entitystatus', 59); // Lead Status: Suspect - Lost
+        customerRecord.getFieldValue('custentity_service_cancellation_reason', 54); //Cancellation Reason: Not Interested Button
+        customerRecord.getFieldValue('custentity13', getDate());
+        var customerRecordId = nlapiSubmitRecord(customerRecord);
 
 
         var returnObj = {

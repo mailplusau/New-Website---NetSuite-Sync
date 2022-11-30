@@ -15,9 +15,8 @@ function bookSalesCall(request, response) {
 
         nlapiLogExecution('DEBUG', 'request.getParameter', request.getParameter);
 
-        var account_id = request.getParameter('account_id');
+        var contactid = request.getParameter('contactid');
         var customerInternalId = request.getParameter('customerInternalId');
-        var company_name = request.getParameter('company_name');
         var first_name = request.getParameter('first_name');
         var last_name = request.getParameter('last_name');
         var email = request.getParameter('email');
@@ -25,9 +24,8 @@ function bookSalesCall(request, response) {
         var dateVal = request.getParameter('dateVal');
         var timeVal = request.getParameter('timeVal');
 
-        nlapiLogExecution('DEBUG', 'account_id', account_id);
+        nlapiLogExecution('DEBUG', 'contactid', contactid);
         nlapiLogExecution('DEBUG', 'customerInternalId', customerInternalId);
-        nlapiLogExecution('DEBUG', 'company_name', company_name);
         nlapiLogExecution('DEBUG', 'first_name', first_name);
         nlapiLogExecution('DEBUG', 'last_name', last_name);
         nlapiLogExecution('DEBUG', 'email', email);
@@ -36,7 +34,7 @@ function bookSalesCall(request, response) {
         nlapiLogExecution('DEBUG', 'timeVal', timeVal);
 
         var params = {
-            account_id: account_id,
+            contactid: contactid,
             customerInternalId: customerInternalId,
             company_name: company_name,
             first_name: first_name,
@@ -71,8 +69,49 @@ function bookSalesCall(request, response) {
         nlapiLogExecution('DEBUG', 'endTime', endTime);
 
         var customerRecord = nlapiLoadRecord('customer', customerInternalId);
+        var entity_id = customerRecord.getFieldValue('entityid');
+        var business_name = customerRecord.getFieldText('companyname');
+        var partner_text = customerRecord.getFieldText('partner');
         customerRecord.setFieldValue('custentity_portal_training_required', 1);
         nlapiSubmitRecord(customerRecord);
+
+        var recContact = nlapiLoadRecord('contact', contactid);
+        var contactEmail = recContact.getFieldValue('email');
+        ecContact.setFieldValue('firstname', first_name);
+        recContact.setFieldValue('lastname', last_name);
+        recContact.setFieldValue('email', email);
+        recContact.setFieldValue('phone', phone_number);
+
+        try {
+            contactid = nlapiSubmitRecord(recContact);
+        } catch (error) {
+            var email_body =
+                'New Lead trying to book a sales call but contact already exists in NetSuite. </br></br>';
+            email_body += '<u><b>Contact Details</b></u> </br>';
+            email_body += 'First Name: ' + first_name + '</br>';
+            email_body += 'Last Name: ' + last_name + '</br>';
+            email_body += 'Email: ' + email + '</br>';
+            email_body += 'Phone: ' + phone_number + '</br></br>';
+            email_body +=
+                '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+                customerRecordId + '</br>';
+            email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
+                '</br>';
+            email_body += 'Franchisee: ' + partner_text + '</br></br>';
+
+            var email_subject = 'Auto Sign Up - Contact Exists - ' +
+                entity_id + ' ' + business_name;
+
+            var records = new Array();
+            records['entity'] = customerRecordId;
+
+            nlapiSendEmail(112209, ['laura.busse@mailplus.com.au'],
+                email_subject, email_body, ['popie.popie@mailplus.com.au',
+                'ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'
+            ], null, records, null, true);
+        }
+
+        contactid = nlapiSubmitRecord(recContact);
 
         var splitDate = dateVal.split('-');
         var callback_date = splitDate[2] + '/' + splitDate[1] + '/' +

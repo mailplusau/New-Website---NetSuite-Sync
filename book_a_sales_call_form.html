@@ -1,11 +1,10 @@
 <h2 class="display-12 text-center text-md-center main-text-form"
     style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;">Book a Sales Call</h2>
 <h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
-    style="text-align: center; line-height: 27px !important;">Please select a convenient time for our onboarding team to
-    walk through the shipping portal via a Teams session. We will do our best to accommodate your requested time slot.
+    style="text-align: center; line-height: 27px !important;">Please confirm your contact details and book the best time to chat to our team.
 </h4>
 <h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
-    style="text-align: center; line-height: 27px !important;">It's all part of our 5-Star MailPlus service.</h4>
+    style="text-align: center; line-height: 27px !important;">We’ll confirm your booking with an email invitation so that you can add it to your calendar. Speak to you soon!</h4>
 <input id="from_email" class="form-control form-control-flush input-field-alignment input-field-default"
     style="display: none;" type="text" value="" />
 <div class="set_orientation hide">
@@ -27,12 +26,15 @@
         <div class="col-12 col-md-12" style="padding-right: 0px !important;">
             <!-- COMPANY NAME -->
             <div style="text-align: center;"></div>
-            <div class="form-label-group"><label class="input-field-label">Company Name*</label>
+            <div class="form-label-group hide"><label class="input-field-label">Company Name*</label>
                 <input id="company_name"
-                    class="form-control form-control-flush input-field-alignment input-field-default" required=""
+                    class="form-control form-control-flush input-field-alignment input-field-default hide" required=""
                     type="text" value="" />
             </div>
             <input id="customerInternalId"
+                class="form-control form-control-flush input-field-alignment input-field-default" style="display: none;"
+                readonly="readonly" required="" type="text" value="" />
+                <input id="contactid"
                 class="form-control form-control-flush input-field-alignment input-field-default" style="display: none;"
                 readonly="readonly" required="" type="text" value="" />
 
