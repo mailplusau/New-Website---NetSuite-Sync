@@ -12,23 +12,17 @@
     var custPhone = urlParams[3].split('=')
     var firstName = urlParams[4].split('=')
     var lastName = urlParams[5].split('=')
-    var add1 = urlParams[6].split('=')
-    var add2 = urlParams[7].split('=')
-    var city = urlParams[8].split('=')
-    var state = urlParams[9].split('=')
-    var zip = urlParams[10].split('=')
+    var contactid = urlParams[6].split('=')
+    var state = urlParams[7].split('=')
+
 
     document.getElementById('customer_internal_id').value = custInternalId[1].toString();
-    document.getElementById('company_name').value = decodeURIComponent(custName[1]);
-    document.getElementById('first_name').value = firstName[1];
-    document.getElementById('last_name').value = lastName[1];
-    document.getElementById('email').value = custEmail[1];
-    document.getElementById('phone_number').value = custPhone[1];
-
-    document.getElementById('del_add1').value = add1[1];
-    document.getElementById('del_address2').value = decodeURIComponent(add2[1]);
-    document.getElementById('del_city').value = city[1];
-    document.getElementById('del_state').value = state[1];
-    document.getElementById('del_postcode').value = zip[1];
+    document.getElementById('company_name_signup').value = decodeURIComponent(custName[1]);
+    document.getElementById('first_name_signup').value = firstName[1];
+    document.getElementById('last_name_signup').value = lastName[1];
+    document.getElementById('email_signup').value = custEmail[1];
+    document.getElementById('phone_number_signup').value = custPhone[1];
+    document.getElementById('contactid').value = contactid[1];
+    document.getElementById('state').value = state[1];
 
 </script>
