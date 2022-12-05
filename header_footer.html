@@ -578,6 +578,7 @@
             var email = jQuery('#email_signup').val();
             var phone_number = jQuery('#phone_number_signup').val();
             var state = jQuery('#state').val();
+            var salesRep = jQuery('#salesRep').val();
             var pageURL = jQuery(location).attr("href");
 
 
@@ -594,7 +595,8 @@
                 phone_number: phone_number,
                 contactid:contactid,
                 pageURL: pageURL,
-                state: state
+                state: state,
+                salesRep: salesRep
             }
             var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1653&deploy=1&compid=1048144&h=9e7b3139156348a7edac'
             jQuery.ajax({
@@ -1724,11 +1726,9 @@
             var address2 = jQuery('#del_address2').val();
             var city = jQuery('#del_city').val();
             var state = jQuery('#del_state').val();
-            if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
+            // if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
                 var postcode = jQuery('#del_postcode').val();
-            } else {
-                var postcode = jQuery('#postcode').val();
-            }
+            
 
             var lat = jQuery('#del_lat').val();
             var lng = jQuery('#del_lng').val();
@@ -1803,24 +1803,23 @@
             }
             console.log('After Service of interest ' + input_error);
 
-            if (pageURL != 'https://mailplus.com.au/about-mailplus/') {
-                if (how_did_you_hear_about_us == "0") {
-                    input_error = true;
-                    jQuery('#how_did_you_hear_about_us').addClass('input-field-error');
-                    jQuery('#how_did_you_hear_about_us').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#how_did_you_hear_about_us').removeClass('input-field-error');
-                        jQuery('#how_did_you_hear_about_us').addClass('input-field-default');
-                    }, 5000);
-                }
-            }
+            // if (pageURL != 'https://mailplus.com.au/about-mailplus/') {
+            //     if (how_did_you_hear_about_us == "0") {
+            //         input_error = true;
+            //         jQuery('#how_did_you_hear_about_us').addClass('input-field-error');
+            //         jQuery('#how_did_you_hear_about_us').removeClass('input-field-default');
+            //         setTimeout(function () {
+            //             jQuery('#how_did_you_hear_about_us').removeClass('input-field-error');
+            //             jQuery('#how_did_you_hear_about_us').addClass('input-field-default');
+            //         }, 5000);
+            //     }
+            // }
 
             console.log('After how did you hear about us ' + input_error);
             if (input_error == false) {
                 jQuery('.get-in-touch-button-submit').html('Thank You!');
                 jQuery('.get-in-touch-button-submit').attr('disabled', 'disabled');
 
-                if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
                     var fullNameSplit = full_name.split(" ");
                     var params = {
                         business_name: business_name,
@@ -1838,7 +1837,8 @@
                         avg_daily_shipments: avg_daily_shipments,
                         services_of_interest: services_of_interest,
                         how_did_you_hear_about_us: how_did_you_hear_about_us,
-                        pageURL: pageURL
+                        pageURL: pageURL,
+                        subscribe: subscribe
                     };
                     var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
                     jQuery.ajax({
@@ -1852,36 +1852,6 @@
                             // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
                         }
                     });
-
-
-                } else {
-                    var params = {
-                        business_name: business_name,
-                        full_name: full_name,
-                        email: email,
-                        phone_number: phone_number,
-                        postcode: postcode,
-                        avg_daily_shipments: avg_daily_shipments,
-                        services_of_interest: services_of_interest,
-                        how_did_you_hear_about_us: how_did_you_hear_about_us,
-                        pageURL: pageURL
-                    };
-                    var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1253&deploy=1&compid=1048144&h=fb05cab392c498f5829c'
-                    jQuery.ajax({
-                        url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
-                        cache: false,
-                        dataType: 'json',
-                        success: function (jResp) {
-                            console.log(123);
-                            console.log(jResp);
-                            window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                            // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
-                        }
-                    });
-                }
-
-
-
             }
         });
 
@@ -2098,7 +2068,7 @@
             var input_error = false;
             var error_color = '#f4524d';
             var customerInternalId = jQuery('#customerInternalId').val();
-            var company_name = jQuery('#company_name').val();
+            var contactid = jQuery('#contactid').val();
             var first_name = jQuery('#first_name').val();
             var last_name = jQuery('#last_name').val();
             var email = jQuery('#email').val();
@@ -2107,16 +2077,7 @@
             var timeVal = $("#booking_time").val();
             var dateVal = $("#booking_date").val();
 
-            console.log(first_name.trim());
-            if (company_name.replace(/  +/g, ' ') == " " || company_name.trim == "" || company_name == "Company Name*") {
-                input_error = true;
-                jQuery('#company_name').addClass('input-field-error');
-                jQuery('#company_name').removeClass('input-field-default')
-                setTimeout(function () {
-                    jQuery('#company_name').removeClass('input-field-error');
-                    jQuery('#company_name').addClass('input-field-default');
-                }, 5000);
-            }
+            console.log(first_name.trim())
             console.log('After business name ' + input_error);
             if (first_name.replace(/  +/g, ' ') == " " || first_name.trim == "" || first_name == "First Name*") {
                 input_error = true;
@@ -2150,12 +2111,32 @@
             }
             console.log('After phone_number ' + input_error);
 
+            if(dateVal == " " || dateVal == "" || dateVal == null){
+                input_error = true;
+                jQuery('#booking_date').addClass('input-field-error');
+                jQuery('#booking_date').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#booking_date').removeClass('input-field-error');
+                    jQuery('#booking_date').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if(timeVal == " " || timeVal == "" || timeVal == null){
+                input_error = true;
+                jQuery('#booking_time').addClass('input-field-error');
+                jQuery('#booking_time').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#booking_time').removeClass('input-field-error');
+                    jQuery('#booking_time').addClass('input-field-default');
+                }, 5000);
+            }
+
             if (input_error == false) {
                 jQuery('.book-sales-call-button-submit').html('Thank You!');
                 jQuery('.book-sales-call-button-submit').attr('disabled', 'disabled');;
                 var params = {
                     customerInternalId: customerInternalId,
-                    company_name: company_name,
+                    contactid: contactid,
                     first_name: first_name,
                     last_name: last_name,
                     email: email,

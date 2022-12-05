@@ -55,7 +55,7 @@ function portalOrientation(request, response) {
         } else {
             timeVal = timeVal + ' AM'
             if (timeArray[0] == 11) {
-                endTime = '12' + timeArray[1] + ' PM'
+                endTime = '12' + ':' + + timeArray[1] + ' PM'
             } else {
                 endTime = (parseInt(timeArray[0]) + 1) + ':' + timeArray[1] + ' AM'
             }

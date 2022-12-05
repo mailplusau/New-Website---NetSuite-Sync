@@ -38,6 +38,10 @@ function leadForm(request, response) {
         var avg_daily_shipments = request.getParameter('avg_daily_shipments');
         var services_of_interest = request.getParameter('services_of_interest');
         var pageURL = request.getParameter('pageURL');
+        var how_did_you_hear_about_us = request.getParameter(
+            'how_did_you_hear_about_us');
+        var subscribe = request.getParameter('subscribe');
+
 
         nlapiLogExecution('DEBUG', 'business_name', business_name);
         nlapiLogExecution('DEBUG', 'full_name', first_name);
@@ -179,8 +183,13 @@ function leadForm(request, response) {
             customerRecord.setFieldValue('custentity_date_lead_entered', getDate());
             customerRecord.setFieldValue('custentity_lead_entered_by', 585236); //Portal
 
-            customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 1);
-            how_did_you_hear_about_us_text = 'Social Media (e.g. Facebook)';
+            if (how_did_you_hear_about_us == '9') {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 9);
+                how_did_you_hear_about_us_text = 'Creative Converters';
+            } else {
+                customerRecord.setFieldValue('custentity_how_did_you_hear_about_us', 1);
+                how_did_you_hear_about_us_text = 'Social Media (e.g. Facebook)';
+            }
 
             customerRecord.setFieldValue('custentity_mpex_customer', 1);
             customerRecord.setFieldValue('custentity_portal_access', 1);
@@ -242,7 +251,7 @@ function leadForm(request, response) {
 
             customerRecord.setFieldValue('custentity_website_page_url', pageURL);
 
-            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '19.7');
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '33.2');
             customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
             customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '7.05');
 
@@ -255,7 +264,7 @@ function leadForm(request, response) {
             } else if (services_of_interest == '8') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 8);
                 service_of_interest_text = 'Parcel & satchel delivery | Australia Post collect & lodge service';
-            } 
+            }
 
             //ADDRESS
             customerRecord.selectNewLineItem('addressbook');
@@ -288,7 +297,9 @@ function leadForm(request, response) {
             contactRecord.setFieldValue('custentity_connect_user', 1);
             contactRecord.setFieldValue('entityid', first_name + ' ' + last_name);
             contactRecord.setFieldValue('contactrole', -10);
-
+            if (subscribe == 'true') {
+                contactRecord.setFieldValue('custentity_subscribe_list', 1);
+            }
             var contactId = nlapiSubmitRecord(contactRecord);
 
 
@@ -331,7 +342,7 @@ function leadForm(request, response) {
             nlapiSubmitRecord(userNoteRecord);
 
             //Create SALES REP
-  
+
 
             var postcode = parseInt(postcode);
 
@@ -351,7 +362,7 @@ function leadForm(request, response) {
                     var body =
                         'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
                         entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                    
+
                     if (postcode >= 2000 && postcode <= 2999) {
                         //ACT & NSW Postcodes
                         var postcode = parseInt(postcode);
@@ -448,38 +459,115 @@ function leadForm(request, response) {
                             nlapiDateToString(date, 'timeofday'));
                         nlapiSubmitRecord(salesRecord);
                     }
-                } else {
-                    // var salesRecord = nlapiCreateRecord('customrecord_sales');
-                    // var salesRep = 112209; //MailPlus team
-
-                    // salesRecord.setFieldValue('custrecord_sales_customer',
-                    //     customerRecordId);
-                    // salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-                    // salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                    // salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                    // salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                    // var date = new Date();
-                    // salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                    //     nlapiDateToString(date, 'timeofday'));
-                    // var sales_record_id = nlapiSubmitRecord(salesRecord);
-
-                    var from = 112209; //MailPlus team
-                    var to = ['laura.busse@mailplus.com.au'];
-                    var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au'
-                    ];
-                    var subject = 'Sales Lead - ' + entity_id + ' ' + customer_name + '';
-                    var cust_id_link =
-                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                        customerRecordId;
-                    var body =
-                        'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
-                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-
-                    nlapiSendEmail(from, to, subject, body, cc);
                 }
 
+                var from = 112209; //MailPlus team
+                var to = ['laura.busse@mailplus.com.au'];
+                var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                    'ankith.ravindran@mailplus.com.au'
+                ];
+                var subject = 'Check Service Territory - Sales Lead - ' + entity_id + ' ' + customer_name + '';
+                var cust_id_link =
+                    'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                    customerRecordId;
+                var body =
+                    'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
+                    entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+
+                nlapiSendEmail(from, to, subject, body, cc);
+
             } else if (!isNullorEmpty(zee_id) && zeeCount == 1) {
+                if (postcode >= 2000 && postcode <= 2999) {
+                    //ACT & NSW Postcodes
+                    var postcode = parseInt(postcode);
+                    //Byron Bay Postcodes
+                    if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
+                        postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
+                        2479) {
+                        to = ['lee.russell@mailplus.com.au'];
+                        body =
+                            'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 668711; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    } else if (postcode == 2481) { //Albury
+                        to = ['david.gdanski@mailplus.com.au'];
+                        body =
+                            'Hi David, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 690145; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    } else {
+                        //ACT Post Codes
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 696160; //Kerina Helliwell
+                        to = ['kerina.helliwell@mailplus.com.au'];
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+
+                    }
+
+                } else { //Everything else
+
+                    //Create Sales Record
+                    var salesRecord = nlapiCreateRecord('customrecord_sales');
+                    if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+                        var salesRep = 690145; //David Gdanski
+                        to = ['david.gdanski@mailplus.com.au']
+                    } else if ((postcode >= 5000 &&
+                        postcode <= 5999)) {
+                        var salesRep = 668712; //Belinda Urbani
+                        to = ['belinda.urbani@mailplus.com.au'];
+                    } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
+                        postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+                        var salesRep = 668711; //Lee Russell
+                        to = ['lee.russell@mailplus.com.au']
+                    } else { //Everything else
+                        var salesRep = 668712; //Belinda Urbani
+                        to = ['belinda.urbani@mailplus.com.au'];
+                    }
+
+                    salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                    salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                    salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                    salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                    salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                    var date = new Date();
+                    salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                        nlapiDateToString(date, 'timeofday'));
+                    nlapiSubmitRecord(salesRecord);
+                }
                 if (services_of_interest == '2' || services_of_interest == '8') {
                     var from = 112209; //MailPlus team
                     var to;
@@ -493,103 +581,8 @@ function leadForm(request, response) {
                     var body =
                         'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
                         entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                    
-                    if (postcode >= 2000 && postcode <= 2999) {
-                        //ACT & NSW Postcodes
-                        var postcode = parseInt(postcode);
-                        //Byron Bay Postcodes
-                        if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
-                            postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
-                            2479) {
-                            to = ['lee.russell@mailplus.com.au'];
-                            body =
-                                'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                            nlapiSendEmail(from, to, subject, body, cc);
-                            var salesRecord = nlapiCreateRecord('customrecord_sales');
-                            var salesRep = 668711; //Lee Russell
 
-                            salesRecord.setFieldValue('custrecord_sales_customer',
-                                customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-                            salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
-                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                            var date = new Date();
-                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                                nlapiDateToString(date, 'timeofday'));
-                            nlapiSubmitRecord(salesRecord);
-                        } else if (postcode == 2481) { //Albury
-                            to = ['david.gdanski@mailplus.com.au'];
-                            body =
-                                'Hi David, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                            nlapiSendEmail(from, to, subject, body, cc);
-                            var salesRecord = nlapiCreateRecord('customrecord_sales');
-                            var salesRep = 690145; //Lee Russell
-
-                            salesRecord.setFieldValue('custrecord_sales_customer',
-                                customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                            var date = new Date();
-                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                                nlapiDateToString(date, 'timeofday'));
-                            nlapiSubmitRecord(salesRecord);
-                        } else {
-                            //ACT Post Codes
-                            var salesRecord = nlapiCreateRecord('customrecord_sales');
-                            var salesRep = 696160; //Kerina Helliwell
-                            to = ['kerina.helliwell@mailplus.com.au'];
-                            nlapiSendEmail(from, to, subject, body, cc);
-
-                            salesRecord.setFieldValue('custrecord_sales_customer',
-                                customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                            var date = new Date();
-                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                                nlapiDateToString(date, 'timeofday'));
-                            nlapiSubmitRecord(salesRecord);
-
-                        }
-
-                    } else { //Everything else
-
-                        //Create Sales Record
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
-                            var salesRep = 690145; //David Gdanski
-                            to = ['david.gdanski@mailplus.com.au']
-                        } else if ((postcode >= 5000 &&
-                            postcode <= 5999)) {
-                            var salesRep = 668712; //Belinda Urbani
-                            to = ['belinda.urbani@mailplus.com.au'];
-                        } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
-                            postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
-                            var salesRep = 668711; //Lee Russell
-                            to = ['lee.russell@mailplus.com.au']
-                        } else { //Everything else
-                            var salesRep = 668712; //Belinda Urbani
-                            to = ['belinda.urbani@mailplus.com.au'];
-                        }
-
-                        nlapiSendEmail(from, to, subject, body, cc);
-
-                        salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
-                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-                    }
+                    nlapiSendEmail(from, to, subject, body, cc);
                 }
             }
 
@@ -1008,7 +1001,7 @@ function leadForm(request, response) {
             dataOut = dataOut.substring(0, dataOut.length - 1);
             dataOut += ']}';
             nlapiLogExecution('DEBUG', 'dataOut', dataOut);
- 
+
             var returnObj = {
                 success: true,
                 message: '',
@@ -1019,30 +1012,35 @@ function leadForm(request, response) {
 
             if (!isNullorEmpty(zee_id) && zeeCount == 1) {
 
-                if (services_of_interest == '2' || services_of_interest == '8') {
+                if (services_of_interest == '2') {
                 } else {
-                    //Send Email to Customer who filled out the Landing Page Form
-                    var url =
-                        'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
-                    var template_id = 148;
-                    var newLeadEmailTemplateRecord = nlapiLoadRecord(
-                        'customrecord_camp_comm_template', template_id);
-                    var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
-                        'custrecord_camp_comm_subject');
-                    var emailAttach = new Object();
-                    emailAttach['entity'] = customerRecordId;
+                    var partner_record = nlapiLoadRecord('partner', zee_id);
+                    var mp_std_activated = partner_record.getFieldValue('custentity_zee_mp_std_activated');
+                    var mp_exp_activated = partner_record.getFieldValue('custentity_zee_mp_std_activated');
+                    if ((mp_std_activated != 1 || mp_std_activated != '1') && (mp_exp_activated == 2 || mp_exp_activated == '2')) {
+                        //NO SIGN UP EMAIL IF BOTH EXPRESS & STANDARD NOT ACTIVATED
+                    } else {
+                        //Send Email to Customer who filled out the Landing Page Form
+                        var url =
+                            'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+                        var template_id = 148;
+                        var newLeadEmailTemplateRecord = nlapiLoadRecord(
+                            'customrecord_camp_comm_template', template_id);
+                        var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+                            'custrecord_camp_comm_subject');
+                        var emailAttach = new Object();
+                        emailAttach['entity'] = customerRecordId;
 
-                    url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
-                        salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
-                        encodeURIComponent(nlapiGetContext().getUser());;
-                    urlCall = nlapiRequestURL(url);
-                    var emailHtml = urlCall.getBody();
+                        url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+                            salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
+                            encodeURIComponent(nlapiGetContext().getUser());;
+                        urlCall = nlapiRequestURL(url);
+                        var emailHtml = urlCall.getBody();
 
-                    nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
-                        null, emailAttach);
-
+                        nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
+                            null, emailAttach);
+                    }
                 }
-
             }
 
         }

@@ -36,7 +36,6 @@ function bookSalesCall(request, response) {
         var params = {
             contactid: contactid,
             customerInternalId: customerInternalId,
-            company_name: company_name,
             first_name: first_name,
             last_name: last_name,
             email: email,
@@ -77,7 +76,7 @@ function bookSalesCall(request, response) {
 
         var recContact = nlapiLoadRecord('contact', contactid);
         var contactEmail = recContact.getFieldValue('email');
-        ecContact.setFieldValue('firstname', first_name);
+        recContact.setFieldValue('firstname', first_name);
         recContact.setFieldValue('lastname', last_name);
         recContact.setFieldValue('email', email);
         recContact.setFieldValue('phone', phone_number);
@@ -111,7 +110,6 @@ function bookSalesCall(request, response) {
             ], null, records, null, true);
         }
 
-        contactid = nlapiSubmitRecord(recContact);
 
         var splitDate = dateVal.split('-');
         var callback_date = splitDate[2] + '/' + splitDate[1] + '/' +
@@ -153,7 +151,7 @@ function bookSalesCall(request, response) {
         emailAttach['entity'] = customerInternalId;
 
         url += template_id + '&recid=' + customerInternalId + '&salesrep=' +
-            653718 + '&dear=' + first_name + '&contactid=' + null + '&userid=' +
+            653718 + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
             encodeURIComponent(nlapiGetContext().getUser());;
         urlCall = nlapiRequestURL(url);
         var emailHtml = urlCall.getBody();

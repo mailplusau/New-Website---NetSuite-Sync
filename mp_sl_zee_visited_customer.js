@@ -36,8 +36,16 @@ function zeeVisited(request, response) {
         var customerRecordId = request.getParameter('custinternalid');
 
         var customerRecord = nlapiLoadRecord('customer', customerRecordId);
+
+        var companyName = customerRecord.getFieldValue('companyname');
+
         customerRecord.setFieldValue('custentity_mp_toll_zeevisit_memo', getDate());
+        customerRecord.setFieldValue('custentity_mp_toll_zeevisit', 'T');
         var customerRecordId = nlapiSubmitRecord(customerRecord);
+
+        var form = nlapiCreateForm('Thank you for contacting/visiting ' + companyName);
+
+        response.writePage(form);
 
     }
 }
