@@ -45,7 +45,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-12 col-md-6" style="padding-right: 0px !important;">
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;">
 
         <!-- AVERAGE DAILY SHIPMENTS -->
         <div class="form-label-group"><label class="input-field-label">Average Daily Shipments<span
@@ -59,7 +59,7 @@
             </select>
         </div>
     </div>
-    <div class="col-12 col-md-6" style="padding-right: 0px !important;">
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;">
 
         <!-- SERVICES OF INTEREST -->
         <div class="form-label-group"><label class="input-field-label">Services of Interest?<span
@@ -67,14 +67,30 @@
             <select id="services_of_interest"
                 class="form-control form-control-flush dropdown-field-alignment input-field-default" required="">
                 <option selected="selected" value="0"></option>
-                <option value="7">Parcel & satchel delivery</option>
-                <option value="2">Australia Post collect & lodge service</option>
-                <option value="8">All of the above</option>
+                <option value="7">Parcel &amp; satchel delivery</option>
+                <option value="2">Australia Post collect &amp; lodge service</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;">
+
+        <!-- SERVICES OF INTEREST -->
+        <div class="form-label-group"><label class="input-field-label">Current Carrier?<span
+                    style="color: red;">*</span></label>
+            <select id="current_carrier"
+                class="form-control form-control-flush dropdown-field-alignment input-field-default" required="">
+                <option selected="selected" value="0"></option>
+                <option value="6">Australia Post</option>
+                <option value="3">Courier Please</option>
+                <option value="7">Aramex</option>
+                <option value="5">Sendle</option>
+                <option value="8">Mix</option>
             </select>
         </div>
     </div>
 </div>
-<div class="row delivery_name_row " style="margin-bottom: 10px;margin-top: 5px;">
+<div class="row delivery_name_row " style="margin-bottom: 10px; margin-top: 5px;">
     <div class="col-12 col-md-12" style="padding-right: 0px !important;">
         <h4><span style="background-color: #095c7b; border-radius: 15px; height: auto; right: 0; position: relative;"
                 class="label label-default col-xs-12 delivery_label">Pickup Address</span></h4>
@@ -90,8 +106,7 @@
                 required="" type="text" value="" />
         </div>
     </div>
-    <div class="col-12 col-md-2" style="padding-right: 0px !important;">
-        <!-- ADDRESS 1 -->
+    <div class="col-12 col-md-2" style="padding-right: 0px !important;"><!-- ADDRESS 1 -->
         <div class="form-label-group"><label class="input-field-label">Unit Number/Level</label>
             <input id="del_add1" class="form-control form-control-flush input-field-alignment input-field-default"
                 required="" type="text" value="" />

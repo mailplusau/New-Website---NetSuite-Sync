@@ -40,6 +40,8 @@ function leadForm(request, response) {
         var pageURL = request.getParameter('pageURL');
         var how_did_you_hear_about_us = request.getParameter(
             'how_did_you_hear_about_us');
+        var current_carrier = request.getParameter(
+            'current_carrier');
         var subscribe = request.getParameter('subscribe');
 
 
@@ -61,6 +63,7 @@ function leadForm(request, response) {
         var avg_daily_shipments_text;
         var services_of_interest_text;
         var how_did_you_hear_about_us_text;
+        var current_carrier_text;
 
         var state_id;
 
@@ -149,9 +152,17 @@ function leadForm(request, response) {
 
             var zeeNetworkMatrixSearchResults = zeeNetworkMatrixSearch.runSearch();
 
+            var zee_name = '';
+
             zeeNetworkMatrixSearchResults.forEachResult(function (searchResult) {
 
                 zee_id = searchResult.getValue('internalid');
+                if (zeeCount == 0) {
+                    zee_name += searchResult.getValue('companyname');
+                } else {
+                    zee_name += ', ' + searchResult.getValue('companyname');
+                }
+
 
                 nlapiLogExecution('DEBUG', 'zee_id|count:' + zeeCount, zee_id);
 
@@ -166,7 +177,9 @@ function leadForm(request, response) {
             var customerRecord = nlapiCreateRecord('lead');
 
             customerRecord.setFieldValue('companyname', business_name);
+            customerRecord.setFieldValue('email', email);
             customerRecord.setFieldValue('custentity_email_service', email);
+            customerRecord.setFieldValue('custentity_email_sales', email);
             customerRecord.setFieldValue('phone', phone_number);
 
             var quadient = business_name.substring(0, 10);
@@ -251,9 +264,9 @@ function leadForm(request, response) {
 
             customerRecord.setFieldValue('custentity_website_page_url', pageURL);
 
-            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '33.2');
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '31.9');
             customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
-            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '7.05');
+            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '6.75');
 
             if (services_of_interest == '7') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 7);
@@ -264,6 +277,23 @@ function leadForm(request, response) {
             } else if (services_of_interest == '8') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 8);
                 service_of_interest_text = 'Parcel & satchel delivery | Australia Post collect & lodge service';
+            }
+
+            if (current_carrier == '6') {
+                customerRecord.setFieldValue('custentity_previous_carrier', 6);
+                current_carrier_text = 'Australia Post';
+            } else if (current_carrier == '3') {
+                customerRecord.setFieldValue('custentity_previous_carrier', 3);
+                current_carrier_text = 'Courier Please';
+            } else if (current_carrier == '7') {
+                customerRecord.setFieldValue('custentity_previous_carrier', 7);
+                current_carrier_text = 'Aramex';
+            } else if (current_carrier == '5') {
+                customerRecord.setFieldValue('custentity_previous_carrier', 5);
+                current_carrier_text = 'Sendle';
+            } else if (current_carrier == '8') {
+                customerRecord.setFieldValue('custentity_previous_carrier', 8);
+                current_carrier_text = 'Mix';
             }
 
             //ADDRESS
@@ -312,9 +342,11 @@ function leadForm(request, response) {
                 'custentity_how_did_you_hear_about_us');
             var interests = customer_record.getFieldText(
                 'custentity_services_of_interest');
+            var previous_carrier = customer_record.getFieldText(
+                'custentity_previous_carrier');
 
             if (!isNullorEmpty(zee_id) && zeeCount == 1) {
-                if (services_of_interest != '2' && services_of_interest != '8') {
+                if (services_of_interest != '2') {
                     //Prospect - Quote Sent
                     customer_record.setFieldValue('entitystatus', 50);
                     customer_record.setFieldValue('custentity_date_lead_quote_sent',
@@ -328,6 +360,7 @@ function leadForm(request, response) {
             note_value += 'Average Daily Shipment: ' + usage_per_week + '/\n';
             note_value += 'How did you hear about us: ' + hear_about_us + '/\n';
             note_value += 'Service of Interest: ' + interests + '/\n';
+            note_value += 'Current Carrier: ' + previous_carrier + '/\n';
 
             var userNoteRecord = nlapiCreateRecord('note');
             userNoteRecord.setFieldValue('title', 'New Lead');
@@ -380,7 +413,7 @@ function leadForm(request, response) {
 
                             salesRecord.setFieldValue('custrecord_sales_customer',
                                 customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                             salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
                             salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                             salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -399,7 +432,7 @@ function leadForm(request, response) {
 
                             salesRecord.setFieldValue('custrecord_sales_customer',
                                 customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                             salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                             salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                             salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -416,7 +449,7 @@ function leadForm(request, response) {
 
                             salesRecord.setFieldValue('custrecord_sales_customer',
                                 customerRecordId);
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                             salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                             salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                             salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -450,7 +483,7 @@ function leadForm(request, response) {
                         nlapiSendEmail(from, to, subject, body, cc);
 
                         salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                         salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -461,20 +494,38 @@ function leadForm(request, response) {
                     }
                 }
 
-                var from = 112209; //MailPlus team
-                var to = ['laura.busse@mailplus.com.au'];
-                var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
-                    'ankith.ravindran@mailplus.com.au'
-                ];
-                var subject = 'Check Service Territory - Sales Lead - ' + entity_id + ' ' + customer_name + '';
-                var cust_id_link =
-                    'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                    customerRecordId;
-                var body =
-                    'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
-                    entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                if (isNullorEmpty(zee_id)) {
+                    var from = 112209; //MailPlus team
+                    var to = ['laura.busse@mailplus.com.au'];
+                    var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au'
+                    ];
+                    var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
+                    var cust_id_link =
+                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                        customerRecordId;
+                    var body =
+                        'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n No suburb mapping available for the address entered by the lead \n\n Customer Name: ' +
+                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                nlapiSendEmail(from, to, subject, body, cc);
+                    nlapiSendEmail(from, to, subject, body, cc);
+                } else if (zeeCount > 1) {
+                    var from = 112209; //MailPlus team
+                    var to = ['laura.busse@mailplus.com.au'];
+                    var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au'
+                    ];
+                    var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
+                    var cust_id_link =
+                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                        customerRecordId;
+                    var body =
+                        'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n The address entered by the lead can be service by ' + zee_name + ' franchisees. Please check the maps and either assign to correct franchisee or send it to the Sales Team. \n Customer Name: ' +
+                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+
+                    nlapiSendEmail(from, to, subject, body, cc);
+                }
+
 
             } else if (!isNullorEmpty(zee_id) && zeeCount == 1) {
                 if (postcode >= 2000 && postcode <= 2999) {
@@ -493,7 +544,7 @@ function leadForm(request, response) {
 
                         salesRecord.setFieldValue('custrecord_sales_customer',
                             customerRecordId);
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                         salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -511,7 +562,7 @@ function leadForm(request, response) {
 
                         salesRecord.setFieldValue('custrecord_sales_customer',
                             customerRecordId);
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                         salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -527,7 +578,7 @@ function leadForm(request, response) {
 
                         salesRecord.setFieldValue('custrecord_sales_customer',
                             customerRecordId);
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                         salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -559,7 +610,7 @@ function leadForm(request, response) {
                     }
 
                     salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
-                    salesRecord.setFieldValue('custrecord_sales_campaign', 62); //Field Sales
+                    salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                     salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
                     salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                     salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
@@ -589,17 +640,24 @@ function leadForm(request, response) {
             //
             var sendleZoneIDSearch = nlapiLoadSearch('customrecord_dom_zones', 'customsearch_sendle_dom_zones');
 
-            var newFilters = new Array();
-            newFilters[newFilters.length] = new nlobjSearchFilter(
-                'custrecord_dom_zones_postcode', null, 'is', postcode);
-            sendleZoneIDSearch.addFilters(newFilters);
+            var newFiltersZoneID = new Array();
+            newFiltersZoneID[newFiltersZoneID.length] = new nlobjSearchFilter(
+                'custrecord_dom_zones_postcode', null, 'is', postcode.toString());
+            newFiltersZoneID[newFiltersZoneID.length] = new nlobjSearchFilter(
+                'custrecord_dom_zones_suburb_name', null, 'is', city);
+
+            sendleZoneIDSearch.addFilters(newFiltersZoneID);
 
             var sendleZoneIDSearchResult = sendleZoneIDSearch.runSearch();
 
+            nlapiLogExecution('DEBUG', 'sendleZoneIDSearchResult.length', sendleZoneIDSearchResult.length);
+
             var nsZoneID = 4;
             sendleZoneIDSearchResult.forEachResult(function (sendleZoneIDSearchResultSet) {
-                nsZoneID = sendleZoneIDSearchResultSet.getValue('custrecord_dom_zones_ns_zones')
 
+                nsZoneID = sendleZoneIDSearchResultSet.getValue('custrecord_dom_zones_ns_zones');
+                nlapiLogExecution('DEBUG', 'inside zone search', nsZoneID);
+                return true;
             });
 
             nlapiLogExecution('DEBUG', 'nsZoneID', nsZoneID);
@@ -613,6 +671,7 @@ function leadForm(request, response) {
             10Kg	8
             25Kg	9
             250g	10
+            25kg    11
             */
 
             var std250gGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
@@ -792,6 +851,34 @@ function leadForm(request, response) {
                 return true;
             });
 
+            var std20kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 5);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 11);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_zones', null, 'anyof', nsZoneID);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_item_receiver_zones', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 13);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 14);
+            }
+            std20kgGoldItemPricingSearch.addFilters(newFilters);
+
+            var std20kgGoldItemPricingSearchResult = std20kgGoldItemPricingSearch.runSearch();
+
+            var itemInternalstd20kgID = null;
+            std20kgGoldItemPricingSearchResult.forEachResult(function (std20kgGoldItemPricingSearchResultSet) {
+                itemInternalstd20kgID = std20kgGoldItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
             var std25kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
 
             var newFilters = new Array();
@@ -824,6 +911,7 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_last_update', getDate());
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_customer', customerRecordId);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_delivery_speeds', 1);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_20kg', itemInternalstd20kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_250g', itemInternalstd250gID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_10kg', itemInternalstd10kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_25kg', itemInternalstd25kgID);
@@ -1031,13 +1119,19 @@ function leadForm(request, response) {
                         var emailAttach = new Object();
                         emailAttach['entity'] = customerRecordId;
 
+                        var customer_record = nlapiLoadRecord('customer', customerRecordId);
+                        var entity_id = customer_record.getFieldValue('entityid');
+                        var customer_name = customer_record.getFieldValue('companyname');
+
+                        templateSubject = entity_id + ' ' + customer_name + ' - ' + templateSubject
+
                         url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
                             salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
                             encodeURIComponent(nlapiGetContext().getUser());;
                         urlCall = nlapiRequestURL(url);
                         var emailHtml = urlCall.getBody();
 
-                        nlapiSendEmail(112209, email, templateSubject, emailHtml, null,
+                        nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep, null,
                             null, emailAttach);
                     }
                 }

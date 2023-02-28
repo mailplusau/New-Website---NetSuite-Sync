@@ -46,8 +46,8 @@ function bookSalesCall(request, response) {
 
         var endTime;
         var timeArray = timeVal.split(':')
-        if (timeArray[0] >= 12) {
-            if (timeArray[0] == 12) {
+        if (parseInt(timeArray[0]) >= 12) {
+            if (parseInt(timeArray[0]) == 12) {
                 timeVal = (1) + ':' + timeArray[1] + ' PM'
                 endTime = (1 + 1) + ':' + timeArray[1] + ' PM'
             } else {
@@ -57,7 +57,7 @@ function bookSalesCall(request, response) {
 
         } else {
             timeVal = timeVal + ' AM'
-            if (timeArray[0] == 11) {
+            if (parseInt(timeArray[0]) == 11) {
                 endTime = '12' + ':' + timeArray[1] + ' PM'
             } else {
                 endTime = (parseInt(timeArray[0]) + 1) + ':' + timeArray[1] + ' AM'
@@ -69,9 +69,13 @@ function bookSalesCall(request, response) {
 
         var customerRecord = nlapiLoadRecord('customer', customerInternalId);
         var entity_id = customerRecord.getFieldValue('entityid');
+        var entitystatus = customerRecord.getFieldValue('entitystatus');
         var business_name = customerRecord.getFieldText('companyname');
         var partner_text = customerRecord.getFieldText('partner');
-        customerRecord.setFieldValue('custentity_portal_training_required', 1);
+        if (entitystatus != 13) {
+            customerRecord.setFieldValue('entitystatus', 8);
+        }
+        
         nlapiSubmitRecord(customerRecord);
 
         var recContact = nlapiLoadRecord('contact', contactid);
@@ -93,7 +97,7 @@ function bookSalesCall(request, response) {
             email_body += 'Phone: ' + phone_number + '</br></br>';
             email_body +=
                 '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
-                customerRecordId + '</br>';
+                customerInternalId + '</br>';
             email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
                 '</br>';
             email_body += 'Franchisee: ' + partner_text + '</br></br>';
@@ -102,13 +106,37 @@ function bookSalesCall(request, response) {
                 entity_id + ' ' + business_name;
 
             var records = new Array();
-            records['entity'] = customerRecordId;
+            records['entity'] = customerInternalId;
 
             nlapiSendEmail(112209, ['laura.busse@mailplus.com.au'],
                 email_subject, email_body, ['popie.popie@mailplus.com.au',
                 'ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'
             ], null, records, null, true);
         }
+
+        //Sales Record - Auto Signed Up
+        var salesRecordAutoSigned = nlapiLoadSearch('customer', 'customsearch6430');
+
+        var newFilters_addresses = new Array();
+        newFilters_addresses[0] = new nlobjSearchFilter('internalid', null, 'is', customerInternalId);
+
+        salesRecordAutoSigned.addFilters(newFilters_addresses);
+
+        var salesRecordAutoSignedResult = salesRecordAutoSigned.runSearch();
+
+        var salesRecordAutoSignedResultSet = salesRecordAutoSignedResult.getResults(0, 1);
+
+        var salesRepId = null;
+
+        if (salesRecordAutoSignedResultSet.length != 0) {
+            salesRecordAutoSignedResult.forEachResult(function (searchResult) {
+
+                salesRepId = searchResult.getValue("custrecord_sales_assigned", "CUSTRECORD_SALES_CUSTOMER", null);
+
+                return true;
+            });
+        }
+
 
 
         var splitDate = dateVal.split('-');
@@ -119,7 +147,7 @@ function bookSalesCall(request, response) {
 
         var task = nlapiCreateRecord('task');
         task.setFieldValue('title', 'Sales Call Booked');
-        task.setFieldValue('assigned', 653718);
+        task.setFieldValue('assigned', salesRepId);
         task.setFieldValue('company', customerInternalId);
         task.setFieldValue('sendemail', 'T');
         task.setFieldValue('timedevent', 'T');

@@ -5,7 +5,7 @@
  * @Date:   2021-09-15T17:02:45+10:00
  * @Filename: mp_sl2.0_become_a_zee_web_form_v2.js
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-03-18T14:46:10+11:00
+ * @Last modified time: 2022-03-18T14:46:10+11:00 AR
  */
 
 
@@ -173,7 +173,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			})
 		}
 
-		var sendTo = 'david.gdanski@mailplus.com.au';
+		var sendTo = 'greg.hart@mailplus.com.au';
 
 		if ((parseInt(postcode) >= 2600 && parseInt(postcode) <= 2618) || (parseInt(
 				postcode) >= 2900 && parseInt(postcode) <= 2920)) { //ACT

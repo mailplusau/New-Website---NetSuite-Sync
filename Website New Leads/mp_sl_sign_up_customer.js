@@ -105,23 +105,27 @@ function leadForm(request, response) {
 
         var intitial_customer_status = customerRecord.getFieldValue('entitystatus');
 
+        var zee_id = customerRecord.getFieldValue('partner');
+        var partner_text = customerRecord.getFieldText('partner');
+
+        var partner_id = customerRecord.getFieldValue('partner');
+
+        var partner_record = nlapiLoadRecord('partner', partner_id);
+        var mp_std_activated = partner_record.getFieldValue('custentity_zee_mp_std_activated');
+        var previous_carrier = customerRecord.getFieldValue('custentity_previous_carrier');
+        var zee_email = partner_record.getFieldValue('email');
+
+        var services_of_interest = customerRecord.getFieldValue('custentity_services_of_interest');
+
         if (intitial_customer_status != 13) {
-            var zee_id = customerRecord.getFieldValue('partner');
-            var partner_text = customerRecord.getFieldText('partner');
-
-            var partner_id = customerRecord.getFieldValue('partner');
-
-            var partner_record = nlapiLoadRecord('partner', partner_id);
-            var mp_std_activated = partner_record.getFieldValue('custentity_zee_mp_std_activated');
-            var zee_email = partner_record.getFieldValue('email');
-
-            var services_of_interest = customerRecord.getFieldValue('custentity_services_of_interest');
 
             nlapiLogExecution('DEBUG', 'services_of_interest', services_of_interest);
 
             customerRecord.setFieldValue('companyname', business_name);
             customerRecord.setFieldValue('vatregnumber', abn);
+            customerRecord.setFieldValue('email', email);
             customerRecord.setFieldValue('custentity_email_service', email);
+            customerRecord.setFieldValue('custentity_email_sales', email);
             customerRecord.setFieldValue('phone', phone_number);
 
             var quadient = business_name.substring(0, 10);
@@ -152,6 +156,13 @@ function leadForm(request, response) {
             customerRecord.setFieldValue('custentity_date_prospect_opportunity',
                 getDate());
 
+            //Remove all Cancellation details
+            customerRecord.setFieldValue('custentity13', null);
+            customerRecord.setFieldValue('custentity_service_cancellation_reason',
+                null);
+            customerRecord.setFieldValue('custentity_date_lead_lost',
+                null);
+
 
             var finacnial_tab_size = customerRecord.getLineItemCount('itempricing');
             var old_financial_tab_size = finacnial_tab_size;
@@ -162,18 +173,6 @@ function leadForm(request, response) {
 
 
             var customerRecordId = nlapiSubmitRecord(customerRecord);
-
-            var customerJSON = '{';
-            customerJSON += '"ns_id" : "' + customerRecordId + '"'
-            customerJSON += '}';
-
-            var headers = {};
-            headers['Content-Type'] = 'application/json';
-            headers['Accept'] = 'application/json';
-            headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
-
-            nlapiRequestURL('https://mpns.protechly.com/new_customer', customerJSON,
-                headers);
 
             var recContact = nlapiLoadRecord('contact', contactid);
             var contactEmail = recContact.getFieldValue('email');
@@ -288,7 +287,7 @@ function leadForm(request, response) {
             phonecall.setFieldValue('company', customerRecordId);
             phonecall.setFieldValue('status', 'COMPLETE');
             phonecall.setFieldValue('custevent_call_outcome', 16);
-            phonecall.setFieldValue('title', 'X Sale - Website Lead - Signed');
+            phonecall.setFieldValue('title', 'Sales - Digital Lead Campaign - Signed');
             nlapiSubmitRecord(phonecall);
 
             var freqArray = [];
@@ -317,188 +316,231 @@ function leadForm(request, response) {
             new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegId);
             new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
             new_service_change_record.setFieldValue('custrecord_servicechg_created', 112209);
-            new_service_change_record.setFieldValue('custrecord_servicechg_type', 'MPEX Customer');
+            new_service_change_record.setFieldValue('custrecord_servicechg_type', 'New Customer');
             new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
             nlapiSubmitRecord(new_service_change_record);
+        }
 
-            dataOut += '{"ns_id":"' + customerRecordId + '"},';
+        dataOut += '{"ns_id":"' + customerRecordId + '"},';
 
-            dataOut = dataOut.substring(0, dataOut.length - 1);
-            dataOut += ']}';
-            nlapiLogExecution('DEBUG', 'dataOut', dataOut);
+        dataOut = dataOut.substring(0, dataOut.length - 1);
+        dataOut += ']}';
+        nlapiLogExecution('DEBUG', 'dataOut', dataOut);
 
-            var returnObj = {
-                success: true,
-                message: '',
-                result: dataOut
-            };
+        var returnObj = {
+            success: true,
+            message: '',
+            result: dataOut
+        };
 
-            _sendJSResponse(request, response, returnObj);
+        _sendJSResponse(request, response, returnObj);
 
-            var customerJSON = '{';
-            customerJSON += '"ns_id" : "' + customerRecordId + '"'
-            customerJSON += '}';
+        var customerJSON = '{';
+        customerJSON += '"ns_id" : "' + customerRecordId + '"'
+        customerJSON += '}';
 
-            var headers = {};
-            headers['Content-Type'] = 'application/json';
-            headers['Accept'] = 'application/json';
-            headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
+        var headers = {};
+        headers['Content-Type'] = 'application/json';
+        headers['Accept'] = 'application/json';
+        headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
 
-            nlapiRequestURL('https://mpns.protechly.com/new_customer', customerJSON,
-                headers);
+        nlapiRequestURL('https://mpns.protechly.com/new_customer', customerJSON,
+            headers);
 
-            var email_body =
-                'Please link the USER to the below CUSTOMER details </br></br>';
-            email_body += '<u><b>User Details</b></u> </br>';
-            email_body += 'First Name: ' + first_name + '</br>';
-            email_body += 'Last Name: ' + last_name + '</br>';
-            email_body += 'Email: ' + email + '</br>';
-            email_body += 'Phone: ' + phone_number + '</br></br>';
-            email_body +=
-                '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+        var email_body =
+            'Please link the USER to the below CUSTOMER details </br></br>';
+        email_body += '<u><b>User Details</b></u> </br>';
+        email_body += 'First Name: ' + first_name + '</br>';
+        email_body += 'Last Name: ' + last_name + '</br>';
+        email_body += 'Email: ' + email + '</br>';
+        email_body += 'Phone: ' + phone_number + '</br></br>';
+        email_body +=
+            '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+            customerRecordId + '</br>';
+        email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
+            '</br>';
+        email_body += 'Franchisee: ' + partner_text + '</br></br>';
+
+        var email_subject = 'MP Portal - Link User to Customer - ' +
+            entity_id + ' ' + business_name;
+
+        var records = new Array();
+        records['entity'] = customerRecordId;
+
+        nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
+            email_subject, email_body, ['mj@roundtableapps.com',
+            'ankith.ravindran@mailplus.com.au'
+        ], null, records, null, true);
+
+        var userJSON = '{';
+        userJSON += '"customer_ns_id" : "' + customerRecordId + '",'
+        userJSON += '"first_name" : "' + first_name + '",'
+        userJSON += '"last_name" : "' + last_name + '",'
+        userJSON += '"email" : "' + email + '",'
+        userJSON += '"phone" : "' + phone_number + '"'
+        userJSON += '}';
+        var headers = {};
+        headers['Content-Type'] = 'application/json';
+        headers['Accept'] = 'application/json';
+        headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
+
+        nlapiRequestURL('https://mpns.protechly.com/new_staff', userJSON,
+            headers);
+
+        //Sales Record - Auto Signed Up
+        var salesRecordAutoSigned = nlapiLoadSearch('customrecord_sales', 'customsearch_sales_record_auto_signed__2');
+
+        var newFilters_addresses = new Array();
+        newFilters_addresses[0] = new nlobjSearchFilter('internalid', 'custrecord_sales_customer', 'is', customerRecordId);
+
+        salesRecordAutoSigned.addFilters(newFilters_addresses);
+
+        var salesRecordAutoSignedResult = salesRecordAutoSigned.runSearch();
+
+        var salesRecordAutoSignedResultSet = salesRecordAutoSignedResult.getResults(0, 1);
+
+        var salesRepEmail = null;
+        var salesRepName = null;
+
+        if (salesRecordAutoSignedResultSet.length != 0) {
+            salesRecordAutoSignedResult.forEachResult(function (searchResult) {
+
+                salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
+                salesRepId = searchResult.getValue('custrecord_sales_assigned');
+                salesRepName = searchResult.getText('custrecord_sales_assigned');
+                return true;
+            });
+        }
+
+
+        //Send Email to Customer who filled out the Landing Page Form
+        var url =
+            'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+        var template_id = 59;
+        var newLeadEmailTemplateRecord = nlapiLoadRecord(
+            'customrecord_camp_comm_template', template_id);
+        var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+            'custrecord_camp_comm_subject');
+        var emailAttach = new Object();
+        emailAttach['entity'] = customerRecordId;
+
+        nlapiLogExecution('DEBUG', 'customerRecordId', customerRecordId)
+        nlapiLogExecution('DEBUG', 'salesRep', salesRep)
+        nlapiLogExecution('DEBUG', 'first_name', first_name)
+        nlapiLogExecution('DEBUG', 'contactid', contactid)
+        nlapiLogExecution('DEBUG', 'salesRepName', salesRepName)
+
+        url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+            salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
+            encodeURIComponent(nlapiGetContext().getUser()) + '&salesRepName=' + salesRepName
+        urlCall = nlapiRequestURL(url);
+        var emailHtml = urlCall.getBody();
+
+        var attachments = [];
+        attachments.push(nlapiLoadFile(6000513))
+        attachments.push(nlapiLoadFile(6000512))
+        attachments.push(nlapiLoadFile(5044913))
+        attachments.push(nlapiLoadFile(6000511))
+
+        nlapiSendEmail(salesRepId, email, entity_id + ' ' + business_name + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au',
+            'customerservice@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
+            'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
+
+
+        if (intitial_customer_status != 13) {
+            var sales_rep_email_body =
+                'New Customer Signed Up</br></br>';
+            // sales_rep_email_body += '<u><b>User Details</b></u> </br>';
+            // sales_rep_email_body += 'First Name: ' + first_name + '</br>';
+            // sales_rep_email_body += 'Last Name: ' + last_name + '</br>';
+            // sales_rep_email_body += 'Email: ' + email + '</br>';
+            // sales_rep_email_body += 'Phone: ' + phone_number + '</br></br>';
+            sales_rep_email_body +=
+                '<u><b>Customer Details</b></u> </br>Customer NS ID: ' +
                 customerRecordId + '</br>';
-            email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
+            sales_rep_email_body += 'Customer Name: ' + entity_id + ' ' + business_name +
                 '</br>';
-            email_body += 'Franchisee: ' + partner_text + '</br></br>';
+            sales_rep_email_body += 'Franchisee: ' + partner_text + '</br></br>';
+            var sales_rep_cust_id_link = 'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' + customerRecordId;
+            sales_rep_email_body += '<b><u>Customer Link</u></b>: ' + sales_rep_cust_id_link + '</br></br> <b><u>New Auto Signed Up Customer List</u></b>: https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1657&deploy=1&compid=1048144';
 
-            var email_subject = 'MP Portal - Link User to Customer - ' +
+            var sales_rep_email_subject = 'Action required: New Customer Signed Up - ' +
                 entity_id + ' ' + business_name;
 
-            var records = new Array();
-            records['entity'] = customerRecordId;
 
-            nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
-                email_subject, email_body, ['mj@roundtableapps.com',
-                'ankith.ravindran@mailplus.com.au'
-            ], null, records, null, true);
+            var sales_rep_records = new Array();
+            sales_rep_records['entity'] = customerRecordId;
 
-            var userJSON = '{';
-            userJSON += '"customer_ns_id" : "' + customerRecordId + '",'
-            userJSON += '"first_name" : "' + first_name + '",'
-            userJSON += '"last_name" : "' + last_name + '",'
-            userJSON += '"email" : "' + email + '",'
-            userJSON += '"phone" : "' + phone_number + '"'
-            userJSON += '}';
-            var headers = {};
-            headers['Content-Type'] = 'application/json';
-            headers['Accept'] = 'application/json';
-            headers['x-api-key'] = 'XAZkNK8dVs463EtP7WXWhcUQ0z8Xce47XklzpcBj';
-
-            nlapiRequestURL('https://mpns.protechly.com/new_staff', userJSON,
-                headers);
-
-
-            //Send Email to Customer who filled out the Landing Page Form
-            var url =
-                'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
-            var template_id = 59;
-            var newLeadEmailTemplateRecord = nlapiLoadRecord(
-                'customrecord_camp_comm_template', template_id);
-            var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
-                'custrecord_camp_comm_subject');
-            var emailAttach = new Object();
-            emailAttach['entity'] = customerRecordId;
-
-
-            url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
-                salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
-                encodeURIComponent(nlapiGetContext().getUser());;
-            urlCall = nlapiRequestURL(url);
-            var emailHtml = urlCall.getBody();
-
-            var attachments = [];
-            attachments.push(nlapiLoadFile(6000513))
-            attachments.push(nlapiLoadFile(6000512))
-            attachments.push(nlapiLoadFile(5044913))
-            attachments.push(nlapiLoadFile(6000511))
-
-            nlapiSendEmail(112209, email, templateSubject, emailHtml, ['portalsupport@mailplus.com.au',
-                'customerservice@mailplus.com.au'], ['ankith.ravindran@mailplus.com.au',
-                'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au'], emailAttach, attachments, true)
-
-
-            //Send Email to franchisee about new customer
-            var url =
-                'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
-            var template_id = 150;
-            var newLeadEmailTemplateRecord = nlapiLoadRecord(
-                'customrecord_camp_comm_template', template_id);
-            var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
-                'custrecord_camp_comm_subject');
-            var emailAttach = new Object();
-            emailAttach['entity'] = partner_id;
-
-
-            url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
-                salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
-                encodeURIComponent(nlapiGetContext().getUser());;
-            urlCall = nlapiRequestURL(url);
-            var emailHtml = urlCall.getBody();
-
-
-
-            nlapiSendEmail(112209, zee_email, templateSubject, emailHtml, ['michael.mcdaid@mailplus.com.au',
-                'greg.hart@mailplus.com.au'], ['ankith.ravindran@mailplus.com.au',
-                'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au'], emailAttach, null, true);
-
-            if (services_of_interest == 8 && !isNullorEmpty(form_salesRep)) {
-
-                //Sales Record - Auto Signed Up
-                var salesRecordAutoSigned = nlapiLoadSearch('customrecord_sales', 'customsearch_sales_record_auto_signed_up');
-
-                var newFilters_addresses = new Array();
-                newFilters_addresses[0] = new nlobjSearchFilter('internalid', 'custrecord_sales_customer', 'is', customerRecordId);
-
-                salesRecordAutoSigned.addFilters(newFilters_addresses);
-
-                var salesRecordAutoSignedResult = salesRecordAutoSigned.runSearch();
-
-                var salesRecordAutoSignedResultSet = salesRecordAutoSignedResult.getResults(0, 1);
-
-                var salesRepEmail = null;
-
-                if (salesRecordAutoSignedResultSet.length != 0) {
-                    salesRecordAutoSignedResult.forEachResult(function (searchResult) {
-
-                        salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
-
-                        return true;
-                    });
-                }
-
-                var from = 112209; //MailPlus team
-                var to;
-                var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+            if (!isNullorEmpty(salesRepEmail)) {
+                nlapiSendEmail(112209, salesRepEmail,
+                    sales_rep_email_subject, sales_rep_email_body, ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
                     'ankith.ravindran@mailplus.com.au'
-                ];
-                var subject = 'Sales HOT Lead Auto Signed Up - ' + entity_id + ' ' + business_name + '';
-                var cust_id_link =
-                    'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                    customerRecordId;
-                var body =
-                    'This lead has Signed Up via the website. \n\n Lead Interested in both Products & Services.\n Customer has got access to the portal and has received rates for the products. \n\n Customer Name: ' +
-                    entity_id + ' ' + business_name + '\n\nCustomer Link: ' + cust_id_link + '\n\n Auto Signed Up List - Services & Products: https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1661&deploy=1';
-
-                nlapiLogExecution('DEBUG', 'salesRepEmail', salesRepEmail);
-                if (!isNullorEmpty(salesRepEmail)) {
-                    nlapiSendEmail(from, salesRepEmail, subject, body, cc);
-                }
-
+                ], null, sales_rep_records, null, true);
             }
 
-            if (mp_std_activated == 1 || mp_std_activated == '1') {
-                var status = nlapiScheduleScript(
-                    'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', null
-                );
-                nlapiLogExecution('DEBUG', 'status', status);
-            } else {
-                var status = nlapiScheduleScript(
-                    'customscript_ss_exp_prod_sync_map', 'customdeploy2', null
-                );
-                nlapiLogExecution('DEBUG', 'status', status);
+        }
+
+        //Send Email to franchisee about new customer
+        // var url =
+        //     'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+        // var template_id = 150;
+        // var newLeadEmailTemplateRecord = nlapiLoadRecord(
+        //     'customrecord_camp_comm_template', template_id);
+        // var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+        //     'custrecord_camp_comm_subject');
+        // var emailAttach = new Object();
+        // emailAttach['entity'] = partner_id;
+
+
+        // url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+        //     salesRep + '&dear=' + first_name + '&contactid=' + contactid + '&userid=' +
+        //     encodeURIComponent(nlapiGetContext().getUser());;
+        // urlCall = nlapiRequestURL(url);
+        // var emailHtml = urlCall.getBody();
+
+
+
+        // nlapiSendEmail(112209, zee_email, templateSubject, emailHtml, ['michael.mcdaid@mailplus.com.au',
+        //     'greg.hart@mailplus.com.au'], ['ankith.ravindran@mailplus.com.au',
+        //     'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au'], emailAttach, null, true);
+
+        if (services_of_interest == 8 && !isNullorEmpty(form_salesRep)) {
+
+
+
+            var from = 112209; //MailPlus team
+            var to;
+            var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                'ankith.ravindran@mailplus.com.au'
+            ];
+            var subject = 'Sales HOT Lead Auto Signed Up - ' + entity_id + ' ' + business_name + '';
+            var cust_id_link =
+                'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                customerRecordId;
+            var body =
+                'This lead has Signed Up via the website. \n\n Lead Interested in both Products & Services.\n Customer has got access to the portal and has received rates for the products. \n\n Customer Name: ' +
+                entity_id + ' ' + business_name + '\n\nCustomer Link: ' + cust_id_link + '\n\n Auto Signed Up List - Services & Products: https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1661&deploy=1';
+
+            nlapiLogExecution('DEBUG', 'salesRepEmail', salesRepEmail);
+            if (!isNullorEmpty(salesRepEmail)) {
+                nlapiSendEmail(from, salesRepEmail, subject, body, cc);
             }
+
+        }
+
+        if ((mp_std_activated != 1 && mp_std_activated != '1') || (previous_carrier == 3 || previous_carrier == 7 || previous_carrier == 5)) {
+            var status = nlapiScheduleScript(
+                'customscript_ss_exp_prod_sync_map', 'customdeploy2', null
+            );
+            nlapiLogExecution('DEBUG', 'status', status);
+        } else if (mp_std_activated == 1 || mp_std_activated == '1') {
+            var status = nlapiScheduleScript(
+                'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', null
+            );
+            nlapiLogExecution('DEBUG', 'status', status);
         }
     }
+
 }
 
 function _sendJSResponse(request, response, respObject) {
