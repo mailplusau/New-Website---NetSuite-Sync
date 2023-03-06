@@ -189,7 +189,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
             })
         }
 
-        var sendTo = 'david.gdanski@mailplus.com.au';
+        var sendTo = 'greg.hart@mailplus.com.au';
 
         if ((parseInt(postcode) >= 2600 && parseInt(postcode) <= 2618) || (parseInt(
             postcode) >= 2900 && parseInt(postcode) <= 2920)) { //ACT
