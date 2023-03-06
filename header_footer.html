@@ -534,11 +534,23 @@
 
             var input_error = false;
             var error_color = '#f4524d';
-            var customer_internal_id = jQuery('#customerInternalId').val();
             var first_name = jQuery('#std_activation_first_name').val();
             var last_name = jQuery('#std_activation_last_name').val();
             var email = jQuery('#std_activation_email').val();
             var phone_number = jQuery('#std_activation_phone_number').val();
+
+            var entityid = jQuery('#std_activation_customer_id').val();
+
+
+            if (entityid == " " || entityid == "") {
+                input_error = true;
+                jQuery('#std_activation_customer_id').addClass('input-field-error');
+                jQuery('#std_activation_customer_id').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#std_activation_customer_id').removeClass('input-field-error');
+                    jQuery('#std_activation_customer_id').addClass('input-field-default');
+                }, 5000);
+            }
 
 
             if (first_name == " " || first_name == "") {
@@ -585,13 +597,13 @@
                 jQuery('#create-my-account').html('Thank You!');
                 jQuery('#create-my-account').attr('disabled', 'disabled');
                 var params = {
-                    customer_internal_id: customer_internal_id,
+                    entityid: entityid,
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
                     phone_number: phone_number
                 }
-                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1708&deploy=1&compid=1048144&h=a759c4688556f948443c'
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1709&deploy=1&compid=1048144&h=d870ee6daecacdaf3009'
                 jQuery.ajax({
                     url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
                     cache: false,
@@ -599,6 +611,11 @@
                     success: function (jResp) {
                         console.log(123);
                         console.log(jResp);
+                        if (jResp.success == false && jResp.message == 'Contact Already Existing') {
+
+                        } else if(jResp.success == true){
+
+                        }
                         // window.location.href = 'https://mailplus.com.au/sign-up-confirmation/';
                     }
                 });

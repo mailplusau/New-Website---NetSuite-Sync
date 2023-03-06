@@ -655,6 +655,34 @@ function createLead(data) {
                         return true;
                     });
 
+                    var std20kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+                    var newFilters = new Array();
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_carrier', null, 'anyof', 5);
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_product_weight', null, 'anyof', 11);
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_item_zones', null, 'anyof', nsZoneID);
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_item_receiver_zones', null, 'anyof', 1);
+                    if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                        newFilters[newFilters.length] = new nlobjSearchFilter(
+                            'custitem_price_plans', null, 'anyof', 13);
+                    } else {
+                        newFilters[newFilters.length] = new nlobjSearchFilter(
+                            'custitem_price_plans', null, 'anyof', 14);
+                    }
+                    std20kgGoldItemPricingSearch.addFilters(newFilters);
+
+                    var std20kgGoldItemPricingSearchResult = std20kgGoldItemPricingSearch.runSearch();
+
+                    var itemInternalstd20kgID = null;
+                    std20kgGoldItemPricingSearchResult.forEachResult(function (std20kgGoldItemPricingSearchResultSet) {
+                        itemInternalstd20kgID = std20kgGoldItemPricingSearchResultSet.getValue('internalid');
+                        return true;
+                    });
+
                     var std25kgGoldItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
 
                     var newFilters = new Array();
@@ -684,6 +712,7 @@ function createLead(data) {
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_last_update', getDate());
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_customer', customerRecordId);
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_delivery_speeds', 1);
+                    prodPricingRecord.setFieldValue('custrecord_prod_pricing_20kg', itemInternalstd20kgID);
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_250g', itemInternalstd250gID);
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_10kg', itemInternalstd10kgID);
                     prodPricingRecord.setFieldValue('custrecord_prod_pricing_25kg', itemInternalstd25kgID);
@@ -715,10 +744,10 @@ function createLead(data) {
                         'custitem_carrier', null, 'anyof', 2);
                     newFilters[newFilters.length] = new nlobjSearchFilter(
                         'custitem_product_weight', null, 'anyof', 5);
-                    
-                        newFilters[newFilters.length] = new nlobjSearchFilter(
-                            'custitem_price_plans', null, 'anyof', 15);
-                    
+
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_price_plans', null, 'anyof', 15);
+
 
                     expB4ItemPricingSearch.addFilters(newFilters);
 
@@ -737,10 +766,10 @@ function createLead(data) {
                         'custitem_carrier', null, 'anyof', 2);
                     newFilters[newFilters.length] = new nlobjSearchFilter(
                         'custitem_product_weight', null, 'anyof', 4);
-                   
-                        newFilters[newFilters.length] = new nlobjSearchFilter(
-                            'custitem_price_plans', null, 'anyof', 15);
-                   
+
+                    newFilters[newFilters.length] = new nlobjSearchFilter(
+                        'custitem_price_plans', null, 'anyof', 15);
+
                     exp500gItemPricingSearch.addFilters(newFilters);
 
                     var exp500gItemPricingSearchResult = exp500gItemPricingSearch.runSearch();
