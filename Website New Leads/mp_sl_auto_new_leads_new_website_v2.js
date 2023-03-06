@@ -264,9 +264,9 @@ function leadForm(request, response) {
 
             customerRecord.setFieldValue('custentity_website_page_url', pageURL);
 
-            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '31.9');
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '31.16');
             customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
-            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '6.75');
+            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '6.95');
 
             if (services_of_interest == '7') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 7);
