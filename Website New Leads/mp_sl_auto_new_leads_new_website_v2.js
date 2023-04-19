@@ -1,9 +1,11 @@
 /**
- * @Author: Ankith Ravindran <ankithravindran>
- * @Date:   2021-09-15T17:02:45+10:00
- * @Filename: mp_sl_new_leads_new_website_v2.js
- * @Last modified by:   ankithravindran
- * @Last modified time: 2022-05-24T08:22:37+10:00
+ * Author:               Ankith Ravindran
+ * Created on:           Thu Nov 24 2022
+ * Modified on:          Wed Apr 19 2023 13:01:26
+ * SuiteScript Version:  1.0 
+ * Description:          Suitelet to create a new lead in Netsuite from the information got from the website form.  
+ *
+ * Copyright (c) 2023 MailPlus Pty. Ltd.
  */
 
 var ctx = nlapiGetContext();
@@ -348,9 +350,9 @@ function leadForm(request, response) {
             if (!isNullorEmpty(zee_id) && zeeCount == 1) {
                 if (services_of_interest != '2') {
                     //Prospect - Quote Sent
-                    customer_record.setFieldValue('entitystatus', 50);
-                    customer_record.setFieldValue('custentity_date_lead_quote_sent',
-                        getDate());
+                    // customer_record.setFieldValue('entitystatus', 50);
+                    // customer_record.setFieldValue('custentity_date_lead_quote_sent',
+                    //     getDate());
                 }
                 var customerRecordId = nlapiSubmitRecord(customer_record);
             }
@@ -382,6 +384,113 @@ function leadForm(request, response) {
             var salesRep = 112209;
 
             if (isNullorEmpty(zee_id) || zeeCount > 1) {
+                if (postcode >= 2000 && postcode <= 2999) {
+                    //ACT & NSW Postcodes
+                    var postcode = parseInt(postcode);
+                    //Byron Bay Postcodes
+                    if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
+                        postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
+                        2479) {
+                        to = ['lee.russell@mailplus.com.au'];
+                        body =
+                            'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 668711; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                        salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    } else if (postcode == 2481) { //Albury
+                        to = ['david.gdanski@mailplus.com.au'];
+                        body =
+                            'Hi David, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 690145; //Lee Russell
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    } else {
+                        //ACT Post Codes
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        var salesRep = 696160; //Kerina Helliwell
+                        to = ['kerina.helliwell@mailplus.com.au'];
+
+                        salesRecord.setFieldValue('custrecord_sales_customer',
+                            customerRecordId);
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+
+                    }
+
+                } else { //Everything else
+
+                    //Create Sales Record
+                    var salesRecord = nlapiCreateRecord('customrecord_sales');
+                    if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+                        var salesRep = 690145; //David Gdanski
+                        to = ['david.gdanski@mailplus.com.au']
+                    } else if ((postcode >= 5000 &&
+                        postcode <= 5999)) {
+                        var salesRep = 668712; //Belinda Urbani
+                        to = ['belinda.urbani@mailplus.com.au'];
+                    } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
+                        postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+                        var salesRep = 668711; //Lee Russell
+                        to = ['lee.russell@mailplus.com.au']
+                    } else { //Everything else
+                        var salesRep = 668712; //Belinda Urbani
+                        to = ['belinda.urbani@mailplus.com.au'];
+                    }
+
+                    salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                    salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                    salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                    salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                    salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                    var date = new Date();
+                    salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                        nlapiDateToString(date, 'timeofday'));
+                    nlapiSubmitRecord(salesRecord);
+                }
+                if (services_of_interest == '2' || services_of_interest == '8') {
+                    var from = 112209; //MailPlus team
+                    var to;
+                    var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au'
+                    ];
+                    var subject = 'Sales HOT Lead - ' + entity_id + ' ' + customer_name + '';
+                    var cust_id_link =
+                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                        customerRecordId;
+                    var body =
+                        'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
+                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+
+                    nlapiSendEmail(from, to, subject, body, cc);
+                }
                 if (services_of_interest == '2' || services_of_interest == '8') {
                     var from = 112209; //MailPlus team
                     var to;
@@ -496,34 +605,34 @@ function leadForm(request, response) {
 
                 if (isNullorEmpty(zee_id)) {
                     var from = 112209; //MailPlus team
-                    var to = ['laura.busse@mailplus.com.au'];
-                    var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au'
-                    ];
-                    var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
-                    var cust_id_link =
-                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                        customerRecordId;
-                    var body =
-                        'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n No suburb mapping available for the address entered by the lead \n\n Customer Name: ' +
-                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                    // var to = ['laura.busse@mailplus.com.au'];
+                    // var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                    //     'ankith.ravindran@mailplus.com.au'
+                    // ];
+                    // var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
+                    // var cust_id_link =
+                    //     'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                    //     customerRecordId;
+                    // var body =
+                    //     'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n No suburb mapping available for the address entered by the lead \n\n Customer Name: ' +
+                    //     entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                    nlapiSendEmail(from, to, subject, body, cc);
+                    // nlapiSendEmail(from, to, subject, body, cc);
                 } else if (zeeCount > 1) {
-                    var from = 112209; //MailPlus team
-                    var to = ['laura.busse@mailplus.com.au'];
-                    var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au'
-                    ];
-                    var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
-                    var cust_id_link =
-                        'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                        customerRecordId;
-                    var body =
-                        'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n The address entered by the lead can be service by ' + zee_name + ' franchisees. Please check the maps and either assign to correct franchisee or send it to the Sales Team. \n Customer Name: ' +
-                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                    // var from = 112209; //MailPlus team
+                    // var to = ['laura.busse@mailplus.com.au'];
+                    // var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                    //     'ankith.ravindran@mailplus.com.au'
+                    // ];
+                    // var subject = 'Check Service Territory - ' + entity_id + ' ' + customer_name + '';
+                    // var cust_id_link =
+                    //     'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                    //     customerRecordId;
+                    // var body =
+                    //     'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n\n The address entered by the lead can be service by ' + zee_name + ' franchisees. Please check the maps and either assign to correct franchisee or send it to the Sales Team. \n Customer Name: ' +
+                    //     entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                    nlapiSendEmail(from, to, subject, body, cc);
+                    // nlapiSendEmail(from, to, subject, body, cc);
                 }
 
 
@@ -1109,33 +1218,35 @@ function leadForm(request, response) {
                         //NO SIGN UP EMAIL IF BOTH EXPRESS & STANDARD NOT ACTIVATED
                     } else {
                         //Send Email to Customer who filled out the Landing Page Form
-                        var url =
-                            'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
-                        var template_id = 148;
-                        var newLeadEmailTemplateRecord = nlapiLoadRecord(
-                            'customrecord_camp_comm_template', template_id);
-                        var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
-                            'custrecord_camp_comm_subject');
-                        var emailAttach = new Object();
-                        emailAttach['entity'] = customerRecordId;
 
-                        var customer_record = nlapiLoadRecord('customer', customerRecordId);
-                        var entity_id = customer_record.getFieldValue('entityid');
-                        var customer_name = customer_record.getFieldValue('companyname');
-
-                        templateSubject = entity_id + ' ' + customer_name + ' - ' + templateSubject
-
-                        url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
-                            salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
-                            encodeURIComponent(nlapiGetContext().getUser());;
-                        urlCall = nlapiRequestURL(url);
-                        var emailHtml = urlCall.getBody();
-
-                        nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep, null,
-                            null, emailAttach);
                     }
                 }
             }
+
+            var url =
+                'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=';
+            var template_id = 164;
+            var newLeadEmailTemplateRecord = nlapiLoadRecord(
+                'customrecord_camp_comm_template', template_id);
+            var templateSubject = newLeadEmailTemplateRecord.getFieldValue(
+                'custrecord_camp_comm_subject');
+            var emailAttach = new Object();
+            emailAttach['entity'] = customerRecordId;
+
+            var customer_record = nlapiLoadRecord('customer', customerRecordId);
+            var entity_id = customer_record.getFieldValue('entityid');
+            var customer_name = customer_record.getFieldValue('companyname');
+
+            templateSubject = entity_id + ' ' + customer_name + ' - ' + templateSubject
+
+            url += template_id + '&recid=' + customerRecordId + '&salesrep=' +
+                salesRep + '&dear=' + first_name + '&contactid=' + contactId + '&userid=' +
+                encodeURIComponent(nlapiGetContext().getUser());;
+            urlCall = nlapiRequestURL(url);
+            var emailHtml = urlCall.getBody();
+
+            nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep, null,
+                null, emailAttach);
 
         }
     }
