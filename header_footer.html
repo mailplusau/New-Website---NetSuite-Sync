@@ -616,7 +616,7 @@
                         } else if (jResp.success == true) {
 
                         }
-                        // window.location.href = 'https://mailplus.com.au/sign-up-confirmation/';
+                        window.location.href = 'https://mailplus.com.au/authenticate-confirmation/';
                     }
                 });
             }
@@ -984,10 +984,11 @@
             barcode = barcode.toUpperCase();
             var barcode_beg = barcode.slice(0, 3);
             var barcode_beg4 = barcode.slice(0, 4);
+            var barcode_std_aramex = barcode.slice(0, 2);
             console.log('barcode_beg: ' + barcode_beg);
             console.log('barcode_beg4: ' + barcode_beg4)
             console.log('After barcode ' + input_error);
-            if (barcode_beg4 != "MPXL" && barcode_beg4 != "MPSD" && barcode_beg != "MPE" && barcode_beg != 'CPB') {
+            if (barcode_beg4 != "MPXL" && barcode_beg4 != "MPSD" && barcode_beg != "MPE" && barcode_beg != 'CPB' && barcode_std_aramex != 'MP') {
                 input_error = true;
                 jQuery('#barcode').addClass('input-field-error');
                 jQuery('#barcode').removeClass('input-field-default')

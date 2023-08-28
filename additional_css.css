@@ -1356,3 +1356,15 @@
     /*   position: relative !important; */
     /*   margin: 7px !important; */
 }
+
+.back-to-top i {
+    color: #095c7b !important;
+}
+
+.stars__icon{
+	 color: #095c7b !important;
+}
+
+.R-IconButton__icon{
+	color: #095c7b !important;
+}

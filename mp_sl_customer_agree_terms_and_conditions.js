@@ -1,9 +1,11 @@
 /**
- * @Author: Ankith Ravindran <ankithravindran>
- * @Date:   2021-09-15T17:02:45+10:00
- * @Filename: mp_sl_new_leads_new_website_v2.js
- * @Last modified by:   ankithravindran
- * @Last modified time: 2022-05-24T08:22:37+10:00
+ * Author:               Ankith Ravindran
+ * Created on:           Mon Jan 01 2023
+ * Modified on:          Thu Apr 27 2023 12:13:27
+ * SuiteScript Version:  Agree to the Terms & Conditions
+ * Description:           
+ *
+ * Copyright (c) 2023 MailPlus Pty. Ltd.
  */
 
 
@@ -33,50 +35,55 @@ function agreeTersmAndConditions(request, response) {
         var entityId = customerRecord.getFieldValue('entityid');
         var compnayName = customerRecord.getFieldValue('companyname');
 
-        customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
-        customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
-        customerRecord.setFieldValue('custentity_date_prospect_opportunity',
-          getDate());
-        customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
-        var customerRecordId = nlapiSubmitRecord(customerRecord);
+        var tncaccepted = customerRecord.getFieldValue('custentity_terms_conditions_agree');
 
-        var form = nlapiCreateForm('Thank you for Agreeing to the Terms & Conditions');
+        if (tncaccepted != 1 || tncaccepted != '1') {
+            customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
+            customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
+            customerRecord.setFieldValue('custentity_date_prospect_opportunity',
+                getDate());
+            customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
+            var customerRecordId = nlapiSubmitRecord(customerRecord);
 
-        var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
-            'customsearch_sales_record_auto_signed__2');
+            var form = nlapiCreateForm('Thank you for Agreeing to the Terms & Conditions');
 
-        var filPo = [];
-        filPo[filPo.length] = new nlobjSearchFilter('internalid',
-            'custrecord_sales_customer', 'anyof', customerRecordId);
+            var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
+                'customsearch_sales_record_auto_signed__2');
 
-        salesRecordSearch.addFilters(filPo);
+            var filPo = [];
+            filPo[filPo.length] = new nlobjSearchFilter('internalid',
+                'custrecord_sales_customer', 'anyof', customerRecordId);
 
-        var resultSetSalesRecord = salesRecordSearch.runSearch();
+            salesRecordSearch.addFilters(filPo);
 
-        resultSetSalesRecord.forEachResult(function (searchResult) {
+            var resultSetSalesRecord = salesRecordSearch.runSearch();
 
-            var salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
+            resultSetSalesRecord.forEachResult(function (searchResult) {
 
-            var email_body =
-                'Customer has agreed to the Terms & Conditions. </br></br>';
-            email_body +=
-                '<u><b>Customer Details</b></u> </br>';
-            email_body += 'Customer Name: ' + entityId + ' ' + compnayName +
-                '</br>';
+                var salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
 
-            var email_subject = 'Terms & Conditions Agreed - ' +
-            entityId + ' ' + compnayName;
+                var email_body =
+                    'Customer has agreed to the Terms & Conditions. </br></br>';
+                email_body +=
+                    '<u><b>Customer Details</b></u> </br>';
+                email_body += 'Customer Name: ' + entityId + ' ' + compnayName +
+                    '</br>';
 
-            var records = new Array();
-            records['entity'] = customerRecordId;
+                var email_subject = 'Terms & Conditions Agreed - ' +
+                    entityId + ' ' + compnayName;
 
-            nlapiSendEmail(112209, salesRepEmail,
-                email_subject, email_body, ['luke.forbes@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'], null, records, null, true);
+                var records = new Array();
+                records['entity'] = customerRecordId;
 
-            return true;
-        });
+                nlapiSendEmail(112209, salesRepEmail,
+                    email_subject, email_body, ['luke.forbes@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'], null, records, null, true);
 
-
+                return true;
+            });
+            
+        } else {
+            var form = nlapiCreateForm('The Terms & Conditions has already been accepted');
+        }
 
         response.writePage(form);
 

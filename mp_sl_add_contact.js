@@ -159,8 +159,7 @@ function addContact(request, response) {
                 nlapiLogExecution('DEBUG', 'salesRepEmail', salesRepEmail);
                 nlapiLogExecution('DEBUG', 'contactId', contactId);
 
-                nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au',
-                    'customerservice@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
+                nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
                     'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
                 var email_body =
@@ -183,10 +182,10 @@ function addContact(request, response) {
                 var records = new Array();
                 records['entity'] = custInternalID;
 
-                nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
-                    email_subject, email_body, ['mj@roundtableapps.com',
-                    'ankith.ravindran@mailplus.com.au'
-                ], null, records, null, true);
+                // nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
+                //     email_subject, email_body, ['mj@roundtableapps.com',
+                //     'ankith.ravindran@mailplus.com.au'
+                // ], null, records, null, true);
 
                 var userJSON = '{';
                 userJSON += '"customer_ns_id" : "' + custInternalID + '",'
@@ -305,8 +304,7 @@ function addContact(request, response) {
                 attachments.push(nlapiLoadFile(5044913))
                 attachments.push(nlapiLoadFile(6000511))
 
-                nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au',
-                    'customerservice@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
+                nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
                     'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
                 var email_body =
@@ -329,10 +327,10 @@ function addContact(request, response) {
                 var records = new Array();
                 records['entity'] = custInternalID;
 
-                nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
-                    email_subject, email_body, ['mj@roundtableapps.com',
-                    'ankith.ravindran@mailplus.com.au'
-                ], null, records, null, true);
+                // nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
+                //     email_subject, email_body, ['mj@roundtableapps.com',
+                //     'ankith.ravindran@mailplus.com.au'
+                // ], null, records, null, true);
 
                 var userJSON = '{';
                 userJSON += '"customer_ns_id" : "' + custInternalID + '",'

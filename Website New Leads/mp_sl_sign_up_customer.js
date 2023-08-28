@@ -140,7 +140,8 @@ function leadForm(request, response) {
             customerRecord.setFieldValue('custentity_portal_access', 1);
             customerRecord.setFieldValue('custentity_mpex_invoicing_cycle', 2);
 
-            customerRecord.setFieldValue('entitystatus', 13);
+
+            customerRecord.setFieldValue('entitystatus', 66);
 
             if (mp_std_activated == 1 || mp_std_activated == '1') {
                 customerRecord.setFieldValue('custentity_mp_std_activate', 1);
@@ -166,10 +167,42 @@ function leadForm(request, response) {
 
             var finacnial_tab_size = customerRecord.getLineItemCount('itempricing');
             var old_financial_tab_size = finacnial_tab_size;
-            old_financial_tab_size++;
-            customerRecord.setLineItemValue('itempricing', 'item', old_financial_tab_size, 8981);
-            customerRecord.setLineItemValue('itempricing', 'level', old_financial_tab_size, -1);
-            customerRecord.setLineItemValue('itempricing', 'price', old_financial_tab_size, 0);
+            var financialTabItemArray = [];
+
+            if (finacnial_tab_size == 0) {
+
+                old_financial_tab_size++;
+                customerRecord.setLineItemValue('itempricing', 'item', old_financial_tab_size, 8981);
+                customerRecord.setLineItemValue('itempricing', 'level', old_financial_tab_size, -1);
+                customerRecord.setLineItemValue('itempricing', 'price', old_financial_tab_size, 0);
+            } else {
+                // for (var i = 1; i <= customerRecord.getLineItemCount('itempricing'); i++) {
+                //     var financialTabItem = customerRecord.getLineItemValue('itempricing', 'item',
+                //         i);
+                //     financialTabItemArray[financialTabItemArray.length] = financialTabItem;
+                // }
+            }
+
+
+            // var params3 = {
+            //     custscriptcustomer_id: parseInt(request.getParameter('customer')),
+            //     custscriptids: item_ids.toString(),
+            //     custscriptlinked_service_ids: null,
+            //     custscriptfinancial_tab_array: financial_tab_item_array.toString(),
+            //     custscriptfinancial_tab_price_array: financial_tab_price_array.toString()
+            // }
+            // /**
+            //         * Description - Schedule Script to create / edit / delete the financial tab items with the new details
+            //         */
+            // var status = nlapiScheduleScript(
+            //     'customscript_sc_smc_item_pricing_update', 'customdeploy1', params3
+            // );
+            // if (status == 'QUEUED') {
+
+            //     response.sendRedirect('RECORD', 'customer', parseInt(request.getParameter(
+            //         'customer')), false);
+            //     return false;
+            // }
 
 
             var customerRecordId = nlapiSubmitRecord(customerRecord);
@@ -260,24 +293,76 @@ function leadForm(request, response) {
             //     nlapiDateToString(date, 'timeofday'));
             // var sales_record_id = nlapiSubmitRecord(salesRecord);
 
-            customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
-            customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
-            customer_comm_reg.setFieldValue('custrecord_comm_date', getDate());
-            customer_comm_reg.setFieldValue('custrecord_comm_date_signup', getDate());
-            customer_comm_reg.setFieldValue('custrecord_customer', customerRecordId);
-            customer_comm_reg.setFieldValue('custrecord_salesrep', salesRep);
-            customer_comm_reg.setFieldValue('custrecord_franchisee', zee_id);
-            customer_comm_reg.setFieldValue('custrecord_wkly_svcs', '5');
-            customer_comm_reg.setFieldValue('custrecord_in_out', 1);
-            customer_comm_reg.setFieldValue('custrecord_trial_status', 2);
-            customer_comm_reg.setFieldValue('custrecord_state', state_id);
-            customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
-            customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
-            customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
-            // customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
-            //     sales_record_id);
+            var commReg_search = nlapiLoadSearch('customrecord_commencement_register', 'customsearch_service_commreg_assign');
 
-            var commRegId = nlapiSubmitRecord(customer_comm_reg);
+            nlapiLogExecution("DEBUG", "customerRecordId", customerRecordId);
+            nlapiLogExecution("DEBUG", "zee_id", zee_id);
+
+            var filterExpression = [
+                ["custrecord_customer", "anyof", customerRecordId], // customer id
+                "AND", ["custrecord_franchisee", "is", zee_id] // partner id
+            ];
+
+            var newFilters = new Array();
+            newFilters[0] = new nlobjSearchFilter('custrecord_customer', null, 'anyof', customerRecordId);
+            newFilters[1] = new nlobjSearchFilter('custrecord_franchisee', null, 'anyof', zee_id);
+
+            // commReg_search.setFilterExpression(filterExpression);
+            commReg_search.addFilters(newFilters);
+
+
+            var comm_reg_results = commReg_search.runSearch();
+
+            var count_commReg = 0;
+            var commRegId = null;
+
+            comm_reg_results.forEachResult(function (searchResult) {
+                count_commReg++;
+
+                /**
+                 * [if description] - Only the latest comm Reg needs to be assigned
+                 */
+                if (count_commReg == 1) {
+                    commRegId = searchResult.getValue('internalid');
+                    customer_comm_reg = nlapiLoadRecord('customrecord_commencement_register', commRegId);
+                    customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
+                    commRegId = nlapiSubmitRecord(customer_comm_reg);
+                }
+
+                /**
+                 * [if description] - if more than one Comm Reg, error mail is sent
+                 */
+                if (count_commReg > 1) {
+                    return false;
+                }
+                return true;
+            });
+
+            nlapiLogExecution("DEBUG", "count_commReg", count_commReg);
+            nlapiLogExecution("DEBUG", "commRegId", commRegId);
+
+            if (isNullorEmpty(commRegId)) {
+                customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
+                customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
+                customer_comm_reg.setFieldValue('custrecord_comm_date', getDate());
+                customer_comm_reg.setFieldValue('custrecord_comm_date_signup', getDate());
+                customer_comm_reg.setFieldValue('custrecord_customer', customerRecordId);
+                customer_comm_reg.setFieldValue('custrecord_salesrep', salesRep);
+                customer_comm_reg.setFieldValue('custrecord_franchisee', zee_id);
+                customer_comm_reg.setFieldValue('custrecord_wkly_svcs', '5');
+                customer_comm_reg.setFieldValue('custrecord_in_out', 1);
+                customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
+                customer_comm_reg.setFieldValue('custrecord_state', state_id);
+                customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
+                customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
+                customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
+                // customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
+                //     sales_record_id);
+
+                commRegId = nlapiSubmitRecord(customer_comm_reg);
+            }
+
+
 
 
             var phonecall = nlapiCreateRecord('phonecall');
@@ -367,10 +452,10 @@ function leadForm(request, response) {
         var records = new Array();
         records['entity'] = customerRecordId;
 
-        nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
-            email_subject, email_body, ['mj@roundtableapps.com',
-            'ankith.ravindran@mailplus.com.au'
-        ], null, records, null, true);
+        // nlapiSendEmail(112209, ['mailplussupport@protechly.com'],
+        //     email_subject, email_body, ['mj@roundtableapps.com',
+        //     'ankith.ravindran@mailplus.com.au'
+        // ], null, records, null, true);
 
         var userJSON = '{';
         userJSON += '"customer_ns_id" : "' + customerRecordId + '",'
@@ -477,6 +562,22 @@ function leadForm(request, response) {
                     'ankith.ravindran@mailplus.com.au'
                 ], null, sales_rep_records, null, true);
             }
+
+            var email_body_internal =
+                'Please check the below CUSTOMER details </br></br>';
+            email_body_internal +=
+                '<u><b>Customer Details</b></u> </br></br>Customer NS ID: ' +
+                customerRecordId + '</br>';
+            email_body_internal += 'Customer Name: ' + entity_id + ' ' + business_name +
+                '</br>';
+            email_body_internal += 'Franchisee: ' + partner_text + '</br></br>';
+            nlapiSendEmail(112209, ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'],
+                entity_id + ' ' + customer_name + ' - ' + 'Customer Account Created - Please Check & Finalise', email_body_internal, [
+                'ankith.ravindran@mailplus.com.au'
+            ], null, records, null, true);
+
+           
+
 
         }
 

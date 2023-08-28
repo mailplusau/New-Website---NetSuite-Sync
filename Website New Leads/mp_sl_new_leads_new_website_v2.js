@@ -317,13 +317,13 @@ function leadForm(request, response) {
             nlapiDateToString(date, 'timeofday'));
           nlapiSubmitRecord(salesRecord);
         } else if (postcode == 2481) { //Albury
-          to = ['david.gdanski@mailplus.com.au'];
+          var salesRep = 668712; //Belinda Urbani
+          to = ['belinda.urbani@mailplus.com.au'];
           body =
-            'Hi David, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+            'Hi Belinda, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
             entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
           nlapiSendEmail(from, to, subject, body, cc);
           var salesRecord = nlapiCreateRecord('customrecord_sales');
-          var salesRep = 690145; //Lee Russell
 
           salesRecord.setFieldValue('custrecord_sales_customer',
             customerRecordId);
@@ -360,8 +360,8 @@ function leadForm(request, response) {
         //Create Sales Record
         var salesRecord = nlapiCreateRecord('customrecord_sales');
         if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
-          var salesRep = 690145; //David Gdanski
-          to = ['david.gdanski@mailplus.com.au']
+          var salesRep = 668712; //Belinda Urbani
+          to = ['belinda.urbani@mailplus.com.au'];
         } else if ((postcode >= 5000 &&
           postcode <= 5999)) {
           var salesRep = 668712; //Belinda Urbani
