@@ -1311,6 +1311,162 @@ function leadForm(request, response) {
             }
             nlapiSubmitRecord(prodPricingRecord);
 
+            /*
+           5Kg	    1
+           3Kg	    2
+           1Kg	    3
+           500g	4
+           B4	    5
+           10Kg	8
+           25Kg	9
+           250g	10
+           */
+            var premium10kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 8);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 17);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 18);
+            }
+
+            premium10kgItemPricingSearch.addFilters(newFilters);
+
+            var premium10kgItemPricingSearchResult = premium10kgItemPricingSearch.runSearch();
+
+            var itemInternalpremium10kgID = null;
+            premium10kgItemPricingSearchResult.forEachResult(function (premium10kgItemPricingSearchResultSet) {
+                itemInternalpremium10kgID = premium10kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var premium20kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 11);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 17);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 18);
+            }
+
+            premium20kgItemPricingSearch.addFilters(newFilters);
+
+            var premium20kgItemPricingSearchResult = premium20kgItemPricingSearch.runSearch();
+
+            var itemInternalPremium20kgID = null;
+            premium20kgItemPricingSearchResult.forEachResult(function (premium20kgItemPricingSearchResultSet) {
+                itemInternalPremium20kgID = premium20kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var premium1kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 3);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 17);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 18);
+            }
+
+            premium1kgItemPricingSearch.addFilters(newFilters);
+
+            var premium1kgItemPricingSearchResult = premium1kgItemPricingSearch.runSearch();
+
+            var itemInternalPremium1kgID = null;
+            premium1kgItemPricingSearchResult.forEachResult(function (premium1kgItemPricingSearchResultSet) {
+                itemInternalPremium1kgID = premium1kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var premium3kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 2);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 17);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 18);
+            }
+
+            premium3kgItemPricingSearch.addFilters(newFilters);
+
+            var premium3kgItemPricingSearchResult = premium3kgItemPricingSearch.runSearch();
+
+            var itemInternalPremium3kgID = null;
+            premium3kgItemPricingSearchResult.forEachResult(function (premium3kgItemPricingSearchResultSet) {
+                itemInternalPremium3kgID = premium3kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+            var premium5kgItemPricingSearch = nlapiLoadSearch('noninventoryitem', 'customsearch3745');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_carrier', null, 'anyof', 9);
+            newFilters[newFilters.length] = new nlobjSearchFilter(
+                'custitem_product_weight', null, 'anyof', 1);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 17);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter(
+                    'custitem_price_plans', null, 'anyof', 18);
+            }
+
+            premium5kgItemPricingSearch.addFilters(newFilters);
+
+            var premium5kgItemPricingSearchResult = premium5kgItemPricingSearch.runSearch();
+
+            var itemInternalPremium5kgID = null;
+            premium5kgItemPricingSearchResult.forEachResult(function (premium5kgItemPricingSearchResultSet) {
+                itemInternalPremium5kgID = premium5kgItemPricingSearchResultSet.getValue('internalid');
+                return true;
+            });
+
+
+            var prodPricingRecord = nlapiCreateRecord('customrecord_product_pricing');
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_last_update', getDate());
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_customer', customerRecordId);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_delivery_speeds', 4);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_10kg', itemInternalpremium10kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_20kg', itemInternalPremium20kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_1kg', itemInternalPremium1kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_3kg', itemInternalPremium3kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalPremium5kgID);
+            prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
+            prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
+            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 17);
+            } else {
+                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 18);
+            }
+            nlapiSubmitRecord(prodPricingRecord);
+
             dataOut += '{"ns_id":"' + customerRecordId + '"},';
 
             dataOut = dataOut.substring(0, dataOut.length - 1);
