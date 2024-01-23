@@ -2011,7 +2011,7 @@
                     current_carrier: '0',
                     pageURL: pageURL,
                     subscribe: subscribe,
-                    lpo_notes:lpo_notes
+                    lpo_notes: lpo_notes
                 };
                 console.log(params);
                 var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
@@ -2027,6 +2027,113 @@
                 });
             }
         });
+
+        //On submit of Submit Now button in the LPO Owner Information Page
+        jQuery('.lpo-owner-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var lpo_name = jQuery('#lpo_name').val();
+            var lpo_owner_name = jQuery('#lpo_owner_name').val();
+            var email = jQuery('#lpo_email').val();
+            var phone_number = jQuery('#lpo_phone').val();
+
+            var address1 = jQuery('#del_add1').val();
+            var address2 = jQuery('#del_address2').val();
+            var city = jQuery('#del_city').val();
+            var state = jQuery('#del_state').val();
+            // if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
+            var postcode = jQuery('#del_postcode').val();
+            var lpo_notes = jQuery('#lpo_notes').val();
+            var pageURL = jQuery(location).attr("href");
+            var lat = jQuery('#del_lat').val();
+            var lng = jQuery('#del_lng').val();
+
+            if (lpo_name == " " || lpo_name == "") {
+                input_error = true;
+                jQuery('#lpo_name').addClass('input-field-error');
+                jQuery('#lpo_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#lpo_name').removeClass('input-field-error');
+                    jQuery('#lpo_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After business name ' + input_error);
+            if (lpo_owner_name == " " || lpo_owner_name == "") {
+                input_error = true;
+                jQuery('#lpo_owner_name').addClass('input-field-error');
+                jQuery('#lpo_owner_name').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#lpo_owner_name').removeClass('input-field-error');
+                    jQuery('#lpo_owner_name').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After full name ' + input_error);
+            if (email == " " || email == "" || IsEmail(email)) {
+                input_error = true;
+                jQuery('#lpo_email').addClass('input-field-error');
+                jQuery('#lpo_email').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#lpo_email').removeClass('input-field-error');
+                    jQuery('#lpo_email').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After email ' + input_error);
+            if (phone_number == " " || phone_number == "" || validatePhone(phone_number) == false) {
+                input_error = true;
+                jQuery('#lpo_phone').addClass('input-field-error');
+                jQuery('#lpo_phone').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#lpo_phone').removeClass('input-field-error');
+                    jQuery('#lpo_phone').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After phone number ' + input_error);
+            if (postcode == " " || postcode == "" || validatePostcode(postcode) == false) {
+                input_error = true;
+                jQuery('#postcode').addClass('input-field-error');
+                jQuery('#postcode').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#postcode').removeClass('input-field-error');
+                    jQuery('#postcode').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After postcode ' + input_error);
+
+            if (input_error == false) {
+                jQuery('.lpo-owner-submit').html('Thank You!');
+                jQuery('.lpo-owner-submit').attr('disabled', 'disabled');
+
+                var fullNameSplit = lpo_owner_name.split(" ");
+                var params = {
+                    business_name: lpo_name,
+                    lpo_owner_name: lpo_owner_name,
+                    email: email,
+                    phone_number: phone_number,
+                    address1: address1,
+                    address2: address2,
+                    city: city,
+                    state: state,
+                    postcode: postcode,
+                    lat: lat,
+                    lng: lng,
+                    notes: lpo_notes,
+                    pageURL: pageURL
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1652&deploy=1&compid=1048144&h=a9df91afe9c7971f52d5'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(123);
+                        console.log(jResp);
+                        window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                        // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
+                    }
+                });
+            }
+        });
+
 
 
         //On submit of Enquire Now button
