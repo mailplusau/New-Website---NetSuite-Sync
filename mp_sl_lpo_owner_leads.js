@@ -108,11 +108,12 @@ function leadForm(request, response) {
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_email', email);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_number', phone_number);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_notes', lpo_notes);
-            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_st_num_name', address1);
-            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_level', address2);
+            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_st_num_name', address2);
+            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_level', address1);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_suburb', city);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_state', state_id);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_postcode', postcode);
+            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_status', 1);
 
 
             var lpoLeadRecordID = nlapiSubmitRecord(lpoLeadrecord);

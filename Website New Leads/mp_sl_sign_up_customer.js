@@ -572,7 +572,7 @@ function leadForm(request, response) {
                 '</br>';
             email_body_internal += 'Franchisee: ' + partner_text + '</br></br>';
             nlapiSendEmail(112209, ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'],
-                entity_id + ' ' + customer_name + ' - ' + 'Customer Account Created - Please Check & Finalise', email_body_internal, [
+                entity_id + ' ' + business_name + ' - ' + 'Customer Account Created - Please Check & Finalise', email_body_internal, [
                 'ankith.ravindran@mailplus.com.au'
             ], null, records, null, true);
 
