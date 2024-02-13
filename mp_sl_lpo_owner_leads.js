@@ -37,6 +37,7 @@ function leadForm(request, response) {
         var lat = request.getParameter('lat');
         var lng = request.getParameter('lng');
         var lpo_notes = request.getParameter('notes');
+        var pageURL = request.getParameter('pageURL');
 
         nlapiLogExecution('DEBUG', 'business_name', business_name);
         nlapiLogExecution('DEBUG', 'lpo_owner_name', lpo_owner_name);
@@ -90,19 +91,7 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
         nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
 
-        var params = {
-            business_name: business_name,
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            phone_number: phone_number,
-            address1: address1,
-            address2: address2,
-            city: city,
-            state: state,
-            postcode: postcode,
-            pageURL: pageURL
-        };
+        
 
         //NEW CUSTOMER RECORD
         var dataOut = '{"dataOut":[';
@@ -117,20 +106,20 @@ function leadForm(request, response) {
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_name', business_name);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_name', lpo_owner_name);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_email', email);
-            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_number', phone);
+            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_contact_number', phone_number);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_notes', lpo_notes);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_st_num_name', address1);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_level', address2);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_suburb', city);
-            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_state', state);
+            lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_state', state_id);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_postcode', postcode);
 
 
             var lpoLeadRecordID = nlapiSubmitRecord(lpoLeadrecord);
 
             //Email to be sent out to Corrine about the new LPO Lead.
-            templateSubject = ''
-            nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep);
+            // templateSubject = ''
+            // nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep);
 
 
         }
