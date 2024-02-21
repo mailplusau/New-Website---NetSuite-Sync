@@ -305,6 +305,7 @@ function createLead(data) {
                                 var salesRecord = nlapiCreateRecord('customrecord_sales');
                                 var salesRep = 696160; //Kerina Helliwell
                                 to = ['kerina.helliwell@mailplus.com.au'];
+
                                 nlapiSendEmail(from, to, subject, body, cc);
 
                                 salesRecord.setFieldValue('custrecord_sales_customer',
@@ -325,8 +326,8 @@ function createLead(data) {
                             //Create Sales Record
                             var salesRecord = nlapiCreateRecord('customrecord_sales');
                             if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
-                                var salesRep = 690145; //David Gdanski
-                                to = ['david.gdanski@mailplus.com.au']
+                                var salesRep = 668712; //David Gdanski
+                                to = ['belinda.urbani@mailplus.com.au']
                             } else if ((postcode >= 5000 &&
                                 postcode <= 5999)) {
                                 var salesRep = 668712; //Belinda Urbani
@@ -354,20 +355,20 @@ function createLead(data) {
                         }
 
 
-                        var from = 112209; //MailPlus team
-                        var to = ['laura.busse@mailplus.com.au'];
-                        var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
-                            'ankith.ravindran@mailplus.com.au'
-                        ];
-                        var subject = 'Check Service Territory - Sales Lead - ' + entity_id + ' ' + customer_name + '';
-                        var cust_id_link =
-                            'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
-                            customerRecordId;
-                        var body =
-                            'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
-                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                        // var from = 112209; //MailPlus team
+                        // var to = ['laura.busse@mailplus.com.au'];
+                        // var cc = ['fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au',
+                        //     'ankith.ravindran@mailplus.com.au'
+                        // ];
+                        // var subject = 'Check Service Territory - Sales Lead - ' + entity_id + ' ' + customer_name + '';
+                        // var cust_id_link =
+                        //     'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
+                        //     customerRecordId;
+                        // var body =
+                        //     'New sales lead has been created in NetSuite. \n Please validate if the lead can be serviced by a franchisee. \n Customer Name: ' +
+                        //     entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                        nlapiSendEmail(from, to, subject, body, cc);
+                        // nlapiSendEmail(from, to, subject, body, cc);
 
                     } else if (!isNullorEmpty(zee_id) && zeeCount == 1) {
                         if (postcode >= 2000 && postcode <= 2999) {
