@@ -1,6 +1,6 @@
 /* Header- Enquire Now Buttong */
 .btn-bg1 {
-    background-color: #EAF044 !important;
+    background-color: #EAF044;
     border-radius: 30px;
 }
 
@@ -1361,10 +1361,10 @@
     color: #095c7b !important;
 }
 
-.stars__icon{
-	 color: #095c7b !important;
+.stars__icon {
+    color: #095c7b !important;
 }
 
-.R-IconButton__icon{
-	color: #095c7b !important;
+.R-IconButton__icon {
+    color: #095c7b !important;
 }
