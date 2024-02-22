@@ -91,7 +91,7 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
         nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
 
-        
+
 
         //NEW CUSTOMER RECORD
         var dataOut = '{"dataOut":[';
@@ -118,9 +118,19 @@ function leadForm(request, response) {
 
             var lpoLeadRecordID = nlapiSubmitRecord(lpoLeadrecord);
 
-            //Email to be sent out to Corrine about the new LPO Lead.
-            // templateSubject = ''
-            // nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep);
+            // Email to be sent out to Corrine about the new LPO Lead.
+            var from = 112209; //MailPlus team
+            var to = ['corinne.jackson@mailplus.com.au'];
+            var cc = ['chris.burgess@mailplus.com.au', 'michael.mcdaid@mailplus.com.au', 'alexandra.bathman@mailplus.com.au'];
+            var emailSubject = 'New LPO Owner Lead - ' + business_name;
+
+            var emailBody = '';
+            var cust_id_link =
+                'https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1844&deploy=1&lpoleadid=' + lpoLeadRecordID;
+            var body =
+                'New LPO Owner lead has been created in NetSuite. \n LPO Name: ' +
+                business_name + '\nLink: ' + cust_id_link;
+            nlapiSendEmail(from, to, emailSubject, body, cc);
 
 
         }
