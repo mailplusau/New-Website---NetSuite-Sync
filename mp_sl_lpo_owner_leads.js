@@ -91,7 +91,11 @@ function leadForm(request, response) {
         nlapiLogExecution('DEBUG', 'splitPageURL[0]', splitPageURL[0]);
         nlapiLogExecution('DEBUG', 'splitPageURL[1]', splitPageURL[1]);
 
-
+        if (splitPageURL[1] == 'lpo-profile-creation/') {
+            splitPageURL[1] = 'Head Office Generated'
+        } else {
+            splitPageURL[1] = 'Inbound Web'
+        }
 
         //NEW CUSTOMER RECORD
         var dataOut = '{"dataOut":[';
@@ -114,6 +118,7 @@ function leadForm(request, response) {
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_state', state_id);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_address_postcode', postcode);
             lpoLeadrecord.setFieldValue('custrecord_lpo_lead_status', 1);
+            lpoLeadrecord.setFieldValue('custrecord_webpage_url_source', splitPageURL[1]);
 
 
             var lpoLeadRecordID = nlapiSubmitRecord(lpoLeadrecord);
