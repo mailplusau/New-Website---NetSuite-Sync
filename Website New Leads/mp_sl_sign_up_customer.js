@@ -635,8 +635,11 @@ function leadForm(request, response) {
             );
             nlapiLogExecution('DEBUG', 'status', status);
         } else if (mp_std_activated == 1 || mp_std_activated == '1') {
+            var params = {
+                custscript_prod_pricing_cust_id: customerRecordId
+            }
             var status = nlapiScheduleScript(
-                'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', null
+                'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', params
             );
             nlapiLogExecution('DEBUG', 'status', status);
         }
