@@ -558,7 +558,7 @@ function leadForm(request, response) {
 
             if (!isNullorEmpty(salesRepEmail)) {
                 nlapiSendEmail(112209, salesRepEmail,
-                    sales_rep_email_subject, sales_rep_email_body, ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                    sales_rep_email_subject, sales_rep_email_body, ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                     'ankith.ravindran@mailplus.com.au'
                 ], null, sales_rep_records, null, true);
             }
@@ -576,7 +576,7 @@ function leadForm(request, response) {
                 'ankith.ravindran@mailplus.com.au'
             ], null, records, null, true);
 
-           
+
 
 
         }
@@ -611,7 +611,7 @@ function leadForm(request, response) {
 
             var from = 112209; //MailPlus team
             var to;
-            var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+            var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                 'ankith.ravindran@mailplus.com.au'
             ];
             var subject = 'Sales HOT Lead Auto Signed Up - ' + entity_id + ' ' + business_name + '';

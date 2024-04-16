@@ -425,7 +425,7 @@ function leadForm(request, response) {
 
                 var from = 112209; //MailPlus team
                 var to;
-                var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                     'ankith.ravindran@mailplus.com.au'
                 ];
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
@@ -712,7 +712,7 @@ function leadForm(request, response) {
                 emailAttach['entity'] = customerRecordId;
                 var from = 112209; //MailPlus team
                 var to;
-                var cc = ['luke.forbes@mailplus.com.au', 'belinda.urbani@mailplus.com.au',
+                var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                     'ankith.ravindran@mailplus.com.au'
                 ];
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
