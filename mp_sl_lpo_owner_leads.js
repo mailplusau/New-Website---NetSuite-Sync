@@ -126,7 +126,7 @@ function leadForm(request, response) {
             if (splitPageURL[1] != 'lpo-profile-creation/') {
                 // Email to be sent out to Corrine about the new LPO Lead.
                 var from = 112209; //MailPlus team
-                var to = ['corinne.jackson@mailplus.com.au'];
+                var to = ['corinne.jackson@mailplus.com.au', 'kerry.oneill@mailplus.com.au'];
                 var cc = ['chris.burgess@mailplus.com.au', 'michael.mcdaid@mailplus.com.au', 'alexandra.bathman@mailplus.com.au'];
                 var emailSubject = 'New LPO Owner Lead - ' + business_name;
 
