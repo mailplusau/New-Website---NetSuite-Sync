@@ -1,0 +1,43 @@
+<h2 class="display-12 text-center text-md-center main-text-form"
+    style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;">Message Your Operator</h2>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">Enter the tracking number and select whether you are the
+    sender or receiver below, then fill in all fields that appear.</h4>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">This will automatically create a ticket in our system and
+    open an enquiry with our local Customer Service team. Please allow for 48 hours for a response. If the matter is
+    urgent, please call 1300 65 65 95 Mon-Fri, during business hours.</h4>
+<input id="from_email" class="form-control form-control-flush input-field-alignment input-field-default"
+    style="display: none;" type="text" value="" />
+<div class="orientation_from_email">
+    <div class="row">
+        <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- COMPANY NAME -->
+            <div style="text-align: center;"></div>
+            <div class="form-label-group hide"><label class="input-field-label">Company Name*</label>
+                <input id="company_name"
+                    class="form-control form-control-flush input-field-alignment input-field-default hide" required=""
+                    type="text" value="" />
+            </div>
+            <input id="customerInternalId"
+                class="form-control form-control-flush input-field-alignment input-field-default" style="display: none;"
+                readonly="readonly" required="" type="text" value="" />
+            <input id="contactid" class="form-control form-control-flush input-field-alignment input-field-default"
+                style="display: none;" readonly="readonly" required="" type="text" value="" />
+
+        </div>
+    </div>
+</div>
+<div class="row contact_details_row ">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- COMPANY NAME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label">Message*</label>
+            <textarea id="message" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" rows="4"></textarea>
+        </div>
+    </div>
+</div>
+<h4 style="text-align: center;"><!-- Submit -->
+    <button class="btn btn-block-form btn-primary mt-3 lift get-in-touch-button book-sales-call-button-submit"
+        style="margin-top: 0.75rem !important; width: 100%;">Submit
+    </button>
+</h4>
