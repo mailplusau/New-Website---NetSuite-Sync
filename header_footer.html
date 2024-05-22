@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://assets.reviews.io/css/widgets/carousel-widget.css?_t=2022032200">
 <link rel="stylesheet" href="https://assets.reviews.io/iconfont/reviewsio-icons/style.css?_t=2022032200">
 <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
-<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet" />
 <script>
     var investor_radio = false;
     var owner_radio = false;
@@ -2604,6 +2604,37 @@
             }
         });
 
+        //Message Your Operator
+        jQuery('.message-your-operator-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var customerInternalId = jQuery('#customerInternalId').val();
+            var email = jQuery('#email').val();
+            var message = jQuery('#message').val();
+
+
+            if (input_error == false) {
+                jQuery('.message-your-operator-button-submit').html('Thank You!');
+                jQuery('.message-your-operator-button-submit').attr('disabled', 'disabled');;
+                var params = {
+                    customerInternalId: customerInternalId,
+                    email: email,
+                    message: message
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1880&deploy=1&compid=1048144&ns-at=AAEJ7tMQq8oqScYRZLvUhx5Rl04VeLN5l_yRNdMaPriVbzPY3Po'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(jResp);
+                        // act on the results
+                    }
+                });
+
+                // window.location.href = 'https://mailplus.com.au/book-a-call-confirmation/?date=' + dateVal + '&time=' + timeVal;
+            }
+        });
 
         //On submit of create IT ticket page
         jQuery('.create-portal-orientation-button-submit').click(function () {

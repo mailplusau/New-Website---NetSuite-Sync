@@ -1,0 +1,36 @@
+<script>
+    var mainURLSplit = window.location.href.split('?');
+    console.log(mainURLSplit)
+    console.log(mainURLSplit.length)
+    var urlParams = mainURLSplit[1].split('&');
+    console.log(urlParams)
+    var urlParams = mainURLSplit[1].split('&');
+    console.log(urlParams)
+    var custInternalId = urlParams[0].split('=')
+    var emailId = urlParams[1].split('=')
+
+    document.getElementById('customerInternalId').value = custInternalId[1].toString();
+    document.getElementById('email').value = decodeURIComponent(emailId[1]);
+    document.getElementById('customerInternalId').setAttribute('value', custInternalId[1].toString());
+    document.getElementById('email').setAttribute('value', decodeURIComponent(emailId[1]));
+
+    console.log('customerInternalId: ' + custInternalId[1].toString())
+    console.log('email: ' + decodeURIComponent(emailId[1]))
+
+
+    var date = new Date();
+
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+
+    var today = year + "-" + month + "-" + day;
+
+    console.log('today: ' + today)
+
+    document.getElementById("reviewsio-carousel-widget").style.display = "none";  //divsToHide is an array
+
+</script>
