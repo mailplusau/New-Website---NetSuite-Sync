@@ -44,12 +44,19 @@ function emailYourOperator(request, response) {
         var customerRecord = nlapiLoadRecord('customer', customerInternalId);
         var entity_id = customerRecord.getFieldValue('entityid');
         var entitystatus = customerRecord.getFieldValue('entitystatus');
-        var business_name = customerRecord.getFieldText('companyname');
+        var business_name = customerRecord.getFieldValue('companyname');
         var partner_text = customerRecord.getFieldText('partner');
         var partner_id = customerRecord.getFieldValue('partner');
 
         var partner_email = nlapiLoadRecord('partner', partner_id).getFieldValue('email');
         var partner_phone = nlapiLoadRecord('partner', partner_id).getFieldValue('custentity2');
+
+        partner_phone = partner_phone.replace(/ /g, '');
+        partner_phone = partner_phone.slice(1);
+        partner_phone = '+61' + partner_phone;
+
+        nlapiLogExecution('DEBUG', 'partner_email', partner_email);
+        nlapiLogExecution('DEBUG', 'partner_phone', partner_phone);
 
         var emailAttach = new Object();
         emailAttach['entity'] = customerInternalId;
@@ -65,6 +72,19 @@ function emailYourOperator(request, response) {
 
 
         nlapiSendEmail(from, to, emailSubject, emailBody, null, bcc, emailAttach, null, true);
+
+        var headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic U0s0ZTgwNTdiNjZkOGYyMGM0M2ExNGI2Y2E4NmY0MjgwZDo0alpGVDB5aDFWbUxRNWNtVDhoNlNUYkVibGZOTTBhYg=="
+        };
+
+        var postdata = {
+            "Body": 'Message from your customer - ' + business_name + '. PLease check your emails for more details.',
+            "To": partner_phone,
+            "From": "+61488883115"
+        }
+
+        var smsResponse = nlapiRequestURL("https://api.twilio.com/2010-04-01/Accounts/ACc4fb93dc175b8f9066ed80bf0caecdb7/Messages.json", postdata, headers, "POST");
 
 
         var returnObj = {
