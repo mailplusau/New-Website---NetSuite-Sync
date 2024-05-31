@@ -47,22 +47,25 @@ function portalOrientation(request, response) {
             timeVal: timeVal
         };
 
-        var endTime;
-        var timeArray = timeVal.split(':')
-        if (timeArray[0] >= 12) {
-            timeVal = (parseInt(timeVal[0]) - 12) + ':' + timeArray[1] + ' PM'
-            endTime = ((parseInt(timeVal[0]) - 12) + 1) + ':' + timeArray[1] + ' PM'
-        } else {
-            timeVal = timeVal + ' AM'
-            if (timeArray[0] == 11) {
-                endTime = '12' + ':' + + timeArray[1] + ' PM'
-            } else {
-                endTime = (parseInt(timeArray[0]) + 1) + ':' + timeArray[1] + ' AM'
-            }
-        }
+        var customerRecord = nlapiLoadRecord('customer', customerInternalId);
+        var entityId = customerRecord.getFieldValue('entityid');
 
-        nlapiLogExecution('DEBUG', 'timeVal', timeVal);
-        nlapiLogExecution('DEBUG', 'endTime', endTime);
+        // var endTime;
+        // var timeArray = timeVal.split(':')
+        // if (timeArray[0] >= 12) {
+        //     timeVal = (parseInt(timeVal[0]) - 12) + ':' + timeArray[1] + ' PM'
+        //     endTime = ((parseInt(timeVal[0]) - 12) + 1) + ':' + timeArray[1] + ' PM'
+        // } else {
+        //     timeVal = timeVal + ' AM'
+        //     if (timeArray[0] == 11) {
+        //         endTime = '12' + ':' + + timeArray[1] + ' PM'
+        //     } else {
+        //         endTime = (parseInt(timeArray[0]) + 1) + ':' + timeArray[1] + ' AM'
+        //     }
+        // }
+
+        // nlapiLogExecution('DEBUG', 'timeVal', timeVal);
+        // nlapiLogExecution('DEBUG', 'endTime', endTime);
 
         var customerRecord = nlapiLoadRecord('customer', customerInternalId);
         customerRecord.setFieldValue('custentity_portal_training_required', 1);
@@ -74,20 +77,34 @@ function portalOrientation(request, response) {
 
         var notes = 'Call Back Date: ' + callback_date + '. Call Back Time: ' + timeVal;
 
-        var task = nlapiCreateRecord('task');
-        task.setFieldValue('title', 'Shipping Portal Orientation');
-        task.setFieldValue('assigned', 1706027);
-        task.setFieldValue('company', customerInternalId);
-        task.setFieldValue('sendemail', 'T');
-        task.setFieldValue('timedevent', 'T');
-        task.setFieldValue('duedate', callback_date);
-        task.setFieldValue('starttime', timeVal);
-        task.setFieldValue('endtime', endTime);
-        task.setFieldText('remindertype', 'Email');
-        task.setFieldText('reminderminutes', '30 minutes')
-        task.setFieldValue('message', notes);
-        task.setFieldText('status', 'Not Started');
-        nlapiSubmitRecord(task);
+        // var task = nlapiCreateRecord('task');
+        // task.setFieldValue('title', 'Shipping Portal Orientation');
+        // task.setFieldValue('assigned', 1706027);
+        // task.setFieldValue('company', customerInternalId);
+        // task.setFieldValue('sendemail', 'T');
+        // task.setFieldValue('timedevent', 'T');
+        // task.setFieldValue('duedate', callback_date);
+        // task.setFieldValue('starttime', timeVal);
+        // task.setFieldValue('endtime', endTime);
+        // task.setFieldText('remindertype', 'Email');
+        // task.setFieldText('reminderminutes', '30 minutes')
+        // task.setFieldValue('message', notes);
+        // task.setFieldText('status', 'Not Started');
+        // nlapiSubmitRecord(task);
+
+        var emailAttach = new Object();
+        emailAttach['entity'] = customerInternalId;
+        // Email to be sent out to Corrine about the new LPO Lead.
+        var from = 112209; //MailPlus team
+        var to = 'portalsupport@mailplus.com.au';
+        var emailSubject = 'ShipMate Portal Orientation: ' + company_name + 'Call Back Date: ' + callback_date + '. Call Back Time: ' + timeVal;
+
+        var emailBody =
+            'ShipMate Orientation onboarding by customer:' + entityId + ' ' + company_name + '</br>Call Back Date: ' + callback_date + '.</br>Call Back Time: ' + timeVal;
+
+
+        nlapiSendEmail(from, to, emailSubject, emailBody, null, null, emailAttach, null, true);
+
 
         var returnObj = {
             success: true,

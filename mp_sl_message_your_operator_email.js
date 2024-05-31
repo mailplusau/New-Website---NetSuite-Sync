@@ -65,7 +65,7 @@ function emailYourOperator(request, response) {
         var from = 112209; //MailPlus team
         var to = partner_email;
         var bcc = ['dispatcher@mailplus.com.au'];
-        var emailSubject = 'Message from your Customer - ' + business_name;
+        var emailSubject = 'Message from your Customer - ' + business_name + '(Franchisee: ' + partner_text + ')';
 
         var emailBody =
             'Message : ' + message;
@@ -79,7 +79,7 @@ function emailYourOperator(request, response) {
         };
 
         var postdata = {
-            "Body": 'Message from your customer - ' + business_name + '. PLease check your emails for more details.',
+            "Body": 'Message from your customer - ' + business_name + '(Franchisee: ' + partner_text + '). Please check your emails for more details.',
             "To": partner_phone,
             "From": "+61488883115"
         }
