@@ -100,7 +100,7 @@ function portalOrientation(request, response) {
         var emailSubject = 'ShipMate Portal Orientation: ' + company_name + 'Call Back Date: ' + callback_date + '. Call Back Time: ' + timeVal;
 
         var emailBody =
-            'ShipMate Orientation onboarding by customer:' + entityId + ' ' + company_name + '</br>Call Back Date: ' + callback_date + '.</br>Call Back Time: ' + timeVal;
+            'ShipMate Orientation onboarding by customer:' + entityId + ' ' + company_name + '</br>Contact Name: ' + first_name + '</br>Contact Email: ' + email + '</br>Contact Phone: ' + phone_number + '</br></br>Call Back Date: ' + callback_date + '.</br>Call Back Time: ' + timeVal;
 
 
         nlapiSendEmail(from, to, emailSubject, emailBody, null, null, emailAttach, null, true);
