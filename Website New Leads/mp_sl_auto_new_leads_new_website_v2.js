@@ -48,6 +48,8 @@ function leadForm(request, response) {
         var subscribe = request.getParameter('subscribe');
         var lpo_notes = request.getParameter('lpo_notes');
 
+        var lpoLeadProfileSalesRep = null;
+
 
         nlapiLogExecution('DEBUG', 'parent_lpo', parent_lpo);
         nlapiLogExecution('DEBUG', 'business_name', business_name);
@@ -182,7 +184,24 @@ function leadForm(request, response) {
 
             var customerRecord = nlapiCreateRecord('lead');
             if (!isNullorEmpty(parent_lpo)) {
-                customerRecord.setFieldValue('parent', parent_lpo);
+                customerRecord.setFieldValue('custentity_lpo_parent_account', parent_lpo);
+
+                //Search Name: LPO Lead Profiles - List
+                var resultSetlpoProfileLeadsListSearch = nlapiLoadSearch('customrecord_lpo_lead_form', 'customsearch_lpo_lead_profiles_list');
+
+                var newFiltersLPOProfileLead = new Array();
+                newFiltersLPOProfileLead[newFiltersLPOProfileLead.length] = new nlobjSearchFilter(
+                    'custrecord_lpo_lead_customer', null, 'is', parent_lpo);
+                resultSetlpoProfileLeadsListSearch.addFilters(newFiltersLPOProfileLead);
+
+                var resultSetlpoProfileLeadsListSearch = resultSetlpoProfileLeadsListSearch.runSearch();
+                resultSetlpoProfileLeadsListSearch.forEachResult(function (lpoProfileLeadsListSearchResultSet) {
+
+                    var lpoLeadProfileParentCustomer = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_lead_customer');
+                    lpoLeadProfileSalesRep = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_sales_rep');
+
+                    return true;
+                });
             }
             customerRecord.setFieldValue('companyname', business_name);
             customerRecord.setFieldValue('email', email);
@@ -274,7 +293,8 @@ function leadForm(request, response) {
 
                 if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
                     customerRecord.setFieldValue('custentity_lpo_account_status', 2); //LPO Account Status: Inactive
-                    customerRecord.setFieldValue('entitystatus', 42); //Suspect - Qualified
+                    customerRecord.setFieldValue('custentity_date_lpo_validated', getDate()); //LPO Account Status: Inactive
+                    customerRecord.setFieldValue('entitystatus', 68); //Suspect - Validated
                 }
 
                 if (serviceFuelSurchargeToBeApplied == 1 ||
@@ -442,114 +462,140 @@ function leadForm(request, response) {
                     'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
                     entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                if (postcode >= 2000 && postcode <= 2999) {
-                    //ACT & NSW Postcodes
-                    var postcode = parseInt(postcode);
-                    //Byron Bay Postcodes
-                    if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
-                        postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
-                        2479) {
-                        to = ['lee.russell@mailplus.com.au'];
-                        body =
-                            'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = 668711; //Lee Russell
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-
-                        salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-                    } else if (postcode == 2481) { //Albury
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];;
-                        body =
-                            'Hi Belinda, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-                    } else {
-                        //ACT Post Codes
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = 696160; //Kerina Helliwell
-                        to = ['kerina.helliwell@mailplus.com.au'];
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-
-                    }
-
-                } else { //Everything else
-
-                    //Create Sales Record
+                if (!isNullorEmpty(lpoLeadProfileSalesRep)) {
+                    to = lpoLeadProfileSalesRep;
+                    body =
+                        'Hi, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
                     var salesRecord = nlapiCreateRecord('customrecord_sales');
-                    if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                    } else if ((postcode >= 5000 &&
-                        postcode <= 5999)) {
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                    } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
-                        postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
-                        var salesRep = 668711; //Lee Russell
-                        to = ['lee.russell@mailplus.com.au']
-                    } else { //Everything else
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                    }
+                    var salesRep = lpoLeadProfileSalesRep;
 
-                    salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                    salesRecord.setFieldValue('custrecord_sales_customer',
+                        customerRecordId);
                     if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                         salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                    } else {
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
                     }
-                    salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+
+                    salesRecord.setFieldValue('custrecord_sales_assigned', lpoLeadProfileSalesRep);
                     salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                     salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
                     var date = new Date();
                     salesRecord.setFieldValue('custrecord_sales_callbacktime',
                         nlapiDateToString(date, 'timeofday'));
                     nlapiSubmitRecord(salesRecord);
+
+                    nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
+                } else {
+                    if (postcode >= 2000 && postcode <= 2999) {
+                        //ACT & NSW Postcodes
+                        var postcode = parseInt(postcode);
+                        //Byron Bay Postcodes
+                        if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
+                            postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
+                            2479) {
+                            to = ['lee.russell@mailplus.com.au'];
+                            body =
+                                'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+                            var salesRep = 668711; //Lee Russell
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+
+                            salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+                        } else if (postcode == 2481) { //Albury
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];;
+                            body =
+                                'Hi Belinda, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+                        } else {
+                            //ACT Post Codes
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+                            var salesRep = 696160; //Kerina Helliwell
+                            to = ['kerina.helliwell@mailplus.com.au'];
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+
+                        }
+
+                    } else { //Everything else
+
+                        //Create Sales Record
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        } else if ((postcode >= 5000 &&
+                            postcode <= 5999)) {
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
+                            postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+                            var salesRep = 668711; //Lee Russell
+                            to = ['lee.russell@mailplus.com.au']
+                        } else { //Everything else
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        }
+
+                        salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                        if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                        } else {
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                        }
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    }
                 }
+
                 // if (services_of_interest == '2' || services_of_interest == '8') {
                 //     var from = 112209; //MailPlus team
                 //     var to;
@@ -728,113 +774,138 @@ function leadForm(request, response) {
                     'New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: ' +
                     entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
 
-                if (postcode >= 2000 && postcode <= 2999) {
-                    //ACT & NSW Postcodes
-                    var postcode = parseInt(postcode);
-                    //Byron Bay Postcodes
-                    if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
-                        postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
-                        2479) {
-                        to = ['lee.russell@mailplus.com.au'];
-                        body =
-                            'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = 668711; //Lee Russell
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-                        salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-                    } else if (postcode == 2481) { //Albury
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                        body =
-                            'Hi Belinda, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
-                            entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-                    } else {
-                        //ACT Post Codes
-                        var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = 696160; //Kerina Helliwell
-                        to = ['kerina.helliwell@mailplus.com.au'];
-
-                        salesRecord.setFieldValue('custrecord_sales_customer',
-                            customerRecordId);
-                        if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                        } else {
-                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                        }
-                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
-                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
-                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
-                        var date = new Date();
-                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
-                            nlapiDateToString(date, 'timeofday'));
-                        nlapiSubmitRecord(salesRecord);
-
-                    }
-
-                } else { //Everything else
-
-                    //Create Sales Record
+                if (!isNullorEmpty(lpoLeadProfileSalesRep)) {
+                    to = lpoLeadProfileSalesRep;
+                    body =
+                        'Hi, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                        entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
                     var salesRecord = nlapiCreateRecord('customrecord_sales');
-                    if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                    } else if ((postcode >= 5000 &&
-                        postcode <= 5999)) {
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
-                    } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
-                        postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
-                        var salesRep = 668711; //Lee Russell
-                        to = ['lee.russell@mailplus.com.au']
-                    } else { //Everything else
-                        var salesRep = 668712; //Belinda Urbani
-                        to = ['belinda.urbani@mailplus.com.au'];
+                    var salesRep = lpoLeadProfileSalesRep;
+
+                    salesRecord.setFieldValue('custrecord_sales_customer',
+                        customerRecordId);
+                    if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                        salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
                     }
 
-                    salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
-                    if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
-                    } else {
-                        salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
-                    }
-                    salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                    salesRecord.setFieldValue('custrecord_sales_assigned', lpoLeadProfileSalesRep);
                     salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                     salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
                     var date = new Date();
                     salesRecord.setFieldValue('custrecord_sales_callbacktime',
                         nlapiDateToString(date, 'timeofday'));
                     nlapiSubmitRecord(salesRecord);
+                } else {
+                    if (postcode >= 2000 && postcode <= 2999) {
+                        //ACT & NSW Postcodes
+                        var postcode = parseInt(postcode);
+                        //Byron Bay Postcodes
+                        if (postcode == 2481 || postcode == 2482 || postcode == 2485 ||
+                            postcode == 2486 || postcode == 2487 || postcode == 2488 || postcode ==
+                            2479) {
+                            to = ['lee.russell@mailplus.com.au'];
+                            body =
+                                'Hi Lee, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+                            var salesRep = 668711; //Lee Russell
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+                            salesRecord.setFieldValue('custrecord_sales_assigned', 668711);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+                        } else if (postcode == 2481) { //Albury
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                            body =
+                                'Hi Belinda, \n \nA HOT Lead has been entered into the System.\n Customer Name: ' +
+                                entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+                        } else {
+                            //ACT Post Codes
+                            var salesRecord = nlapiCreateRecord('customrecord_sales');
+                            var salesRep = 696160; //Kerina Helliwell
+                            to = ['kerina.helliwell@mailplus.com.au'];
+
+                            salesRecord.setFieldValue('custrecord_sales_customer',
+                                customerRecordId);
+                            if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                            } else {
+                                salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                            }
+                            salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                            salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                            salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                            var date = new Date();
+                            salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                                nlapiDateToString(date, 'timeofday'));
+                            nlapiSubmitRecord(salesRecord);
+
+                        }
+
+                    } else { //Everything else
+
+                        //Create Sales Record
+                        var salesRecord = nlapiCreateRecord('customrecord_sales');
+                        if ((postcode >= 3000 && postcode <= 3999) || (postcode >= 7000 && postcode <= 7999)) { //VIC & SA & TAS Postcodes
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        } else if ((postcode >= 5000 &&
+                            postcode <= 5999)) {
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        } else if ((postcode >= 4000 && postcode <= 4999) || (postcode >= 800 &&
+                            postcode <= 999) || (postcode >= 6000 && postcode <= 6999)) { //QLD & NT & WA Postcodes
+                            var salesRep = 668711; //Lee Russell
+                            to = ['lee.russell@mailplus.com.au']
+                        } else { //Everything else
+                            var salesRep = 668712; //Belinda Urbani
+                            to = ['belinda.urbani@mailplus.com.au'];
+                        }
+
+                        salesRecord.setFieldValue('custrecord_sales_customer', customerRecordId);
+                        if ((pageURL == 'https://mailplus.com.au/lpo-lead-generation/' || pageURL == 'https://mailplus.com.au/lpo-partnership/') && zee_id != 713275) {
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
+                        } else {
+                            salesRecord.setFieldValue('custrecord_sales_campaign', 67); //Website Leads - Auto Sign Up
+                        }
+                        salesRecord.setFieldValue('custrecord_sales_assigned', salesRep);
+                        salesRecord.setFieldValue('custrecord_sales_outcome', 5);
+                        salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
+                        var date = new Date();
+                        salesRecord.setFieldValue('custrecord_sales_callbacktime',
+                            nlapiDateToString(date, 'timeofday'));
+                        nlapiSubmitRecord(salesRecord);
+                    }
                 }
+
+
                 // if (services_of_interest == '2' || services_of_interest == '8') {
                 if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/') {
                     body += '\n ' + lpo_notes;
@@ -853,7 +924,7 @@ function leadForm(request, response) {
                 phonecall.setFieldValue('title', 'LPO - Inbound Web - Notes');
                 phonecall.setFieldValue('company', customerRecordId);
                 phonecall.setFieldValue('assigned', nlapiGetUser());
-                phonecall.setFieldValue('custevent_organiser', nlapiGetUser());
+                phonecall.setFieldValue('custevent_organiser', 112209);
                 phonecall.setFieldValue('startdate', getDate());
                 phonecall.setFieldValue('custevent_call_type', 2);
                 phonecall.setFieldValue('assigned', salesRep);
