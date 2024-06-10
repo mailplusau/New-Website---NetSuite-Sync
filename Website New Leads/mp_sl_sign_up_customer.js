@@ -522,14 +522,14 @@ function leadForm(request, response) {
         var emailHtml = urlCall.getBody();
 
         var attachments = [];
-        attachments.push(nlapiLoadFile(6000513))
-        attachments.push(nlapiLoadFile(6000512))
-        attachments.push(nlapiLoadFile(5044913))
-        attachments.push(nlapiLoadFile(6000511))
+        attachments.push(nlapiLoadFile(6977988))
+        // attachments.push(nlapiLoadFile(6000512))
+        // attachments.push(nlapiLoadFile(5044913))
+        // attachments.push(nlapiLoadFile(6000511))
 
         nlapiSendEmail(salesRepId, email, entity_id + ' ' + business_name + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au',
             'customerservice@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
-            'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
+            'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
 
         if (intitial_customer_status != 13) {

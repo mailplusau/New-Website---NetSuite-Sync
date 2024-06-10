@@ -147,10 +147,10 @@ function addContact(request, response) {
                 var emailHtml = urlCall.getBody();
 
                 var attachments = [];
-                attachments.push(nlapiLoadFile(6000513))
-                attachments.push(nlapiLoadFile(6000512))
-                attachments.push(nlapiLoadFile(5044913))
-                attachments.push(nlapiLoadFile(6000511))
+                attachments.push(nlapiLoadFile(6977988))
+                // attachments.push(nlapiLoadFile(6000512))
+                // attachments.push(nlapiLoadFile(5044913))
+                // attachments.push(nlapiLoadFile(6000511))
 
                 nlapiLogExecution('DEBUG', 'salesRepId', salesRepId);
                 nlapiLogExecution('DEBUG', 'custInternalID', custInternalID);
@@ -160,7 +160,7 @@ function addContact(request, response) {
                 nlapiLogExecution('DEBUG', 'contactId', contactId);
 
                 nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
-                    'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
+                    , 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
                 var email_body =
                     'Please link the USER to the below CUSTOMER details </br></br>';
@@ -299,13 +299,13 @@ function addContact(request, response) {
                 var emailHtml = urlCall.getBody();
 
                 var attachments = [];
-                attachments.push(nlapiLoadFile(6000513))
-                attachments.push(nlapiLoadFile(6000512))
-                attachments.push(nlapiLoadFile(5044913))
-                attachments.push(nlapiLoadFile(6000511))
+                attachments.push(nlapiLoadFile(6977988))
+                // attachments.push(nlapiLoadFile(6000512))
+                // attachments.push(nlapiLoadFile(5044913))
+                // attachments.push(nlapiLoadFile(6000511))
 
                 nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au',
-                    'laura.busse@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
+                    'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
                 var email_body =
                     'Please link the USER to the below CUSTOMER details </br></br>';
