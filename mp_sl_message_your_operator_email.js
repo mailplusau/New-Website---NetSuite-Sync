@@ -64,7 +64,7 @@ function emailYourOperator(request, response) {
         // Email to be sent out to Corrine about the new LPO Lead.
         var from = 112209; //MailPlus team
         var to = partner_email;
-        var bcc = ['dispatcher@mailplus.com.au'];
+        var bcc = ['dispatcher@mailplus.com.au', 'customerservice@mailplus.com.au'];
         var emailSubject = 'Message from your Customer - ' + business_name + '(Franchisee: ' + partner_text + ')';
 
         var emailBody =
