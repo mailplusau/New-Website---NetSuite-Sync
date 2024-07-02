@@ -449,9 +449,14 @@ function leadForm(request, response) {
 
                 var from = 112209; //MailPlus team
                 var to;
-                var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                    'ankith.ravindran@mailplus.com.au'
-                ];
+                if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                    var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                } else {
+                    var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au']
+                }
+
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                     var subject = 'Sales LPO - AP Customer HOT Lead - ' + entity_id + ' ' + customer_name + '';
                 } else if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/') {
@@ -671,9 +676,14 @@ function leadForm(request, response) {
                 emailAttach['entity'] = customerRecordId;
                 var from = 112209; //MailPlus team
                 var to;
-                var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                    'ankith.ravindran@mailplus.com.au'
-                ];
+                if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                    var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                } else {
+                    var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
+                        'ankith.ravindran@mailplus.com.au']
+                }
+
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/' && zee_id != 713275) {
                     var subject = 'Sales LPO - AP Customer HOT Lead - ' + entity_id + ' ' + customer_name + '';
                 } else if (pageURL == 'https://mailplus.com.au/lpo-lead-generation/') {
@@ -1529,8 +1539,17 @@ function leadForm(request, response) {
             var emailHtml = urlCall.getBody();
 
             if (pageURL != 'https://mailplus.com.au/lpo-lead-generation/') {
-                nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep, null,
-                    emailAttach, emailAttach);
+                if (isNullorEmpty(salesRep)) {
+                    if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                        nlapiSendEmail(112209, email, templateSubject, emailHtml, ['luke.forbes@mailplus.com.au', 'paul.mcintosh@mailplus.com.au', 'alison.savona@mailplus.com.au'], null, emailAttach, emailAttach);
+                    } else {
+                        nlapiSendEmail(112209, email, templateSubject, emailHtml, ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au'], null, emailAttach, emailAttach);
+                    }
+                } else {
+                    nlapiSendEmail(salesRep, email, templateSubject, emailHtml, salesRep, null,
+                        emailAttach, emailAttach);
+                }
+
             }
 
         }
