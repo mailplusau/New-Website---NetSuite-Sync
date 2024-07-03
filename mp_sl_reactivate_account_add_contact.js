@@ -1,12 +1,14 @@
-/**
+
+/*
  * Author:               Ankith Ravindran
- * Created on:           Tue May 23 2023
- * Modified on:          Tue May 23 2023 11:40:25
+ * Created on:           Thu Jul 03 2024
+ * Modified on:          Thu Jul 04 2024 08:01:22
  * SuiteScript Version:  1.0
- * Description:          Add contact based on the info passed from https://mailplus.com.au/authenticate-your-mailplus-account/ webpage. Also create customer portal access for the user and attach the manuals along with the email
+ * Description:          Add contact based on the info passed from https://mailplus.com.au/reactivate-account/ webpage. Change the status of the customer reecord from "SUSPECT-Customer - Lost" to "SUSPECT- Hot Lead". Assign the lead to the "MP Premium - Lost EDM" campaign and send email to the Account Manager.
  *
- * Copyright (c) 2023 MailPlus Pty. Ltd.
+ * Copyright (c) 2024 MailPlus Pty. Ltd.
  */
+
 
 
 var ctx = nlapiGetContext();
