@@ -42,7 +42,6 @@ function addContact(request, response) {
         //Search Name: Customer List - Status Lost V3
         var activeCustomerListSignedSearch = nlapiLoadSearch('customer', 'customsearch_active_customers_2_2');
 
-
         var newFilters = new Array();
         newFilters[0] = new nlobjSearchFilter('entityid', null, 'is', entityid);
 
@@ -52,6 +51,7 @@ function addContact(request, response) {
 
         var activeCustomerListSignedSearchResultSet = activeCustomerListSignedSearchResult.getResults(0, 1);
 
+        //Check if we get the result of the entity id from the search
         if (activeCustomerListSignedSearchResultSet.length != 0) {
             var custInternalID;
             var custEntityID;
@@ -93,8 +93,9 @@ function addContact(request, response) {
 
             var contactId;
 
+            //Create New contact
             var contactRecordNew = nlapiCreateRecord('contact');
-            contactRecordNew.setFieldValue('firstname', first_name + ('Reactivate'));
+            contactRecordNew.setFieldValue('firstname', first_name + ' (Reactivate)');
             contactRecordNew.setFieldValue('lastname', last_name);
             contactRecordNew.setFieldValue('email', email);
             contactRecordNew.setFieldValue('phone', phone_number);
@@ -121,10 +122,12 @@ function addContact(request, response) {
 
             var allSalesRecordSearchResultSet = allSalesRecordSearchResult.getResults(0, 1);
 
+            //Get any open Sales record
             if (allSalesRecordSearchResultSet.length == 1) {
                 salesRecordInternalId = allSalesRecordSearchResultSet[0].getValue("internalid");
             }
 
+            //Mark the open Sales Record as compeleted
             if (!isNullorEmpty(salesRecordInternalId)) {
                 var salesRecord = nlapiLoadRecord("customrecord_sales", salesRecordInternalId);
                 salesRecord.setFieldValue('custrecord_sales_deactivated', 'T');
@@ -133,6 +136,7 @@ function addContact(request, response) {
                 nlapiSubmitRecord(salesRecord);
             }
 
+            //Create New Sales Record and assign the Sales Record to the Sales rep & MP Premium - Lost EDM Campaign
             var newSalesRecord = nlapiCreateRecord("customrecord_sales");
             newSalesRecord.setFieldValue('custrecord_sales_customer', custInternalID);
             newSalesRecord.setFieldValue('custrecord_sales_campaign', 77); //MP Premium - Lost EDM
@@ -143,10 +147,12 @@ function addContact(request, response) {
             newSalesRecord.setFieldValue('custrecord_sales_callbacktime', nlapiDateToString(date, 'timeofday'));
             nlapiSubmitRecord(newSalesRecord);
 
+            //Change the status of the customer record to "SUSPECT - HOT LEAD"
             var customerRecord = nlapiLoadRecord("customer", custInternalID);
-            customerRecord.setFieldValue('entitystatus', 57);
+            customerRecord.setFieldValue('entitystatus', 57); //SUSPECT - HOT LEAD
             nlapiSubmitRecord(customerRecord);
 
+            //Send email to the Sales Rep
             var emailAttach = new Object();
             emailAttach['entity'] = custInternalID;
             var from = 112209; //MailPlus team
@@ -158,8 +164,8 @@ function addContact(request, response) {
                 'https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=' +
                 custInternalID;
             var body =
-                'New sales record has been created. \n A Lost Customer has requested to reactivate their account. \n Customer Name: ' +
-                custEntityID + ' ' + custName + '\nLink: ' + cust_id_link;
+                'New sales record has been created. \n A Lost Customer has requested to reactivate their account. \n\n Customer Name: ' +
+                custEntityID + ' ' + custName + '\n\nContact Details: \n Name: ' + first_name + ' ' + last_name + '\nEmail: ' + email + '\nNumber: ' + phone_number + '\n\nLink: ' + cust_id_link;
 
             if (!isNullorEmpty(salesRepEmail)) {
                 nlapiSendEmail(from, to,
