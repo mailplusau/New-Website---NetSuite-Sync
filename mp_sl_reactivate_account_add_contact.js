@@ -61,15 +61,12 @@ function addContact(request, response) {
             var salesRepName = null;
             var salesRepId = null;
 
-            var intitial_customer_status = null;
-
             activeCustomerListSignedSearchResult.forEachResult(function (searchResultActiveCustomerListSigned) {
 
                 custInternalID = searchResultActiveCustomerListSigned.getValue('internalid');
                 custEntityID = searchResultActiveCustomerListSigned.getValue('entityid');
                 custName = searchResultActiveCustomerListSigned.getValue('companyname');
                 partnerId = searchResultActiveCustomerListSigned.getValue('partner');
-                intitial_customer_status = searchResultActiveCustomerListSigned.getValue('entitystatus');
                 partner_text = searchResultActiveCustomerListSigned.getText('partner');
 
                 var franchiseeSalesRepAssigned = nlapiLookupField('customer', parseInt(custInternalID), 'partner.custentity_sales_rep_assigned');
