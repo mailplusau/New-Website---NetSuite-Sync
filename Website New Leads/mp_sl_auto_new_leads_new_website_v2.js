@@ -286,6 +286,28 @@ function leadForm(request, response) {
                 //create sales record
                 //Send sign up email to customer
 
+                if (isNullorEmpty(parent_lpo) && pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                    //Search Name: LPO Lead Profiles - List
+                    var resultSetlpoProfileLeadsListSearch = nlapiLoadSearch('customrecord_lpo_lead_form', 'customsearch_lpo_lead_profiles_list');
+
+                    var newFiltersLPOProfileLead = new Array();
+                    newFiltersLPOProfileLead[newFiltersLPOProfileLead.length] = new nlobjSearchFilter(
+                        'custentity_lpo_linked_franchisees', 'custrecord_lpo_lead_customer', 'anyof', zee_id);
+                    resultSetlpoProfileLeadsListSearch.addFilters(newFiltersLPOProfileLead);
+
+                    var resultSetlpoProfileLeadsListSearch = resultSetlpoProfileLeadsListSearch.runSearch();
+                    var lpoLeadProfileParentCustomer = null;
+                    resultSetlpoProfileLeadsListSearch.forEachResult(function (lpoProfileLeadsListSearchResultSet) {
+
+                        lpoLeadProfileParentCustomer = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_lead_customer');
+                        lpoLeadProfileSalesRep = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_sales_rep');
+
+                        return true;
+                    });
+
+                    customerRecord.setFieldValue('custentity_lpo_parent_account', lpoLeadProfileParentCustomer);
+                }
+
                 var serviceFuelSurchargeToBeApplied = 0;
                 var partner_record;
                 if (!isNullorEmpty(zee_id) && zeeCount == 1) {
@@ -451,7 +473,7 @@ function leadForm(request, response) {
                 var to;
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au']
                 } else {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au']
@@ -502,7 +524,7 @@ function leadForm(request, response) {
                             'Hi, \n \nA HOT Lead has been entered into the System.\n The HOT Lead has not been assciated to an LPO or a franchisee.\n Customer Name: ' +
                             entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
                         var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = lpoLeadProfileSalesRep;
+                        var salesRep = 653718;
 
                         salesRecord.setFieldValue('custrecord_sales_customer',
                             customerRecordId);
@@ -510,7 +532,7 @@ function leadForm(request, response) {
                             salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
                         }
 
-                        salesRecord.setFieldValue('custrecord_sales_assigned', lpoLeadProfileSalesRep);
+                        salesRecord.setFieldValue('custrecord_sales_assigned', 653718);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
                         var date = new Date();
@@ -678,7 +700,7 @@ function leadForm(request, response) {
                 var to;
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au']
                 } else {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au']
