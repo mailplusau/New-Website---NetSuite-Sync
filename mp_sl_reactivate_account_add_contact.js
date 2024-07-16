@@ -177,6 +177,26 @@ function addContact(request, response) {
             };
 
         } else {
+
+            //Send email to the Sales Rep
+            // var emailAttach = new Object();
+            // emailAttach['entity'] = custInternalID;
+            var from = 112209; //MailPlus team
+            var subject = 'Sales MP - Premium HOT Lead (Lost Customer to Hot Lead) - ' + entityid;
+            var to = ['belinda.urbani@mailplus.com.au',
+                'kerina.helliwell@mailplus.com.au',
+                'lee.russell@mailplus.com.au'];
+            var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
+                'ankith.ravindran@mailplus.com.au'];
+
+            var body =
+                '\n A contact has requested to reactivate their account. The contact could not be added into NetSuite because we could not find the lead with ID: ' + entityid + '\n\nContact Details: \n Name: ' + first_name + ' ' + last_name + '\nEmail: ' + email + '\nNumber: ' + phone_number + '\n\n';
+
+
+            nlapiSendEmail(from, to,
+                subject, body, cc, null, null, null, true);
+
+
             nlapiLogExecution('AUDIT', "Customer Does Not exist", 'Customer Does Not exist');
             var returnObj = {
                 success: false,
