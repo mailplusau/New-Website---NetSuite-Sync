@@ -45,7 +45,7 @@ function agreeTersmAndConditions(request, response) {
             customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
             var customerRecordId = nlapiSubmitRecord(customerRecord);
 
-            var form = nlapiCreateForm('Thank you for Agreeing to the Terms & Conditions');
+            var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
 
             var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
                 'customsearch_sales_record_auto_signed__2');
@@ -82,7 +82,7 @@ function agreeTersmAndConditions(request, response) {
             });
             
         } else {
-            var form = nlapiCreateForm('The Terms & Conditions has already been accepted');
+            var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
         }
 
         response.writePage(form);
