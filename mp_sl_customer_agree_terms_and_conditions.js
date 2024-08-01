@@ -2,8 +2,8 @@
  * Author:               Ankith Ravindran
  * Created on:           Mon Jan 01 2023
  * Modified on:          Thu Apr 27 2023 12:13:27
- * SuiteScript Version:  Agree to the Terms & Conditions
- * Description:           
+ * SuiteScript Version:  1.0
+ * Description:          Agree to the Terms & Conditions 
  *
  * Copyright (c) 2023 MailPlus Pty. Ltd.
  */
@@ -80,7 +80,34 @@ function agreeTersmAndConditions(request, response) {
 
                 return true;
             });
+
+            //Search: Commencement Register List - To Update T&C's Agreed Date
+            var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch('customrecord_commencement_register',
+                'customsearch_comm_reg_upd_tnc_date');
+
+            var filCommReg = [];
+            filCommReg[filCommReg.length] = new nlobjSearchFilter('internalid',
+                'custrecord_customer', 'anyof', customerRecordId);
             
+            commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
+
+            var commRegUpdateTnCAgreedDateSearchResult = commRegUpdateTnCAgreedDateSearch.runSearch();
+
+            commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
+
+                var commRegInternalId = searchResult.getValue('internalId');
+                nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
+
+                var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', nlapiDateToString(new Date(), 'datetimetz'));
+                var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+
+                nlapiLogExecution('DEBUG', 'comm Reg Update', '');
+
+                return true;
+            });
+
         } else {
             var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
         }
