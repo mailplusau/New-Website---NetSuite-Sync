@@ -166,6 +166,7 @@ function addContact(request, response) {
                 customerRecord.setFieldValue('entitystatus', 13);
                 customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
                 customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
+                customerRecord.setFieldValue('custentity_date_prospect_opportunity', getDate());
                 custInternalID = nlapiSubmitRecord(customerRecord);
 
                 var customerJSON = '{';

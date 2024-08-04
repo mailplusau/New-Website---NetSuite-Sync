@@ -100,7 +100,7 @@ function agreeTersmAndConditions(request, response) {
 
                 var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
                 commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
-                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', nlapiDateToString(new Date(), 'datetimetz'));
+                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
                 var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
 
                 nlapiLogExecution('DEBUG', 'comm Reg Update', '');
@@ -123,5 +123,14 @@ function getDate() {
         date = nlapiAddDays(date, 1);
     }
     date = nlapiDateToString(date);
+    return date;
+}
+
+function getDateAndTime() {
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date, 'datetimetz');
     return date;
 }
