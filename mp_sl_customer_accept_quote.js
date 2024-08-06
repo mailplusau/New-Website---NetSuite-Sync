@@ -103,7 +103,7 @@ function acceptQuote(request, response) {
 
                     var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
                     commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
-                    commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime);
+                    commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
                     var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
 
                     nlapiLogExecution('DEBUG', 'comm Reg Update', '');
