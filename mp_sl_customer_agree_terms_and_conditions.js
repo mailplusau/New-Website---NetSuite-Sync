@@ -44,73 +44,70 @@ function agreeTersmAndConditions(request, response) {
                 getDate());
             customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
             var customerRecordId = nlapiSubmitRecord(customerRecord);
-
-            var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
-
-            var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
-                'customsearch_sales_record_auto_signed__2');
-
-            var filPo = [];
-            filPo[filPo.length] = new nlobjSearchFilter('internalid',
-                'custrecord_sales_customer', 'anyof', customerRecordId);
-
-            salesRecordSearch.addFilters(filPo);
-
-            var resultSetSalesRecord = salesRecordSearch.runSearch();
-
-            resultSetSalesRecord.forEachResult(function (searchResult) {
-
-                var salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
-
-                var email_body =
-                    'Customer has agreed to the Terms & Conditions. </br></br>';
-                email_body +=
-                    '<u><b>Customer Details</b></u> </br>';
-                email_body += 'Customer Name: ' + entityId + ' ' + compnayName +
-                    '</br>';
-
-                var email_subject = 'Terms & Conditions Agreed - ' +
-                    entityId + ' ' + compnayName;
-
-                var records = new Array();
-                records['entity'] = customerRecordId;
-
-                nlapiSendEmail(112209, salesRepEmail,
-                    email_subject, email_body, ['luke.forbes@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'], null, records, null, true);
-
-                return true;
-            });
-
-            //Search: Commencement Register List - To Update T&C's Agreed Date
-            var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch('customrecord_commencement_register',
-                'customsearch_comm_reg_upd_tnc_date');
-
-            var filCommReg = [];
-            filCommReg[filCommReg.length] = new nlobjSearchFilter('internalid',
-                'custrecord_customer', 'anyof', customerRecordId);
-            
-            commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
-
-            var commRegUpdateTnCAgreedDateSearchResult = commRegUpdateTnCAgreedDateSearch.runSearch();
-
-            commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
-
-                var commRegInternalId = searchResult.getValue('internalId');
-                nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
-
-                var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
-                commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
-                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
-                var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
-
-                nlapiLogExecution('DEBUG', 'comm Reg Update', '');
-
-                return true;
-            });
-
-        } else {
-            var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
         }
+
+        var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
+
+        var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
+            'customsearch_sales_record_auto_signed__2');
+
+        var filPo = [];
+        filPo[filPo.length] = new nlobjSearchFilter('internalid',
+            'custrecord_sales_customer', 'anyof', customerRecordId);
+
+        salesRecordSearch.addFilters(filPo);
+
+        var resultSetSalesRecord = salesRecordSearch.runSearch();
+
+        resultSetSalesRecord.forEachResult(function (searchResult) {
+
+            var salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
+
+            var email_body =
+                'Customer has agreed to the Terms & Conditions. </br></br>';
+            email_body +=
+                '<u><b>Customer Details</b></u> </br>';
+            email_body += 'Customer Name: ' + entityId + ' ' + compnayName +
+                '</br>';
+
+            var email_subject = 'Terms & Conditions Agreed - ' +
+                entityId + ' ' + compnayName;
+
+            var records = new Array();
+            records['entity'] = customerRecordId;
+
+            nlapiSendEmail(112209, salesRepEmail,
+                email_subject, email_body, ['luke.forbes@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'], null, records, null, true);
+
+            return true;
+        });
+
+        //Search: Commencement Register List - To Update T&C's Agreed Date
+        var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch('customrecord_commencement_register',
+            'customsearch_comm_reg_upd_tnc_date');
+
+        var filCommReg = [];
+        filCommReg[filCommReg.length] = new nlobjSearchFilter('internalid',
+            'custrecord_customer', 'anyof', customerRecordId);
+
+        commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
+
+        var commRegUpdateTnCAgreedDateSearchResult = commRegUpdateTnCAgreedDateSearch.runSearch();
+
+        commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
+
+            var commRegInternalId = searchResult.getValue('internalId');
+            nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
+
+            var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+            commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+            commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+            var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+
+            nlapiLogExecution('DEBUG', 'comm Reg Update', '');
+
+            return true;
+        });
 
         response.writePage(form);
 
