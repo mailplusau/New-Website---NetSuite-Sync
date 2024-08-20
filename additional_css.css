@@ -959,6 +959,10 @@
         display: none !important;
     }
 
+    #n2-ss-51 .n2-ss-slide-backgrounds {
+        display: none !important;
+    }
+
     #n2-ss-40item2 {
         /* font-size: 51px !important; */
         text-align: center;
