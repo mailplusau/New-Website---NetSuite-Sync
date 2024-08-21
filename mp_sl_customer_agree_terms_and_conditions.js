@@ -97,12 +97,25 @@ function agreeTersmAndConditions(request, response) {
         commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
 
             var commRegInternalId = searchResult.getValue('internalId');
+            var trialExpiryDate = searchResult.getValue('custrecord_trial_expiry');
+            var commDate = searchResult.getValue('custrecord_comm_date');
             nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
 
-            var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
-            commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
-            commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
-            var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+            if (isNullorEmpty(trialExpiryDate)) {
+                var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+            } else {
+                const date1 = stringToDate(commDate);
+                const date2 = stringToDate(getDate());
+                if (date1 >= date2) {
+                    var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                    commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                    commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                    var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+                }
+            }
 
             nlapiLogExecution('DEBUG', 'comm Reg Update', '');
 
@@ -131,3 +144,9 @@ function getDateAndTime() {
     date = nlapiDateToString(date, 'datetimetz');
     return date;
 }
+
+function stringToDate(str) {
+    const [dd, mm, yyyy] = str.split('/');
+    return new Date(yyyy, mm - 1, dd);
+}
+
