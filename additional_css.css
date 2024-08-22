@@ -630,7 +630,7 @@
 
     .btn-block {
         display: initial;
-        width: 25% !important;
+        width: 50% !important;
 
     }
 
@@ -1427,4 +1427,8 @@
 
 .R-IconButton__icon {
     color: #095c7b !important;
+}
+
+.team-slider-text{
+    font-family: 'objectsans-bold' !important;
 }
