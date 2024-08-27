@@ -102,8 +102,22 @@ function addContact(request, response) {
             contactRecordNew.setFieldValue('entityid', first_name + ' ' + last_name);
             contactRecordNew.setFieldValue('contactrole', 8);
 
-            // try {
-            contactId = nlapiSubmitRecord(contactRecordNew);
+            try {
+                contactId = nlapiSubmitRecord(contactRecordNew);
+            } catch (e) {
+                var contactRecordNew = nlapiCreateRecord('contact');
+                contactRecordNew.setFieldValue('firstname', first_name + ' (Portal)');
+                contactRecordNew.setFieldValue('lastname', last_name);
+                contactRecordNew.setFieldValue('email', email);
+                contactRecordNew.setFieldValue('phone', phone_number);
+                contactRecordNew.setFieldValue('company', custInternalID);
+
+                contactRecordNew.setFieldValue('custentity_connect_admin', 1);
+                contactRecordNew.setFieldValue('custentity_connect_user', 1);
+                contactRecordNew.setFieldValue('entityid', first_name + ' ' + last_name);
+                contactRecordNew.setFieldValue('contactrole', 8);
+                contactId = nlapiSubmitRecord(contactRecordNew);
+            }
 
             //Send Email to contact about the 
             var url =
@@ -147,7 +161,7 @@ function addContact(request, response) {
             email_body += 'Last Name: ' + last_name + '</br>';
             email_body += 'Email: ' + email + '</br>';
             email_body += 'Phone: ' + phone_number + '</br></br>';
-           
+
             email_body += 'Customer Name: ' + custEntityID + ' ' + custName +
                 '</br>';
             email_body += 'Franchisee: ' + partner_text + '</br></br>';
@@ -165,9 +179,31 @@ function addContact(request, response) {
                 var customerRecord = nlapiLoadRecord("lead", custInternalID);
                 customerRecord.setFieldValue('entitystatus', 13);
                 customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
+                customerRecord.setFieldValue('custentity_gift_box_activated', 1);
                 customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
                 customerRecord.setFieldValue('custentity_date_prospect_opportunity', getDate());
                 custInternalID = nlapiSubmitRecord(customerRecord);
+
+                //Search Name: Vouchers List - Per Customer
+                var voucherListByCustomerSearch = nlapiLoadSearch('customrecord_customer_vouchers', 'customsearch_vouchers_list_per_customer');
+
+                var newFilters = new Array();
+                newFilters[0] = new nlobjSearchFilter('internalid', 'custrecord_voucher_customer', 'is', custInternalID);
+
+                voucherListByCustomerSearch.addFilters(newFilters);
+
+                var voucherListByCustomerSearchResult = voucherListByCustomerSearch.runSearch();
+
+                var voucherListByCustomerSearchResultSet = voucherListByCustomerSearchResult.getResults(0, 1);
+                if (voucherListByCustomerSearchResultSet.length == 0) {
+                    var customerVoucherRecord = nlapiCreateRecord("customrecord_customer_vouchers");
+                    customerVoucherRecord.setFieldValue('custrecord_voucher_name', 'PREMIUM50');
+                    customerVoucherRecord.setFieldValue('custrecord_voucher_discount_rate', 50);
+                    customerVoucherRecord.setFieldValue('custrecord_voucher_customer', custInternalID);
+                    customerVoucherRecordInternalId = nlapiSubmitRecord(customerVoucherRecord);
+                }
+
+
 
                 var customerJSON = '{';
                 customerJSON += '"ns_id" : "' + custInternalID + '"'
@@ -202,7 +238,7 @@ function addContact(request, response) {
                 sales_rep_email_body += 'Phone: ' + phone_number + '</br></br>';
                 sales_rep_email_body += '<b><u>Customer Link</u></b>: ' + sales_rep_cust_id_link + '</br></br> <b><u>New Auto Signed Up Customer List</u></b>: https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1657&deploy=1&compid=1048144';
 
-                var sales_rep_email_subject = 'Action required: New Customer Signed Up - ' +
+                var sales_rep_email_subject = 'Action Required: Activation Kit QR Code Scanned - ' +
                     custEntityID + ' ' + custName;
 
 
@@ -244,9 +280,9 @@ function addContact(request, response) {
                 //If existing customer, adding new contact to the record.
 
                 email_body +=
-                '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
+                    '<u><b>Customer Details</b></u> </br>Existing Customer? YES </br>Customer NS ID: ' +
                     custInternalID + '</br>';
-                
+
                 var sales_rep_email_body =
                     'New Contact added to an existing customer.</br></br>';
 
@@ -309,7 +345,7 @@ function addContact(request, response) {
                 message: 'Contact Added',
                 result: ''
             };
-            
+
         } else {
             nlapiLogExecution('AUDIT', "Customer Does Not exist", 'Customer Does Not exist');
             var returnObj = {
