@@ -57,6 +57,8 @@ function addContact(request, response) {
             var salesRepEmail = null;
             var salesRepName = null;
             var salesRepId = null;
+            var accountManager = null;
+            var accountManagerId = null;
 
             var intitial_customer_status = null;
 
@@ -68,6 +70,8 @@ function addContact(request, response) {
                 partnerId = searchResultActiveCustomerListSigned.getValue('partner');
                 intitial_customer_status = searchResultActiveCustomerListSigned.getValue('entitystatus');
                 partner_text = searchResultActiveCustomerListSigned.getText('partner');
+                accountManager = searchResultActiveCustomerListSigned.getText('custentity_mp_toll_salesrep');
+                accountManagerId = searchResultActiveCustomerListSigned.getValue('custentity_mp_toll_salesrep');
 
                 var franchiseeSalesRepAssigned = nlapiLookupField('customer', parseInt(custInternalID), 'partner.custentity_sales_rep_assigned');
                 salesRepId = franchiseeSalesRepAssigned;
@@ -79,10 +83,13 @@ function addContact(request, response) {
                     salesRepEmail = 'kerina.helliwell@mailplus.com.au'
                     salesRepName = 'Kerina Helliwell';
                     salesRepId = 696160
-                } else {
+                } else if(franchiseeSalesRepAssigned == '668711'){
                     salesRepEmail = 'lee.russell@mailplus.com.au';
                     salesRepName = 'Lee Russell';
                     salesRepId = 668711
+                } else {
+                    salesRepName = accountManager;
+                    salesRepId = accountManagerId
                 }
 
                 return true;
@@ -148,11 +155,10 @@ function addContact(request, response) {
             nlapiLogExecution('DEBUG', 'custInternalID', custInternalID);
             nlapiLogExecution('DEBUG', 'email', email);
             nlapiLogExecution('DEBUG', 'custEntityID', custEntityID);
-            nlapiLogExecution('DEBUG', 'salesRepEmail', salesRepEmail);
             nlapiLogExecution('DEBUG', 'contactId', contactId);
             nlapiLogExecution('DEBUG', 'intitial_customer_status', intitial_customer_status);
 
-            nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au', salesRepEmail], ['ankith.ravindran@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
+            nlapiSendEmail(salesRepId, email, custEntityID + ' ' + custName + ' - ' + templateSubject, emailHtml, ['portalsupport@mailplus.com.au'], ['ankith.ravindran@mailplus.com.au', 'popie.popie@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'luke.forbes@mailplus.com.au'], emailAttach, attachments, true);
 
             var email_body =
                 'Please link the USER to the below CUSTOMER details </br></br>';
@@ -218,6 +224,22 @@ function addContact(request, response) {
                 nlapiRequestURL('https://mpns.protechly.com/new_customer', customerJSON,
                     headers);
 
+                //Send email about $50 voucher for MP Premium stock.
+                //Template Name: 202408 - $50 Voucher for Premium Packaging
+                var emailMerger = nlapiCreateEmailMerger(467);
+                var subject = "Your $50 Voucher for Premium Packaging";
+                var mergeResult = emailMerger.merge();
+                var emailBody = mergeResult.getBody();
+                emailBody = emailBody.replace(/nlementityid/gi, custEntityID);
+                emailBody = emailBody.replace(/nlemfirstname/gi, first_name);
+                emailBody = emailBody.replace(/nlemaccountmanager/gi, first_name);
+                var emailAttach = new Object();
+                emailAttach['entity'] = custInternalID;
+
+                nlapiSendEmail(112209, email, subject, emailBody,
+                    null,
+                    null, emailAttach, null, true);
+
                 nlapiLogExecution('DEBUG', 'custInternalID after status to signed', custInternalID);
 
                 var sales_rep_email_body =
@@ -245,8 +267,8 @@ function addContact(request, response) {
                 var sales_rep_records = new Array();
                 sales_rep_records['entity'] = custInternalID;
 
-                if (!isNullorEmpty(salesRepEmail)) {
-                    nlapiSendEmail(112209, salesRepEmail,
+                if (!isNullorEmpty(salesRepId)) {
+                    nlapiSendEmail(112209, salesRepId,
                         sales_rep_email_subject, sales_rep_email_body, ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au'
                     ], null, sales_rep_records, null, true);
@@ -307,8 +329,8 @@ function addContact(request, response) {
                 var sales_rep_records = new Array();
                 sales_rep_records['entity'] = custInternalID;
 
-                if (!isNullorEmpty(salesRepEmail)) {
-                    nlapiSendEmail(112209, salesRepEmail,
+                if (!isNullorEmpty(salesRepId)) {
+                    nlapiSendEmail(112209, salesRepId,
                         sales_rep_email_subject, sales_rep_email_body, ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au'
                     ], null, sales_rep_records, null, true);
