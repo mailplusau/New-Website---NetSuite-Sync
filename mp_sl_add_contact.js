@@ -83,7 +83,7 @@ function addContact(request, response) {
                     salesRepEmail = 'kerina.helliwell@mailplus.com.au'
                     salesRepName = 'Kerina Helliwell';
                     salesRepId = 696160
-                } else if(franchiseeSalesRepAssigned == '668711'){
+                } else if (franchiseeSalesRepAssigned == '668711') {
                     salesRepEmail = 'lee.russell@mailplus.com.au';
                     salesRepName = 'Lee Russell';
                     salesRepId = 668711
@@ -178,8 +178,8 @@ function addContact(request, response) {
             var records = new Array();
             records['entity'] = custInternalID;
 
-            //If lead status is "Prospect - Quote Sent", status changed to "Customer - Signed" and T&C's accepted. New lead & contact sent to RTA to be synced along with the price points. 
-            if (intitial_customer_status == 50) {
+            //If lead status is "Prospect - Quote Sent" or  "Prospect - Box Sent", status changed to "Customer - Signed" and T&C's accepted. New lead & contact sent to RTA to be synced along with the price points. 
+            if (intitial_customer_status == 50 || intitial_customer_status == 72) {
 
                 //Changin lead status & accepting the T&C's
                 var customerRecord = nlapiLoadRecord("lead", custInternalID);
@@ -189,6 +189,46 @@ function addContact(request, response) {
                 customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
                 customerRecord.setFieldValue('custentity_date_prospect_opportunity', getDate());
                 custInternalID = nlapiSubmitRecord(customerRecord);
+
+                //Search: Commencement Register List - To Update T&C's Agreed Date
+                var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch('customrecord_commencement_register',
+                    'customsearch_comm_reg_upd_tnc_date');
+
+                var filCommReg = [];
+                filCommReg[filCommReg.length] = new nlobjSearchFilter('internalid',
+                    'custrecord_customer', 'anyof', custInternalID);
+
+                commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
+
+                var commRegUpdateTnCAgreedDateSearchResult = commRegUpdateTnCAgreedDateSearch.runSearch();
+
+                commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
+
+                    var commRegInternalId = searchResult.getValue('internalId');
+                    var trialExpiryDate = searchResult.getValue('custrecord_trial_expiry');
+                    var commDate = searchResult.getValue('custrecord_comm_date');
+                    nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
+
+                    if (isNullorEmpty(trialExpiryDate)) {
+                        var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                        commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                        commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                        var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+                    } else {
+                        const date1 = stringToDate(commDate);
+                        const date2 = stringToDate(getDate());
+                        if (date1 >= date2) {
+                            var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                            commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                            commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                            var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+                        }
+                    }
+
+                    nlapiLogExecution('DEBUG', 'comm Reg Update', '');
+
+                    return true;
+                });
 
                 //Search Name: Vouchers List - Per Customer
                 var voucherListByCustomerSearch = nlapiLoadSearch('customrecord_customer_vouchers', 'customsearch_vouchers_list_per_customer');
@@ -401,4 +441,19 @@ function getDate() {
     }
     date = nlapiDateToString(date);
     return date;
+}
+
+
+function getDateAndTime() {
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date, 'datetimetz');
+    return date;
+}
+
+function stringToDate(str) {
+    const [dd, mm, yyyy] = str.split('/');
+    return new Date(yyyy, mm - 1, dd);
 }
