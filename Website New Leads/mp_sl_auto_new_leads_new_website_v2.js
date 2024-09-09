@@ -953,13 +953,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std250gGoldItemPricingSearch.addFilters(newFilters);
 
             nlapiLogExecution('DEBUG', 'newFilters', newFilters);
@@ -987,13 +987,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std500gGoldItemPricingSearch.addFilters(newFilters);
 
             var std500gGoldItemPricingSearchResult = std500gGoldItemPricingSearch.runSearch();
@@ -1015,13 +1015,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std1kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std1kgGoldItemPricingSearchResult = std1kgGoldItemPricingSearch.runSearch();
@@ -1044,13 +1044,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std3kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std3kgGoldItemPricingSearchResult = std3kgGoldItemPricingSearch.runSearch();
@@ -1072,13 +1072,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
 
             std5kgGoldItemPricingSearch.addFilters(newFilters);
 
@@ -1102,13 +1102,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std10kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std10kgGoldItemPricingSearchResult = std10kgGoldItemPricingSearch.runSearch();
@@ -1130,13 +1130,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std20kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std20kgGoldItemPricingSearchResult = std20kgGoldItemPricingSearch.runSearch();
@@ -1158,13 +1158,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std25kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std25kgGoldItemPricingSearchResult = std25kgGoldItemPricingSearch.runSearch();
@@ -1189,11 +1189,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalstd5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 13);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 14);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             /*
@@ -1213,13 +1213,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 5);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             expB4ItemPricingSearch.addFilters(newFilters);
 
@@ -1238,13 +1238,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 4);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp500gItemPricingSearch.addFilters(newFilters);
 
@@ -1264,13 +1264,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 3);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp1kgItemPricingSearch.addFilters(newFilters);
 
@@ -1290,13 +1290,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp3kgItemPricingSearch.addFilters(newFilters);
 
@@ -1315,13 +1315,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp5kgItemPricingSearch.addFilters(newFilters);
 
@@ -1345,11 +1345,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalexp5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 16);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             /*
@@ -1369,13 +1369,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 8);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium10kgItemPricingSearch.addFilters(newFilters);
 
@@ -1394,13 +1394,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 11);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium20kgItemPricingSearch.addFilters(newFilters);
 
@@ -1420,13 +1420,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 3);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium1kgItemPricingSearch.addFilters(newFilters);
 
@@ -1446,13 +1446,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium3kgItemPricingSearch.addFilters(newFilters);
 
@@ -1471,13 +1471,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium5kgItemPricingSearch.addFilters(newFilters);
 
@@ -1501,11 +1501,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalPremium5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 17);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 18);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             dataOut += '{"ns_id":"' + customerRecordId + '"},';
