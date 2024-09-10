@@ -112,6 +112,10 @@ function addContact(request, response) {
             try {
                 contactId = nlapiSubmitRecord(contactRecordNew);
             } catch (e) {
+                log.error({
+                    title: 'Error while creating contact',
+                    details: e
+                })
                 var contactRecordNew = nlapiCreateRecord('contact');
                 contactRecordNew.setFieldValue('firstname', first_name + ' (Portal)');
                 contactRecordNew.setFieldValue('lastname', last_name);
@@ -328,11 +332,11 @@ function addContact(request, response) {
                 ], null, records, null, true);
 
                 var params = {
-                    custscript_prod_pricing_sync_cust_id: custInternalID
+                    custscript_prod_pricing_cust_id: customer_id
                 }
 
                 var status = nlapiScheduleScript(
-                    'customscript_ss_bulk_sync_prod_pricing', 'customdeploy2', params
+                    'customscript_ss_sync_prod_pricing_mappin', 'customdeploy2', params
                 );
 
                 nlapiLogExecution('DEBUG', 'status', status);

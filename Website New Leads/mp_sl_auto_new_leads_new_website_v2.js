@@ -231,6 +231,9 @@ function leadForm(request, response) {
             customerRecord.setFieldValue('entitystatus', 57); //Suspect - Hot Lead
 
             customerRecord.setFieldValue('custentity_hotleads', 'T');
+            customerRecord.setFieldValue('custentity_invoice_by_email', 'T');//Invoice by Email set to True
+            customerRecord.setFieldValue('custentity18', 'T');//Exclude from Batch Processing set to True
+            customerRecord.setFieldValue('custentity_invoice_method', 2);//Invoice Method set to Email
 
             customerRecord.setFieldValue('custentity_industry_category', 19); //Other services
             customerRecord.setFieldValue('custentity_date_lead_entered', getDate());
@@ -335,9 +338,10 @@ function leadForm(request, response) {
 
             customerRecord.setFieldValue('custentity_website_page_url', pageURL);
 
-            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '18.44');
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '15.12');
             customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
-            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '8.60');
+            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '8.7');
+            customerRecord.setFieldValue('custentity_startrack_fuel_surcharge', '24.85');
 
             if (services_of_interest == '7') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 7);
