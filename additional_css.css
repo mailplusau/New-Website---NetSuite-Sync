@@ -630,7 +630,7 @@
 
     .btn-block {
         display: initial;
-        width: 25% !important;
+        width: 50% !important;
 
     }
 
@@ -956,6 +956,10 @@
     }
 
     #n2-ss-40 .n2-ss-slide-backgrounds {
+        display: none !important;
+    }
+
+    #n2-ss-51 .n2-ss-slide-backgrounds {
         display: none !important;
     }
 
@@ -1423,4 +1427,8 @@
 
 .R-IconButton__icon {
     color: #095c7b !important;
+}
+
+.team-slider-text{
+    font-family: 'objectsans-regular' !important;
 }

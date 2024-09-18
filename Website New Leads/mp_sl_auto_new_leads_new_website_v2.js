@@ -231,6 +231,9 @@ function leadForm(request, response) {
             customerRecord.setFieldValue('entitystatus', 57); //Suspect - Hot Lead
 
             customerRecord.setFieldValue('custentity_hotleads', 'T');
+            customerRecord.setFieldValue('custentity_invoice_by_email', 'T');//Invoice by Email set to True
+            customerRecord.setFieldValue('custentity18', 'T');//Exclude from Batch Processing set to True
+            customerRecord.setFieldValue('custentity_invoice_method', 2);//Invoice Method set to Email
 
             customerRecord.setFieldValue('custentity_industry_category', 19); //Other services
             customerRecord.setFieldValue('custentity_date_lead_entered', getDate());
@@ -286,6 +289,28 @@ function leadForm(request, response) {
                 //create sales record
                 //Send sign up email to customer
 
+                if (isNullorEmpty(parent_lpo) && pageURL == 'https://mailplus.com.au/lpo-partnership/') {
+                    //Search Name: LPO Lead Profiles - List
+                    var resultSetlpoProfileLeadsListSearch = nlapiLoadSearch('customrecord_lpo_lead_form', 'customsearch_lpo_lead_profiles_list');
+
+                    var newFiltersLPOProfileLead = new Array();
+                    newFiltersLPOProfileLead[newFiltersLPOProfileLead.length] = new nlobjSearchFilter(
+                        'custentity_lpo_linked_franchisees', 'custrecord_lpo_lead_customer', 'anyof', zee_id);
+                    resultSetlpoProfileLeadsListSearch.addFilters(newFiltersLPOProfileLead);
+
+                    var resultSetlpoProfileLeadsListSearch = resultSetlpoProfileLeadsListSearch.runSearch();
+                    var lpoLeadProfileParentCustomer = null;
+                    resultSetlpoProfileLeadsListSearch.forEachResult(function (lpoProfileLeadsListSearchResultSet) {
+
+                        lpoLeadProfileParentCustomer = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_lead_customer');
+                        lpoLeadProfileSalesRep = lpoProfileLeadsListSearchResultSet.getValue('custrecord_lpo_sales_rep');
+
+                        return true;
+                    });
+
+                    customerRecord.setFieldValue('custentity_lpo_parent_account', lpoLeadProfileParentCustomer);
+                }
+
                 var serviceFuelSurchargeToBeApplied = 0;
                 var partner_record;
                 if (!isNullorEmpty(zee_id) && zeeCount == 1) {
@@ -313,9 +338,10 @@ function leadForm(request, response) {
 
             customerRecord.setFieldValue('custentity_website_page_url', pageURL);
 
-            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '18.44');
+            customerRecord.setFieldValue('custentity_mpex_surcharge_rate', '15.12');
             customerRecord.setFieldValue('custentity_mpex_surcharge', 1);
-            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '8.60');
+            customerRecord.setFieldValue('custentity_sendle_fuel_surcharge', '8.7');
+            customerRecord.setFieldValue('custentity_startrack_fuel_surcharge', '24.85');
 
             if (services_of_interest == '7') {
                 customerRecord.setFieldValue('custentity_services_of_interest', 7);
@@ -451,7 +477,7 @@ function leadForm(request, response) {
                 var to;
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au']
                 } else {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au']
@@ -502,7 +528,7 @@ function leadForm(request, response) {
                             'Hi, \n \nA HOT Lead has been entered into the System.\n The HOT Lead has not been assciated to an LPO or a franchisee.\n Customer Name: ' +
                             entity_id + ' ' + customer_name + '\nLink: ' + cust_id_link;
                         var salesRecord = nlapiCreateRecord('customrecord_sales');
-                        var salesRep = lpoLeadProfileSalesRep;
+                        var salesRep = 653718;
 
                         salesRecord.setFieldValue('custrecord_sales_customer',
                             customerRecordId);
@@ -510,7 +536,7 @@ function leadForm(request, response) {
                             salesRecord.setFieldValue('custrecord_sales_campaign', 69); //LPO
                         }
 
-                        salesRecord.setFieldValue('custrecord_sales_assigned', lpoLeadProfileSalesRep);
+                        salesRecord.setFieldValue('custrecord_sales_assigned', 653718);
                         salesRecord.setFieldValue('custrecord_sales_outcome', 5);
                         salesRecord.setFieldValue('custrecord_sales_callbackdate', getDate());
                         var date = new Date();
@@ -678,7 +704,7 @@ function leadForm(request, response) {
                 var to;
                 if (pageURL == 'https://mailplus.com.au/lpo-partnership/') {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailpus.com.au']
+                        'ankith.ravindran@mailplus.com.au', 'alexandra.bathman@mailplus.com.au']
                 } else {
                     var cc = ['luke.forbes@mailplus.com.au', 'lee.russell@mailplus.com.au',
                         'ankith.ravindran@mailplus.com.au']
@@ -931,13 +957,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std250gGoldItemPricingSearch.addFilters(newFilters);
 
             nlapiLogExecution('DEBUG', 'newFilters', newFilters);
@@ -965,13 +991,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std500gGoldItemPricingSearch.addFilters(newFilters);
 
             var std500gGoldItemPricingSearchResult = std500gGoldItemPricingSearch.runSearch();
@@ -993,13 +1019,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std1kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std1kgGoldItemPricingSearchResult = std1kgGoldItemPricingSearch.runSearch();
@@ -1022,13 +1048,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std3kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std3kgGoldItemPricingSearchResult = std3kgGoldItemPricingSearch.runSearch();
@@ -1050,13 +1076,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
 
             std5kgGoldItemPricingSearch.addFilters(newFilters);
 
@@ -1080,13 +1106,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std10kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std10kgGoldItemPricingSearchResult = std10kgGoldItemPricingSearch.runSearch();
@@ -1108,13 +1134,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std20kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std20kgGoldItemPricingSearchResult = std20kgGoldItemPricingSearch.runSearch();
@@ -1136,13 +1162,13 @@ function leadForm(request, response) {
                 'custitem_item_zones', null, 'anyof', nsZoneID);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_item_receiver_zones', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 13);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 14);
-            }
+            // }
             std25kgGoldItemPricingSearch.addFilters(newFilters);
 
             var std25kgGoldItemPricingSearchResult = std25kgGoldItemPricingSearch.runSearch();
@@ -1167,11 +1193,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalstd5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 13);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 13);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 14);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             /*
@@ -1191,13 +1217,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 5);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             expB4ItemPricingSearch.addFilters(newFilters);
 
@@ -1216,13 +1242,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 4);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp500gItemPricingSearch.addFilters(newFilters);
 
@@ -1242,13 +1268,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 3);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp1kgItemPricingSearch.addFilters(newFilters);
 
@@ -1268,13 +1294,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp3kgItemPricingSearch.addFilters(newFilters);
 
@@ -1293,13 +1319,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 2);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 15);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 16);
-            }
+            // }
 
             exp5kgItemPricingSearch.addFilters(newFilters);
 
@@ -1323,11 +1349,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalexp5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 16);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             /*
@@ -1347,13 +1373,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 8);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium10kgItemPricingSearch.addFilters(newFilters);
 
@@ -1372,13 +1398,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 11);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium20kgItemPricingSearch.addFilters(newFilters);
 
@@ -1398,13 +1424,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 3);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium1kgItemPricingSearch.addFilters(newFilters);
 
@@ -1424,13 +1450,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium3kgItemPricingSearch.addFilters(newFilters);
 
@@ -1449,13 +1475,13 @@ function leadForm(request, response) {
                 'custitem_carrier', null, 'anyof', 9);
             newFilters[newFilters.length] = new nlobjSearchFilter(
                 'custitem_product_weight', null, 'anyof', 1);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                newFilters[newFilters.length] = new nlobjSearchFilter(
-                    'custitem_price_plans', null, 'anyof', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     newFilters[newFilters.length] = new nlobjSearchFilter(
+            //         'custitem_price_plans', null, 'anyof', 17);
+            // } else {
                 newFilters[newFilters.length] = new nlobjSearchFilter(
                     'custitem_price_plans', null, 'anyof', 18);
-            }
+            // }
 
             premium5kgItemPricingSearch.addFilters(newFilters);
 
@@ -1479,11 +1505,11 @@ function leadForm(request, response) {
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_5kg', itemInternalPremium5kgID);
             prodPricingRecord.setFieldValue('custrecord_prod_pricing_status', 2);
             prodPricingRecord.setFieldValue('custrecord_sycn_complete', 2);
-            if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-                prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 17);
-            } else {
+            // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+            //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 17);
+            // } else {
                 prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 18);
-            }
+            // }
             nlapiSubmitRecord(prodPricingRecord);
 
             dataOut += '{"ns_id":"' + customerRecordId + '"},';
