@@ -129,6 +129,10 @@ function addContact(request, response) {
 				contactId = nlapiSubmitRecord(contactRecordNew);
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
+				if (e.includes("CONTACT_ALREADY_EXISTS")) {
+					nlapiLogExecution("ERROR", "Contact Already Exists: contactId", contactId);
+				}
+				// else {
 				var contactRecordNew = nlapiCreateRecord("contact");
 				contactRecordNew.setFieldValue("firstname", first_name + " (Portal)");
 				contactRecordNew.setFieldValue("lastname", last_name);
@@ -144,6 +148,7 @@ function addContact(request, response) {
 				);
 				contactRecordNew.setFieldValue("contactrole", 8);
 				contactId = nlapiSubmitRecord(contactRecordNew);
+				// }
 			}
 
 			//Send Email to contact about the
