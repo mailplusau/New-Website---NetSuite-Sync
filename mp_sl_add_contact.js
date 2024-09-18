@@ -130,6 +130,8 @@ function addContact(request, response) {
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
 				if (e.includes("CONTACT_ALREADY_EXISTS")) {
+					//Do not recreate the contact if it already exists.
+					//Check what is the contact internal id.
 					nlapiLogExecution("ERROR", "Contact Already Exists: contactId", contactId);
 				}
 				// else {
