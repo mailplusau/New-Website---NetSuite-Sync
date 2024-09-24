@@ -129,10 +129,14 @@ function addContact(request, response) {
 				contactId = nlapiSubmitRecord(contactRecordNew);
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
-				if (e.includes("CONTACT_ALREADY_EXISTS")) {
-					//Do not recreate the contact if it already exists.
-					//Check what is the contact internal id.
-					nlapiLogExecution("ERROR", "Contact Already Exists: contactId", contactId);
+				if (containsWholeWord(e, "CONTACT_ALREADY_EXISTS")) {
+					// 	//Do not recreate the contact if it already exists.
+					// 	//Check what is the contact internal id.
+					nlapiLogExecution(
+						"ERROR",
+						"Contact Already Exists: contactId",
+						contactId
+					);
 				}
 				// else {
 				var contactRecordNew = nlapiCreateRecord("contact");
@@ -665,6 +669,17 @@ function getDate() {
 	}
 	date = nlapiDateToString(date);
 	return date;
+}
+
+/**
+ * @description Checks if a string contains a specific whole word.
+ * @param {string} str - The string to search within.
+ * @param {string} word - The word to search for.
+ * @returns {boolean} True if the whole word is found, otherwise false.
+ */
+function containsWholeWord(str, word) {
+	const regex = new RegExp(`\\b${word}\\b`, "i");
+	return regex.test(str);
 }
 
 function getDateAndTime() {
