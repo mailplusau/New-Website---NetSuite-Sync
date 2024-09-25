@@ -130,15 +130,13 @@ function addContact(request, response) {
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
 				if (containsWholeWord(e, "CONTACT_ALREADY_EXISTS")) {
-					// 	//Do not recreate the contact if it already exists.
-					// 	//Check what is the contact internal id.
 					nlapiLogExecution(
 						"ERROR",
-						"Contact Already Exists: contactId",
-						contactId
+						"containsWholeWord(e, CONTACT_ALREADY_EXISTS)",
+						containsWholeWord(e, "CONTACT_ALREADY_EXISTS")
 					);
 				}
-				// else {
+
 				var contactRecordNew = nlapiCreateRecord("contact");
 				contactRecordNew.setFieldValue("firstname", first_name + " (Portal)");
 				contactRecordNew.setFieldValue("lastname", last_name);
@@ -508,18 +506,6 @@ function addContact(request, response) {
 					null,
 					true
 				);
-
-				var params = {
-					custscript_prod_pricing_cust_id: custInternalID,
-				};
-
-				var status = nlapiScheduleScript(
-					"customscript_ss_sync_prod_pricing_mappin",
-					"customdeploy2",
-					params
-				);
-
-				nlapiLogExecution("DEBUG", "status", status);
 			} else if (
 				intitial_customer_status == 13 ||
 				intitial_customer_status == 32 ||
@@ -631,6 +617,19 @@ function addContact(request, response) {
 			);
 
 			nlapiLogExecution("AUDIT", "Contact Added", "Contact Added");
+
+			var params = {
+				custscript_prod_pricing_cust_id: custInternalID,
+			};
+
+			var status = nlapiScheduleScript(
+				"customscript_ss_sync_prod_pricing_mappin",
+				"customdeploy2",
+				params
+			);
+
+			nlapiLogExecution("DEBUG", "status", status);
+
 			var returnObj = {
 				success: true,
 				message: "Contact Added",
@@ -653,6 +652,22 @@ function addContact(request, response) {
 	}
 }
 
+/**
+ * @description Checks if a whole word exists within a string.
+ * @param {String} str - The string to search within.
+ * @param {String} word - The word to search for.
+ * @returns {Boolean} True if the whole word exists, otherwise false.
+ */
+function containsWholeWord(str, word) {
+	var words = str.split(/\s+/); // Split the string by whitespace
+	for (var i = 0; i < words.length; i++) {
+		if (words[i] === word) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function _sendJSResponse(request, response, respObject) {
 	response.setContentType("JAVASCRIPT");
 	// response.setHeader('Access-Control-Allow-Origin', '*');
@@ -669,17 +684,6 @@ function getDate() {
 	}
 	date = nlapiDateToString(date);
 	return date;
-}
-
-/**
- * @description Checks if a string contains a specific whole word.
- * @param {string} str - The string to search within.
- * @param {string} word - The word to search for.
- * @returns {boolean} True if the whole word is found, otherwise false.
- */
-function containsWholeWord(str, word) {
-	const regex = new RegExp(`\\b${word}\\b`, "i");
-	return regex.test(str);
 }
 
 function getDateAndTime() {
