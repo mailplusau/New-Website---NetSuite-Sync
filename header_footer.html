@@ -689,7 +689,7 @@
             }
 
             if (input_error == false) {
-                jQuery('#create-my-account').html('Thank You!');
+                jQuery('#create-my-account').html('Please wait...');
                 jQuery('#create-my-account').attr('disabled', 'disabled');
                 var params = {
                     entityid: entityid,
@@ -706,7 +706,7 @@
                     success: function (jResp) {
                         console.log(123);
                         console.log(jResp);
-                        if (jResp.success == false && jResp.message == 'Contact Already Existing') {
+                        if (jResp.success == false && jResp.message == "Customer Does Not exist") {
 
                         } else if (jResp.success == true) {
 

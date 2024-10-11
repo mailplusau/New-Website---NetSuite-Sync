@@ -129,13 +129,13 @@ function addContact(request, response) {
 				contactId = nlapiSubmitRecord(contactRecordNew);
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
-				if (containsWholeWord(e, "CONTACT_ALREADY_EXISTS")) {
-					nlapiLogExecution(
-						"ERROR",
-						"containsWholeWord(e, CONTACT_ALREADY_EXISTS)",
-						containsWholeWord(e, "CONTACT_ALREADY_EXISTS")
-					);
-				}
+				// if (containsWholeWord(e, "CONTACT_ALREADY_EXISTS")) {
+				// 	nlapiLogExecution(
+				// 		"ERROR",
+				// 		"containsWholeWord(e, CONTACT_ALREADY_EXISTS)",
+				// 		containsWholeWord(e, "CONTACT_ALREADY_EXISTS")
+				// 	);
+				// }
 
 				var contactRecordNew = nlapiCreateRecord("contact");
 				contactRecordNew.setFieldValue("firstname", first_name + " (Portal)");
