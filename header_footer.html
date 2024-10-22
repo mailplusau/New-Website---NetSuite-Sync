@@ -706,7 +706,7 @@
                     success: function (jResp) {
                         console.log(123);
                         console.log(jResp);
-                        if (jResp.success == false && jResp.message == "Customer Does Not exist") {
+                        if (jResp.success == false && jResp.message == 'Contact Already Existing') {
 
                         } else if (jResp.success == true) {
 
@@ -2390,6 +2390,22 @@
                         // window.location.href = 'https://mailplus.com.au/enquiry-confirmation-page/';
                     }
                 });
+            } else {
+                var originalValue = jQuery('.get-in-touch-button-submit').html();
+                var originalColor = jQuery('.get-in-touch-button-submit').css('background-color');
+                console.log('originalValue' + originalValue);
+                console.log('originalColor' + originalColor);
+                jQuery('.get-in-touch-button-submit').html('Please revise form for errors');
+                jQuery('.get-in-touch-button-submit').addClass('button-error');
+                jQuery('.get-in-touch-button-submit').removeClass('get-in-touch-button');
+                jQuery('.get-in-touch-button-submit').attr('disabled', 'disabled'); // Change to red
+                // Change to red
+                setTimeout(function () {
+                    jQuery('.get-in-touch-button-submit').html(originalValue);
+                    jQuery('.get-in-touch-button-submit').removeClass('button-error');
+                    jQuery('.get-in-touch-button-submit').addClass('get-in-touch-button'); // Revert to original color
+                    jQuery('.get-in-touch-button-submit').removeAttr('disabled');
+                }, 2500);
             }
         });
 
@@ -2932,6 +2948,7 @@
         }
         //Phone validation
         function validatePhone(val) {
+            val = val.replace(/\s+/g, '');
             var digits = val.replace(/[^0-9]/g, '');
             var australiaPhoneFormat = /^(\+\d{2}[ \-]{0,1}){0,1}(((\({0,1}[ \-]{0,1})0{0,1}\){0,1}[2|3|7|8]{1}\){0,1}[ \-]*(\d{4}[ \-]{0,1}\d{4}))|(1[ \-]{0,1}(300|800|900|902)[ \-]{0,1}((\d{6})|(\d{3}[ \-]{0,1}\d{3})))|(13[ \-]{0,1}([\d \-]{5})|((\({0,1}[ \-]{0,1})0{0,1}\){0,1}4{1}[\d \-]{8,10})))$/;
             var phoneFirst6 = digits.substring(0, 6);

@@ -199,7 +199,7 @@ function bookSalesCall(request, response) {
 		_sendJSResponse(request, response, returnObj);
 
 		var url =
-			"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=";
+			"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&ns-at=AAEJ7tMQgAVHkxJsbXgGwQQm4xn968o7JJ9-Ym7oanOzCSkWO78&rectype=customer&template=";
 		var template_id = 149;
 		var newLeadEmailTemplateRecord = nlapiLoadRecord(
 			"customrecord_camp_comm_template",

@@ -157,7 +157,7 @@ function addContact(request, response) {
 
 			//Send Email to contact about the
 			var url =
-				"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=";
+				"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&ns-at=AAEJ7tMQgAVHkxJsbXgGwQQm4xn968o7JJ9-Ym7oanOzCSkWO78&rectype=customer&template=";
 			var template_id = 59;
 			var newLeadEmailTemplateRecord = nlapiLoadRecord(
 				"customrecord_camp_comm_template",
@@ -317,48 +317,6 @@ function addContact(request, response) {
 
 					return true;
 				});
-
-				//Search Name: Vouchers List - Per Customer
-				var voucherListByCustomerSearch = nlapiLoadSearch(
-					"customrecord_customer_vouchers",
-					"customsearch_vouchers_list_per_customer"
-				);
-
-				var newFilters = new Array();
-				newFilters[0] = new nlobjSearchFilter(
-					"internalid",
-					"custrecord_voucher_customer",
-					"is",
-					custInternalID
-				);
-
-				voucherListByCustomerSearch.addFilters(newFilters);
-
-				var voucherListByCustomerSearchResult =
-					voucherListByCustomerSearch.runSearch();
-
-				var voucherListByCustomerSearchResultSet =
-					voucherListByCustomerSearchResult.getResults(0, 1);
-				if (voucherListByCustomerSearchResultSet.length == 0) {
-					var customerVoucherRecord = nlapiCreateRecord(
-						"customrecord_customer_vouchers"
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_name",
-						"PREMIUM50"
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_discount_rate",
-						50
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_customer",
-						custInternalID
-					);
-					customerVoucherRecordInternalId = nlapiSubmitRecord(
-						customerVoucherRecord
-					);
-				}
 
 				var customerJSON = "{";
 				customerJSON += '"ns_id" : "' + custInternalID + '"';
@@ -571,6 +529,48 @@ function addContact(request, response) {
 						true
 					);
 				}
+			}
+
+			//Search Name: Vouchers List - Per Customer
+			var voucherListByCustomerSearch = nlapiLoadSearch(
+				"customrecord_customer_vouchers",
+				"customsearch_vouchers_list_per_customer"
+			);
+
+			var newFilters = new Array();
+			newFilters[0] = new nlobjSearchFilter(
+				"internalid",
+				"custrecord_voucher_customer",
+				"is",
+				custInternalID
+			);
+
+			voucherListByCustomerSearch.addFilters(newFilters);
+
+			var voucherListByCustomerSearchResult =
+				voucherListByCustomerSearch.runSearch();
+
+			var voucherListByCustomerSearchResultSet =
+				voucherListByCustomerSearchResult.getResults(0, 1);
+			if (voucherListByCustomerSearchResultSet.length == 0) {
+				var customerVoucherRecord = nlapiCreateRecord(
+					"customrecord_customer_vouchers"
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_name",
+					"PREMIUM50"
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_discount_rate",
+					50
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_customer",
+					custInternalID
+				);
+				customerVoucherRecordInternalId = nlapiSubmitRecord(
+					customerVoucherRecord
+				);
 			}
 
 			nlapiSendEmail(
