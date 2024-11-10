@@ -335,9 +335,9 @@ function addContact(request, response) {
 				);
 
 				//Send email about $50 voucher for MP Premium stock.
-				//Template Name: 	202409 - BPC 20% Off Email
+				//Template Name: 	202408 - $50 Voucher for Premium Packaging
 				var emailMerger = nlapiCreateEmailMerger(467);
-				var subject = "Get 20% OFF the Better Packaging Co. Range";
+				var subject = "Your $50 Voucher for Premium Packaging";
 				var mergeResult = emailMerger.merge();
 				var emailBody = mergeResult.getBody();
 				emailBody = emailBody.replace(/nlementityid/gi, custEntityID);
@@ -359,9 +359,9 @@ function addContact(request, response) {
 				);
 
 				//Send email about $50 voucher for MP Premium stock.
-				//Template Name: 202408 - $50 Voucher for Premium Packaging
+				//Template Name: 202409 - BPC 20% Off Email
 				var emailMerger2 = nlapiCreateEmailMerger(470);
-				var subject2 = "Your $50 Voucher for Premium Packaging";
+				var subject2 = "Get 20% OFF the Better Packaging Co. Range";
 				var mergeResult2 = emailMerger2.merge();
 				var emailBody2 = mergeResult2.getBody();
 				emailBody2 = emailBody2.replace(/nlementityid/gi, custEntityID);

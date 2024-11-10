@@ -1832,271 +1832,271 @@ function leadForm(request, response) {
             25Kg	9
             250g	10
             */
-			var expB4ItemPricingSearch = nlapiLoadSearch(
-				"noninventoryitem",
-				"customsearch3745"
-			);
+			// var expB4ItemPricingSearch = nlapiLoadSearch(
+			// 	"noninventoryitem",
+			// 	"customsearch3745"
+			// );
 
-			var newFilters = new Array();
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_carrier",
-				null,
-				"anyof",
-				2
-			);
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_product_weight",
-				null,
-				"anyof",
-				5
-			);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     newFilters[newFilters.length] = new nlobjSearchFilter(
-			//         'custitem_price_plans', null, 'anyof', 15);
-			// } else {
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_price_plans",
-				null,
-				"anyof",
-				16
-			);
+			// var newFilters = new Array();
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_carrier",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_product_weight",
+			// 	null,
+			// 	"anyof",
+			// 	5
+			// );
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     newFilters[newFilters.length] = new nlobjSearchFilter(
+			// //         'custitem_price_plans', null, 'anyof', 15);
+			// // } else {
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_price_plans",
+			// 	null,
+			// 	"anyof",
+			// 	16
+			// );
+			// // }
+
+			// expB4ItemPricingSearch.addFilters(newFilters);
+
+			// var expB4ItemPricingSearchResult = expB4ItemPricingSearch.runSearch();
+
+			// var itemInternalexpB4ID = null;
+			// expB4ItemPricingSearchResult.forEachResult(function (
+			// 	expB4ItemPricingSearchResultSet
+			// ) {
+			// 	itemInternalexpB4ID =
+			// 		expB4ItemPricingSearchResultSet.getValue("internalid");
+			// 	return true;
+			// });
+
+			// var exp500gItemPricingSearch = nlapiLoadSearch(
+			// 	"noninventoryitem",
+			// 	"customsearch3745"
+			// );
+
+			// var newFilters = new Array();
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_carrier",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_product_weight",
+			// 	null,
+			// 	"anyof",
+			// 	4
+			// );
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     newFilters[newFilters.length] = new nlobjSearchFilter(
+			// //         'custitem_price_plans', null, 'anyof', 15);
+			// // } else {
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_price_plans",
+			// 	null,
+			// 	"anyof",
+			// 	16
+			// );
+			// // }
+
+			// exp500gItemPricingSearch.addFilters(newFilters);
+
+			// var exp500gItemPricingSearchResult = exp500gItemPricingSearch.runSearch();
+
+			// var itemInternalexp500gID = null;
+			// exp500gItemPricingSearchResult.forEachResult(function (
+			// 	exp500gItemPricingSearchResultSet
+			// ) {
+			// 	itemInternalexp500gID =
+			// 		exp500gItemPricingSearchResultSet.getValue("internalid");
+			// 	return true;
+			// });
+
+			// var exp1kgItemPricingSearch = nlapiLoadSearch(
+			// 	"noninventoryitem",
+			// 	"customsearch3745"
+			// );
+
+			// var newFilters = new Array();
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_carrier",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_product_weight",
+			// 	null,
+			// 	"anyof",
+			// 	3
+			// );
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     newFilters[newFilters.length] = new nlobjSearchFilter(
+			// //         'custitem_price_plans', null, 'anyof', 15);
+			// // } else {
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_price_plans",
+			// 	null,
+			// 	"anyof",
+			// 	16
+			// );
+			// // }
+
+			// exp1kgItemPricingSearch.addFilters(newFilters);
+
+			// var exp1kgItemPricingSearchResult = exp1kgItemPricingSearch.runSearch();
+
+			// var itemInternalexp1kgID = null;
+			// exp1kgItemPricingSearchResult.forEachResult(function (
+			// 	exp1kgItemPricingSearchResultSet
+			// ) {
+			// 	itemInternalexp1kgID =
+			// 		exp1kgItemPricingSearchResultSet.getValue("internalid");
+			// 	return true;
+			// });
+
+			// var exp3kgItemPricingSearch = nlapiLoadSearch(
+			// 	"noninventoryitem",
+			// 	"customsearch3745"
+			// );
+
+			// var newFilters = new Array();
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_carrier",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_product_weight",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     newFilters[newFilters.length] = new nlobjSearchFilter(
+			// //         'custitem_price_plans', null, 'anyof', 15);
+			// // } else {
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_price_plans",
+			// 	null,
+			// 	"anyof",
+			// 	16
+			// );
+			// // }
+
+			// exp3kgItemPricingSearch.addFilters(newFilters);
+
+			// var exp3kgItemPricingSearchResult = exp3kgItemPricingSearch.runSearch();
+
+			// var itemInternalexp3kgID = null;
+			// exp3kgItemPricingSearchResult.forEachResult(function (
+			// 	exp3kgItemPricingSearchResultSet
+			// ) {
+			// 	itemInternalexp3kgID =
+			// 		exp3kgItemPricingSearchResultSet.getValue("internalid");
+			// 	return true;
+			// });
+
+			// var exp5kgItemPricingSearch = nlapiLoadSearch(
+			// 	"noninventoryitem",
+			// 	"customsearch3745"
+			// );
+
+			// var newFilters = new Array();
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_carrier",
+			// 	null,
+			// 	"anyof",
+			// 	2
+			// );
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_product_weight",
+			// 	null,
+			// 	"anyof",
+			// 	1
+			// );
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     newFilters[newFilters.length] = new nlobjSearchFilter(
+			// //         'custitem_price_plans', null, 'anyof', 15);
+			// // } else {
+			// newFilters[newFilters.length] = new nlobjSearchFilter(
+			// 	"custitem_price_plans",
+			// 	null,
+			// 	"anyof",
+			// 	16
+			// );
+			// // }
+
+			// exp5kgItemPricingSearch.addFilters(newFilters);
+
+			// var exp5kgItemPricingSearchResult = exp5kgItemPricingSearch.runSearch();
+
+			// var itemInternalexp5kgID = null;
+			// exp5kgItemPricingSearchResult.forEachResult(function (
+			// 	exp5kgItemPricingSearchResultSet
+			// ) {
+			// 	itemInternalexp5kgID =
+			// 		exp5kgItemPricingSearchResultSet.getValue("internalid");
+			// 	return true;
+			// });
+
+			// var prodPricingRecord = nlapiCreateRecord("customrecord_product_pricing");
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_last_update",
+			// 	getDate()
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_customer",
+			// 	customerRecordId
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_delivery_speeds",
+			// 	2
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_b4",
+			// 	itemInternalexpB4ID
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_500g",
+			// 	itemInternalexp500gID
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_1kg",
+			// 	itemInternalexp1kgID
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_3kg",
+			// 	itemInternalexp3kgID
+			// );
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_5kg",
+			// 	itemInternalexp5kgID
+			// );
+			// prodPricingRecord.setFieldValue("custrecord_prod_pricing_status", 2);
+			// prodPricingRecord.setFieldValue("custrecord_sycn_complete", 2);
+			// // if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
+			// //     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
+			// // } else {
+			// prodPricingRecord.setFieldValue(
+			// 	"custrecord_prod_pricing_pricing_plan",
+			// 	16
+			// );
+			// // }
+			// nlapiSubmitRecord(prodPricingRecord);
+
+			// if (mpExpActivated == 1) {
+			// 	var customer_record = nlapiLoadRecord("customer", customerRecordId);
+			// 	customer_record.setFieldValue("custentity_mpex_small_satchel", 1);
+			// 	nlapiSubmitRecord(customer_record);
 			// }
-
-			expB4ItemPricingSearch.addFilters(newFilters);
-
-			var expB4ItemPricingSearchResult = expB4ItemPricingSearch.runSearch();
-
-			var itemInternalexpB4ID = null;
-			expB4ItemPricingSearchResult.forEachResult(function (
-				expB4ItemPricingSearchResultSet
-			) {
-				itemInternalexpB4ID =
-					expB4ItemPricingSearchResultSet.getValue("internalid");
-				return true;
-			});
-
-			var exp500gItemPricingSearch = nlapiLoadSearch(
-				"noninventoryitem",
-				"customsearch3745"
-			);
-
-			var newFilters = new Array();
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_carrier",
-				null,
-				"anyof",
-				2
-			);
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_product_weight",
-				null,
-				"anyof",
-				4
-			);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     newFilters[newFilters.length] = new nlobjSearchFilter(
-			//         'custitem_price_plans', null, 'anyof', 15);
-			// } else {
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_price_plans",
-				null,
-				"anyof",
-				16
-			);
-			// }
-
-			exp500gItemPricingSearch.addFilters(newFilters);
-
-			var exp500gItemPricingSearchResult = exp500gItemPricingSearch.runSearch();
-
-			var itemInternalexp500gID = null;
-			exp500gItemPricingSearchResult.forEachResult(function (
-				exp500gItemPricingSearchResultSet
-			) {
-				itemInternalexp500gID =
-					exp500gItemPricingSearchResultSet.getValue("internalid");
-				return true;
-			});
-
-			var exp1kgItemPricingSearch = nlapiLoadSearch(
-				"noninventoryitem",
-				"customsearch3745"
-			);
-
-			var newFilters = new Array();
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_carrier",
-				null,
-				"anyof",
-				2
-			);
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_product_weight",
-				null,
-				"anyof",
-				3
-			);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     newFilters[newFilters.length] = new nlobjSearchFilter(
-			//         'custitem_price_plans', null, 'anyof', 15);
-			// } else {
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_price_plans",
-				null,
-				"anyof",
-				16
-			);
-			// }
-
-			exp1kgItemPricingSearch.addFilters(newFilters);
-
-			var exp1kgItemPricingSearchResult = exp1kgItemPricingSearch.runSearch();
-
-			var itemInternalexp1kgID = null;
-			exp1kgItemPricingSearchResult.forEachResult(function (
-				exp1kgItemPricingSearchResultSet
-			) {
-				itemInternalexp1kgID =
-					exp1kgItemPricingSearchResultSet.getValue("internalid");
-				return true;
-			});
-
-			var exp3kgItemPricingSearch = nlapiLoadSearch(
-				"noninventoryitem",
-				"customsearch3745"
-			);
-
-			var newFilters = new Array();
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_carrier",
-				null,
-				"anyof",
-				2
-			);
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_product_weight",
-				null,
-				"anyof",
-				2
-			);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     newFilters[newFilters.length] = new nlobjSearchFilter(
-			//         'custitem_price_plans', null, 'anyof', 15);
-			// } else {
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_price_plans",
-				null,
-				"anyof",
-				16
-			);
-			// }
-
-			exp3kgItemPricingSearch.addFilters(newFilters);
-
-			var exp3kgItemPricingSearchResult = exp3kgItemPricingSearch.runSearch();
-
-			var itemInternalexp3kgID = null;
-			exp3kgItemPricingSearchResult.forEachResult(function (
-				exp3kgItemPricingSearchResultSet
-			) {
-				itemInternalexp3kgID =
-					exp3kgItemPricingSearchResultSet.getValue("internalid");
-				return true;
-			});
-
-			var exp5kgItemPricingSearch = nlapiLoadSearch(
-				"noninventoryitem",
-				"customsearch3745"
-			);
-
-			var newFilters = new Array();
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_carrier",
-				null,
-				"anyof",
-				2
-			);
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_product_weight",
-				null,
-				"anyof",
-				1
-			);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     newFilters[newFilters.length] = new nlobjSearchFilter(
-			//         'custitem_price_plans', null, 'anyof', 15);
-			// } else {
-			newFilters[newFilters.length] = new nlobjSearchFilter(
-				"custitem_price_plans",
-				null,
-				"anyof",
-				16
-			);
-			// }
-
-			exp5kgItemPricingSearch.addFilters(newFilters);
-
-			var exp5kgItemPricingSearchResult = exp5kgItemPricingSearch.runSearch();
-
-			var itemInternalexp5kgID = null;
-			exp5kgItemPricingSearchResult.forEachResult(function (
-				exp5kgItemPricingSearchResultSet
-			) {
-				itemInternalexp5kgID =
-					exp5kgItemPricingSearchResultSet.getValue("internalid");
-				return true;
-			});
-
-			var prodPricingRecord = nlapiCreateRecord("customrecord_product_pricing");
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_last_update",
-				getDate()
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_customer",
-				customerRecordId
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_delivery_speeds",
-				2
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_b4",
-				itemInternalexpB4ID
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_500g",
-				itemInternalexp500gID
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_1kg",
-				itemInternalexp1kgID
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_3kg",
-				itemInternalexp3kgID
-			);
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_5kg",
-				itemInternalexp5kgID
-			);
-			prodPricingRecord.setFieldValue("custrecord_prod_pricing_status", 2);
-			prodPricingRecord.setFieldValue("custrecord_sycn_complete", 2);
-			// if (avg_daily_shipments == 1 || avg_daily_shipments == 2) {
-			//     prodPricingRecord.setFieldValue('custrecord_prod_pricing_pricing_plan', 15);
-			// } else {
-			prodPricingRecord.setFieldValue(
-				"custrecord_prod_pricing_pricing_plan",
-				16
-			);
-			// }
-			nlapiSubmitRecord(prodPricingRecord);
-
-			if (mpExpActivated == 1) {
-				var customer_record = nlapiLoadRecord("customer", customerRecordId);
-				customer_record.setFieldValue("custentity_mpex_small_satchel", 1);
-				nlapiSubmitRecord(customer_record);
-			}
 
 			/*
            5Kg	    1
@@ -2431,8 +2431,7 @@ function leadForm(request, response) {
 			var entity_id = customer_record.getFieldValue("entityid");
 			var customer_name = customer_record.getFieldValue("companyname");
 
-			templateSubject =
-				entity_id + " " + customer_name + " - " + templateSubject;
+			templateSubject = templateSubject;
 
 			url +=
 				template_id +
