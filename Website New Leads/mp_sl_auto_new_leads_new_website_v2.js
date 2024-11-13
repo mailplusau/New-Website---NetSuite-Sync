@@ -2416,7 +2416,8 @@ function leadForm(request, response) {
 
 			var url =
 				"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&ns-at=AAEJ7tMQgAVHkxJsbXgGwQQm4xn968o7JJ9-Ym7oanOzCSkWO78&rectype=customer&template=";
-			var template_id = 164;
+			// var template_id = 164;
+			var template_id = 224;
 			var newLeadEmailTemplateRecord = nlapiLoadRecord(
 				"customrecord_camp_comm_template",
 				template_id
