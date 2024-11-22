@@ -146,11 +146,11 @@ function leadForm(request, response) {
 				"AND",
 				["entityid", "doesnotstartwith", "test"],
 				"AND",
-				["custentity_network_matrix_json", "contains", city],
+				["custentity_zee_territory_json", "contains", city],
 				"AND",
-				["custentity_network_matrix_json", "contains", state],
+				["custentity_zee_territory_json", "contains", state],
 				"AND",
-				["custentity_network_matrix_json", "contains", postcode],
+				["custentity_zee_territory_json", "contains", postcode],
 			];
 
 			nlapiLogExecution("DEBUG", "filterExpression", filterExpression);
