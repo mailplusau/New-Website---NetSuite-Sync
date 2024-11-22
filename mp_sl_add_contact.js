@@ -129,12 +129,14 @@ function addContact(request, response) {
 				contactId = nlapiSubmitRecord(contactRecordNew);
 			} catch (e) {
 				nlapiLogExecution("ERROR", "Error while creating contact", e);
-				if (e.includes("CONTACT_ALREADY_EXISTS")) {
-					//Do not recreate the contact if it already exists.
-					//Check what is the contact internal id.
-					nlapiLogExecution("ERROR", "Contact Already Exists: contactId", contactId);
-				}
-				// else {
+				// if (containsWholeWord(e, "CONTACT_ALREADY_EXISTS")) {
+				// 	nlapiLogExecution(
+				// 		"ERROR",
+				// 		"containsWholeWord(e, CONTACT_ALREADY_EXISTS)",
+				// 		containsWholeWord(e, "CONTACT_ALREADY_EXISTS")
+				// 	);
+				// }
+
 				var contactRecordNew = nlapiCreateRecord("contact");
 				contactRecordNew.setFieldValue("firstname", first_name + " (Portal)");
 				contactRecordNew.setFieldValue("lastname", last_name);
@@ -155,8 +157,9 @@ function addContact(request, response) {
 
 			//Send Email to contact about the
 			var url =
-				"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&h=6d4293eecb3cb3f4353e&rectype=customer&template=";
-			var template_id = 59;
+				"https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=395&deploy=1&compid=1048144&ns-at=AAEJ7tMQgAVHkxJsbXgGwQQm4xn968o7JJ9-Ym7oanOzCSkWO78&rectype=customer&template=";
+			var template_id = 228; //20241113 - T4 - Your ShipMate Access is Ready
+			// var template_id = 59; //202404 - MailPlus - Invite to Portal - Old Email Template 2024-11-13T20:41:17.120Z
 			var newLeadEmailTemplateRecord = nlapiLoadRecord(
 				"customrecord_camp_comm_template",
 				template_id
@@ -316,48 +319,6 @@ function addContact(request, response) {
 					return true;
 				});
 
-				//Search Name: Vouchers List - Per Customer
-				var voucherListByCustomerSearch = nlapiLoadSearch(
-					"customrecord_customer_vouchers",
-					"customsearch_vouchers_list_per_customer"
-				);
-
-				var newFilters = new Array();
-				newFilters[0] = new nlobjSearchFilter(
-					"internalid",
-					"custrecord_voucher_customer",
-					"is",
-					custInternalID
-				);
-
-				voucherListByCustomerSearch.addFilters(newFilters);
-
-				var voucherListByCustomerSearchResult =
-					voucherListByCustomerSearch.runSearch();
-
-				var voucherListByCustomerSearchResultSet =
-					voucherListByCustomerSearchResult.getResults(0, 1);
-				if (voucherListByCustomerSearchResultSet.length == 0) {
-					var customerVoucherRecord = nlapiCreateRecord(
-						"customrecord_customer_vouchers"
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_name",
-						"PREMIUM50"
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_discount_rate",
-						50
-					);
-					customerVoucherRecord.setFieldValue(
-						"custrecord_voucher_customer",
-						custInternalID
-					);
-					customerVoucherRecordInternalId = nlapiSubmitRecord(
-						customerVoucherRecord
-					);
-				}
-
 				var customerJSON = "{";
 				customerJSON += '"ns_id" : "' + custInternalID + '"';
 				customerJSON += "}";
@@ -375,9 +336,9 @@ function addContact(request, response) {
 				);
 
 				//Send email about $50 voucher for MP Premium stock.
-				//Template Name: 	202409 - BPC 20% Off Email
+				//Template Name: 	202408 - $50 Voucher for Premium Packaging
 				var emailMerger = nlapiCreateEmailMerger(467);
-				var subject = "Get 20% OFF the Better Packaging Co. Range";
+				var subject = "Your $50 Voucher for Premium Packaging";
 				var mergeResult = emailMerger.merge();
 				var emailBody = mergeResult.getBody();
 				emailBody = emailBody.replace(/nlementityid/gi, custEntityID);
@@ -399,9 +360,9 @@ function addContact(request, response) {
 				);
 
 				//Send email about $50 voucher for MP Premium stock.
-				//Template Name: 202408 - $50 Voucher for Premium Packaging
+				//Template Name: 202409 - BPC 20% Off Email
 				var emailMerger2 = nlapiCreateEmailMerger(470);
-				var subject2 = "Your $50 Voucher for Premium Packaging";
+				var subject2 = "Get 20% OFF the Better Packaging Co. Range";
 				var mergeResult2 = emailMerger2.merge();
 				var emailBody2 = mergeResult2.getBody();
 				emailBody2 = emailBody2.replace(/nlementityid/gi, custEntityID);
@@ -504,18 +465,6 @@ function addContact(request, response) {
 					null,
 					true
 				);
-
-				var params = {
-					custscript_prod_pricing_cust_id: custInternalID,
-				};
-
-				var status = nlapiScheduleScript(
-					"customscript_ss_sync_prod_pricing_mappin",
-					"customdeploy2",
-					params
-				);
-
-				nlapiLogExecution("DEBUG", "status", status);
 			} else if (
 				intitial_customer_status == 13 ||
 				intitial_customer_status == 32 ||
@@ -583,6 +532,48 @@ function addContact(request, response) {
 				}
 			}
 
+			//Search Name: Vouchers List - Per Customer
+			var voucherListByCustomerSearch = nlapiLoadSearch(
+				"customrecord_customer_vouchers",
+				"customsearch_vouchers_list_per_customer"
+			);
+
+			var newFilters = new Array();
+			newFilters[0] = new nlobjSearchFilter(
+				"internalid",
+				"custrecord_voucher_customer",
+				"is",
+				custInternalID
+			);
+
+			voucherListByCustomerSearch.addFilters(newFilters);
+
+			var voucherListByCustomerSearchResult =
+				voucherListByCustomerSearch.runSearch();
+
+			var voucherListByCustomerSearchResultSet =
+				voucherListByCustomerSearchResult.getResults(0, 1);
+			if (voucherListByCustomerSearchResultSet.length == 0) {
+				var customerVoucherRecord = nlapiCreateRecord(
+					"customrecord_customer_vouchers"
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_name",
+					"PREMIUM50"
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_discount_rate",
+					50
+				);
+				customerVoucherRecord.setFieldValue(
+					"custrecord_voucher_customer",
+					custInternalID
+				);
+				customerVoucherRecordInternalId = nlapiSubmitRecord(
+					customerVoucherRecord
+				);
+			}
+
 			nlapiSendEmail(
 				112209,
 				["mailplussupport@protechly.com"],
@@ -627,6 +618,19 @@ function addContact(request, response) {
 			);
 
 			nlapiLogExecution("AUDIT", "Contact Added", "Contact Added");
+
+			var params = {
+				custscript_prod_pricing_cust_id: custInternalID,
+			};
+
+			var status = nlapiScheduleScript(
+				"customscript_ss_sync_prod_pricing_mappin",
+				"customdeploy2",
+				params
+			);
+
+			nlapiLogExecution("DEBUG", "status", status);
+
 			var returnObj = {
 				success: true,
 				message: "Contact Added",
@@ -647,6 +651,22 @@ function addContact(request, response) {
 		_sendJSResponse(request, response, returnObj);
 	} else {
 	}
+}
+
+/**
+ * @description Checks if a whole word exists within a string.
+ * @param {String} str - The string to search within.
+ * @param {String} word - The word to search for.
+ * @returns {Boolean} True if the whole word exists, otherwise false.
+ */
+function containsWholeWord(str, word) {
+	var words = str.split(/\s+/); // Split the string by whitespace
+	for (var i = 0; i < words.length; i++) {
+		if (words[i] === word) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function _sendJSResponse(request, response, respObject) {

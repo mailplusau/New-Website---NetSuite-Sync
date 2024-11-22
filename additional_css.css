@@ -245,6 +245,12 @@
     color: #f4524d !important;
 }
 
+/*Input field error*/
+.button-error {
+    border-color: #F38282FF !important;
+    background-color: #F38282FF !important;
+}
+
 /*Input field default*/
 .input-field-default {
     color: #263d39 !important;
@@ -1429,6 +1435,6 @@
     color: #095c7b !important;
 }
 
-.team-slider-text{
+.team-slider-text {
     font-family: 'objectsans-regular' !important;
 }
