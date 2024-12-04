@@ -94,100 +94,156 @@ define([
 		afterLoad();
 
 		//View the cart.
-		$(document).on("click", ".viewCart", function (e) {
-			$("#itemAddedToCart").hide();
-
-			var voucherInternalId = currRec.getValue({
-				fieldId: "custpage_voucher_internal_id",
-			});
-			var voucherName = currRec.getValue({
-				fieldId: "custpage_voucher_name",
+		$(document).on("click", ".acceptTNC", function (e) {
+			var customerInternalId = currRec.getValue({
+				fieldId: "custpage_customer_internal_id",
 			});
 
-			if (cartList.length == 0) {
-				var cartModalInlineHtml = "CART IS EMPTY";
-			} else {
-				var cartModalInlineHtml =
-					"<style>table#cartTable {color: #103D39 !important; font-size: 12px;text-align: center;border: solid;}.dataTables_wrapper {font-size: 14px;}table#cartTable th{text-align: center;} .bolded{font-weight: bold;}</style>";
-				cartModalInlineHtml +=
-					'<div class="table_section "><table id="cartTable" class="table table-responsive table-striped customer tablesorter cell-border compact" style="width: 100%;">';
-				cartModalInlineHtml +=
-					'<thead style="color: white;background-color: #103D39;">';
-				cartModalInlineHtml += '<tr class="text-center">';
-				cartModalInlineHtml += "<td></td>";
-				cartModalInlineHtml += "<td>ITEM</td>";
-				cartModalInlineHtml += "<td>QTY</td>";
-				cartModalInlineHtml += "<td>RATE(inc. GST)</td>";
-				cartModalInlineHtml += "<td>AMOUNT(inc. GST)</td>";
-				cartModalInlineHtml += "</tr>";
-				cartModalInlineHtml += "</thead>";
-				cartModalInlineHtml += '<tbody id="" >';
+			var customerRecord = record.load({
+				type: record.Type.CUSTOMER,
+				id: customerInternalId,
+			});
+			var entityId = customerRecord.getValue({
+				fieldId: "entityid",
+			});
+			var compnayName = customerRecord.getValue({
+				fieldId: "companyname",
+			});
+			var tncaccepted = customerRecord.getValue({
+				fieldId: "custentity_terms_conditions_agree",
+			});
 
-				var cartTotalAmount = 0.0;
+			//UPDATE THE COMMENCEMENT REGISTER RECORD
+			var commRegUpdateTnCAgreedDateSearch = search.load({
+				id: "customsearch_comm_reg_upd_tnc_date",
+				type: "customrecord_commencement_register",
+			});
 
-				for (var j = 0; j < cartList.length; j++) {
-					cartModalInlineHtml += "<tr>";
-					cartModalInlineHtml +=
-						'<td><span class="cart-remove-item glyphicon glyphicon-remove" data-id="' +
-						cartList[j].id +
-						'" style="color:red;"></span></td>';
-					cartModalInlineHtml += "<td>" + cartList[j].name + "</td>";
-					cartModalInlineHtml +=
-						'<td><span class="cart-pqt-minus glyphicon glyphicon-minus" data-id="' +
-						cartList[j].id +
-						'"></span> ' +
-						cartList[j].count +
-						' <span class="cart-pqt-plus glyphicon glyphicon-plus" data-id="' +
-						cartList[j].id +
-						'"></span></td>';
-					cartModalInlineHtml +=
-						"<td>" + financial(cartList[j].price) + "</td>";
-					cartModalInlineHtml +=
-						"<td>" + financial(cartList[j].count * cartList[j].price) + "</td>";
+			commRegUpdateTnCAgreedDateSearch.filters.push(
+				search.createFilter({
+					name: "internalid",
+					join: "custrecord_customer",
+					operator: search.Operator.ANYOF,
+					values: parseInt(customerInternalId),
+				})
+			);
 
-					cartModalInlineHtml += "</tr>";
+			commRegUpdateTnCAgreedDateSearch
+				.run()
+				.each(function (commRegUpdateTnCAgreedDateSearchResult) {
+					var commRegInternalId =
+						commRegUpdateTnCAgreedDateSearchResult.getValue({
+							name: "internalId",
+						});
+					var trialExpiryDate = commRegUpdateTnCAgreedDateSearchResult.getValue(
+						{
+							name: "custrecord_trial_expiry",
+						}
+					);
+					var commDate = commRegUpdateTnCAgreedDateSearchResult.getValue({
+						name: "custrecord_comm_date",
+					});
 
-					cartTotalAmount =
-						cartTotalAmount + cartList[j].count * cartList[j].price;
-				}
+					var date_netsuite = format.format({
+						value: new Date(),
+						type: format.Type.DATETIME,
+					});
 
-				if (!isNullorEmpty(voucherInternalId)) {
-					cartModalInlineHtml +=
-						'<tr style="border: solid;background-color: #CFE0CE;">';
-					cartModalInlineHtml += "<td></td>";
-					cartModalInlineHtml += "<td></td>";
-					cartModalInlineHtml +=
-						'<td><div class="input-group"><span class="input-group-addon" id="entity_id_text" style="font-size: 12px;">VOUCHER CODE</span><input type="text" placeholder="Enter voucher code" id="voucherCode" class="form-control" value=""/></div></td>';
-					cartModalInlineHtml +=
-						'<td><input type="button" id="applyVoucher" class="form-control btn btn-primary lift" value="APPLY" style="font-size: 12px;border-radius: 30px;background-color:#F0AECB;color: #0f3d39;"/></td>';
-					cartModalInlineHtml +=
-						'<td style="vertical-align: middle;"><input type="text" id="discountApplied" class="form-control" style="color: #0f3d39;text-align: center;" value="-' +
-						financial(0) +
-						'" readonly/></td>';
+					var commRegRecord = record.load({
+						type: "customrecord_commencement_register",
+						id: commRegInternalId,
+					});
+					commRegRecord.setValue({
+						fieldId: "custrecord_tnc_agreement_date",
+						value: date_netsuite,
+					});
+					commRegRecord.setValue({
+						fieldId: "custrecord_trial_status",
+						value: 9,
+					});
+					commRegRecord.save();
 
-					cartModalInlineHtml += "</tr>";
-				}
+					return true;
+				});
 
-				cartModalInlineHtml +=
-					'<tr style="border: solid;background-color: #CFE0CE;">';
-				cartModalInlineHtml += "<td></td>";
-				cartModalInlineHtml += "<td></td>";
-				cartModalInlineHtml += "<td></td>";
-				cartModalInlineHtml += "<td><b>Total:</b></td>";
-				cartModalInlineHtml +=
-					'<td><input type="text" id="cartTotalAmount" class="form-control" style="color: #0f3d39;text-align: center;" value="' +
-					financial(cartTotalAmount) +
-					'" readonly/></td>';
-
-				cartModalInlineHtml += "</tr>";
-
-				cartModalInlineHtml += "</tbody></table></div>";
+			//UPDATE THE CUSTOMER RECORD
+			if (tncaccepted != 1 || tncaccepted != "1") {
+				customerRecord.getValue({
+					fieldId: "custentity_terms_conditions_agree_date",
+					value: getDateToday(),
+				});
+				customerRecord.getValue({
+					fieldId: "custentity_cust_closed_won",
+					value: true,
+				});
+				customerRecord.getValue({
+					fieldId: "custentity_date_prospect_opportunity",
+					value: getDateToday(),
+				});
+				customerRecord.getValue({
+					fieldId: "custentity_terms_conditions_agree",
+					value: 1,
+				});
+				customerRecord.save();
 			}
 
-			$("#viewCartModal .modal-body").html(cartModalInlineHtml);
-			$("#viewCartModal").show();
+			//SEND OUT EMAIL TO SALES REP
+			var salesRecordSearch = search.load({
+				id: "customsearch_sales_record_auto_signed__2",
+				type: "customrecord_sales",
+			});
+
+			salesRecordSearch.filters.push(
+				search.createFilter({
+					name: "internalid",
+					join: "custrecord_sales_customer",
+					operator: search.Operator.ANYOF,
+					values: parseInt(customerInternalId),
+				})
+			);
+
+			salesRecordSearch.run().each(function (salesRecordSearchResult) {
+				var salesRepEmail = salesRecordSearchResult.getValue({
+					name: "email",
+					join: "CUSTRECORD_SALES_ASSIGNED",
+				});
+
+				var email_body =
+					"Customer has agreed to the Terms & Conditions. </br></br>";
+				email_body += "<u><b>Customer Details</b></u> </br>";
+				email_body +=
+					"Customer Name: " + entityId + " " + compnayName + "</br>";
+
+				var email_subject =
+					"Terms & Conditions Agreed - " + entityId + " " + compnayName;
+
+				email.send({
+					author: 112209,
+					body: email_body,
+					recipients: salesRepEmail,
+					subject: email_subject,
+					cc: [
+						"luke.forbes@mailplus.com.au",
+						"fiona.harrison@mailplus.com.au",
+						"popie.popie@mailplus.com.au",
+					],
+					relatedRecords: { entityId: customerInternalId },
+				});
+
+				return true;
+			});
+		});
+	}
+
+	function getDateToday() {
+		var date = new Date();
+		format.format({
+			value: date,
+			type: format.Type.DATE,
+			timezone: format.Timezone.AUSTRALIA_SYDNEY,
 		});
 
+		return date;
 	}
 
 	function financial(x) {
