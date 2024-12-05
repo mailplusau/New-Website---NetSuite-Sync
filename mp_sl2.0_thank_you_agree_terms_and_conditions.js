@@ -38,7 +38,7 @@ define([
 			var customerInternalId = context.request.parameters.custinternalid;
 
 			var form = ui.createForm({
-				title: "Accept Terms & Conditions",
+				title: "Thank you for accepting the Terms & Conditions",
 			});
 
 			//HEADER LINKS & SCRIPTS
@@ -71,23 +71,12 @@ define([
 				'<div class="vc_empty_space" style="height: 50px"><span class="vc_empty_space_inner"></span></div>';
 
 			inlineHtml +=
-				'<div class="container"><div class="row"><div class="textwidget"><h2 class="color--primary-1 page-header-text" style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;"><strong>Please Accept the Terms & Conditions</strong></h2><h3 class="color--primary-2 page-body-text" style="text-align: center; line-height: 27px !important;">Simply click the button below and services can begin and/or continue. </br>To read the T&Cs, please click this link: <a href="https://mailplus.com.au/terms-conditions/" style="font-family: "objectsans-regular" !important;" target="_blank">Terms & Conditions.</a></h3></br></div></div></div>';
+				'<div class="container"><div class="row"><div class="textwidget"><h2 class="color--primary-1 page-header-text" style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;"><strong>Thank you for accepting the Terms & Conditions</strong></h2><h3 class="color--primary-2 page-body-text" style="text-align: center; line-height: 27px !important;"></h3></br></div></div></div>';
 
 			//ADD SPACING
 			inlineHtml +=
 				'<div class="vc_empty_space" style="height: 50px"><span class="vc_empty_space_inner"></span></div>';
 
-			inlineHtml +=
-				'<div class="form-group container view_cart_buttons_section hide">';
-			inlineHtml += '<div class="row">';
-			inlineHtml += '<div class="col-xs-3"></div>';
-			inlineHtml +=
-				'<div class="col-xs-6"><input type="button" value="ACCEPT" class="form-control btn btn-primary acceptTNC" id="" style="background-color: #F0AECB; border-radius: 30px; color: #103d39 !important;" /></div>';
-
-			inlineHtml += '<div class="col-xs-3"></div>';
-
-			inlineHtml += "</div>";
-			inlineHtml += "</div>";
 
 			inlineHtml +=
 				'<div class="vc_empty_space" style="height: 50px"><span class="vc_empty_space_inner"></span></div>';
@@ -117,166 +106,12 @@ define([
 					layoutType: ui.FieldLayoutType.STARTROW,
 				}).defaultValue = inlineHtml;
 
-			form.addSubmitButton({ label: "" });
+			// form.addSubmitButton({ label: "" });
 
 			form.clientScriptFileId = 7357007;
 
 			context.response.writePage(form);
 		} else {
-			var customerInternalId =
-				context.request.parameters.custpage_customer_internal_id;
-
-			var customerRecord = record.load({
-				type: record.Type.CUSTOMER,
-				id: customerInternalId,
-			});
-			var entityId = customerRecord.getValue({
-				fieldId: "entityid",
-			});
-			var compnayName = customerRecord.getValue({
-				fieldId: "companyname",
-			});
-			var tncaccepted = customerRecord.getValue({
-				fieldId: "custentity_terms_conditions_agree",
-			});
-
-			//UPDATE THE COMMENCEMENT REGISTER RECORD
-			var commRegUpdateTnCAgreedDateSearch = search.load({
-				id: "customsearch_comm_reg_upd_tnc_date",
-				type: "customrecord_commencement_register",
-			});
-
-			commRegUpdateTnCAgreedDateSearch.filters.push(
-				search.createFilter({
-					name: "internalid",
-					join: "custrecord_customer",
-					operator: search.Operator.ANYOF,
-					values: parseInt(customerInternalId),
-				})
-			);
-
-			commRegUpdateTnCAgreedDateSearch
-				.run()
-				.each(function (commRegUpdateTnCAgreedDateSearchResult) {
-					var commRegInternalId =
-						commRegUpdateTnCAgreedDateSearchResult.getValue({
-							name: "internalId",
-						});
-					var trialExpiryDate = commRegUpdateTnCAgreedDateSearchResult.getValue(
-						{
-							name: "custrecord_trial_expiry",
-						}
-					);
-					var commDate = commRegUpdateTnCAgreedDateSearchResult.getValue({
-						name: "custrecord_comm_date",
-					});
-
-					var date_netsuite = format.format({
-						value: new Date(),
-						type: format.Type.DATETIME,
-					});
-
-					var commRegRecord = record.load({
-						type: "customrecord_commencement_register",
-						id: commRegInternalId,
-					});
-					commRegRecord.setValue({
-						fieldId: "custrecord_tnc_agreement_date",
-						value: getDateToday(),
-					});
-					commRegRecord.setValue({
-						fieldId: "custrecord_trial_status",
-						value: 9,
-					});
-					commRegRecord.save();
-
-					return true;
-				});
-
-			log.debug({
-				title: "COMMENCEMENT REGISTER RECORD HAS BEEN UPDATED",
-				details: "",
-			});
-			//UPDATE THE CUSTOMER RECORD
-			if (tncaccepted != 1 || tncaccepted != "1") {
-				customerRecord.setValue({
-					fieldId: "custentity_terms_conditions_agree_date",
-					value: getDateToday(),
-				});
-				customerRecord.setValue({
-					fieldId: "custentity_cust_closed_won",
-					value: true,
-				});
-				customerRecord.setValue({
-					fieldId: "custentity_date_prospect_opportunity",
-					value: getDateToday(),
-				});
-				customerRecord.setValue({
-					fieldId: "custentity_terms_conditions_agree",
-					value: 1,
-				});
-				customerRecord.save();
-			}
-
-			log.debug({
-				title: "CUSTOMER RECORD RECORD HAS BEEN UPDATED",
-				details: "",
-			});
-
-			//SEND OUT EMAIL TO SALES REP
-			var salesRecordSearch = search.load({
-				id: "customsearch_sales_record_auto_signed__2",
-				type: "customrecord_sales",
-			});
-
-			salesRecordSearch.filters.push(
-				search.createFilter({
-					name: "internalid",
-					join: "custrecord_sales_customer",
-					operator: search.Operator.ANYOF,
-					values: parseInt(customerInternalId),
-				})
-			);
-
-			salesRecordSearch.run().each(function (salesRecordSearchResult) {
-				var salesRepEmail = salesRecordSearchResult.getValue({
-					name: "email",
-					join: "CUSTRECORD_SALES_ASSIGNED",
-				});
-
-				var email_body =
-					"Customer has agreed to the Terms & Conditions. </br></br>";
-				email_body += "<u><b>Customer Details</b></u> </br>";
-				email_body +=
-					"Customer Name: " + entityId + " " + compnayName + "</br>";
-
-				var email_subject =
-					"Terms & Conditions Agreed - " + entityId + " " + compnayName;
-
-				email.send({
-					author: 112209,
-					body: email_body,
-					recipients: salesRepEmail,
-					subject: email_subject,
-					cc: [
-						"luke.forbes@mailplus.com.au",
-						"fiona.harrison@mailplus.com.au",
-						"popie.popie@mailplus.com.au",
-					],
-					relatedRecords: { entityId: customerInternalId },
-				});
-
-				log.debug({
-					title: "EMAIL SENT OUT TO SALES REP",
-					details: "",
-				});
-
-				return true;
-			});
-
-			redirect.redirect({
-				url: "https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1963&deploy=1&compid=1048144&ns-at=AAEJ7tMQyzFm1rLjam_UwBnc0EmfHYGGF-79GJswLG6FmJRp650",
-			});
 		}
 	}
 
