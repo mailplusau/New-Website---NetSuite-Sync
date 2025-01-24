@@ -140,6 +140,11 @@ define([
 				fieldId: "custentity_terms_conditions_agree",
 			});
 
+			log.debug({
+				title: "customerInternalId",
+				details: customerInternalId,
+			});
+
 			//UPDATE THE COMMENCEMENT REGISTER RECORD
 			var commRegUpdateTnCAgreedDateSearch = search.load({
 				id: "customsearch_comm_reg_upd_tnc_date",
