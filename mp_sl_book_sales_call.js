@@ -135,8 +135,8 @@ function bookSalesCall(request, response) {
 			);
 		}
 
-		//Sales Record - Auto Signed Up
-		var salesRecordAutoSigned = nlapiLoadSearch("customer", "customsearch6430");
+		//All Leads - Get Latest Sales Record
+		var salesRecordAutoSigned = nlapiLoadSearch("customer", "customsearch9140");
 
 		var newFilters_addresses = new Array();
 		newFilters_addresses[0] = new nlobjSearchFilter(
@@ -162,7 +162,7 @@ function bookSalesCall(request, response) {
 				salesRepId = searchResult.getValue(
 					"custrecord_sales_assigned",
 					"CUSTRECORD_SALES_CUSTOMER",
-					null
+					"GROUP"
 				);
 
 				return true;
