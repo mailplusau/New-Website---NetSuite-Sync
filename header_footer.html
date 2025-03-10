@@ -1252,6 +1252,101 @@
             }
         });
 
+
+        //On submit of create operation ticket page
+        jQuery('.create-operation-ticket-button-submit').click(function () {
+            var input_error = false;
+            var error_color = '#f4524d';
+            var zee_name = jQuery('#zee_name').val();
+            var first_name = jQuery('#first_name').val();
+
+            var email = jQuery('#email').val();
+            var phone_number = jQuery('#phone_number').val();
+
+            var comments = jQuery('#comments').val();
+            var issues = jQuery('#issues').val();
+
+            if (zee_name == " " || zee_name == "" || zee_name == "Franchisee*") {
+                input_error = true;
+                jQuery('#zee_name').addClass('input-field-error');
+                jQuery('#zee_name').removeClass('input-field-default')
+                setTimeout(function () {
+                    jQuery('#zee_name').removeClass('input-field-error');
+                    jQuery('#zee_name').addClass('input-field-default');
+                }, 5000);
+            }
+
+            if (issues == 0) {
+                input_error = true;
+                jQuery('#issues').addClass('input-field-error');
+                jQuery('#issues').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#issues').removeClass('input-field-error');
+                    jQuery('#issues').addClass('input-field-default');
+                }, 5000);
+            }
+
+            console.log('After last name ' + input_error);
+            if (email != " " && email != "" && email != "Email Address") {
+                if (IsEmail(email)) {
+                    input_error = true;
+                    jQuery('#email').addClass('input-field-error');
+                    jQuery('#email').removeClass('input-field-default');
+                    setTimeout(function () {
+                        jQuery('#email').removeClass('input-field-error');
+                        jQuery('#email').addClass('input-field-default');
+                    }, 5000);
+                }
+            }
+            console.log('After email ' + input_error);
+            if (phone_number != " " && phone_number != "" && phone_number != "Phone Number") {
+                if (validatePhone(phone_number) == false) {
+                    input_error = true;
+                    jQuery('#phone_number').addClass('input-field-error');
+                    jQuery('#phone_number').removeClass('input-field-default');
+                    setTimeout(function () {
+                        jQuery('#phone_number').removeClass('input-field-error');
+                        jQuery('#phone_number').addClass('input-field-default');
+                    }, 5000);
+                }
+            }
+            console.log('After phone_number ' + input_error);
+            if (issues == 0) {
+                input_error = true;
+                jQuery('#issues').addClass('input-field-error');
+                jQuery('#issues').removeClass('input-field-default');
+                setTimeout(function () {
+                    jQuery('#issues').removeClass('input-field-error');
+                    jQuery('#issues').addClass('input-field-default');
+                }, 5000);
+            }
+            console.log('After issues ' + input_error);
+
+            if (input_error == false) {
+                var params = {
+                    company_name: company_name,
+                    first_name: first_name,
+                    email: email,
+                    phone_number: phone_number,
+                    issues: issues,
+                    comments: comments
+                };
+                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1250&deploy=1&compid=1048144&ns-at=AAEJ7tMQKbDU37GmGXMY7egpNDHZL4Ys3ArzZlM7X4cHVJ38PpQ'
+                jQuery.ajax({
+                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (jResp) {
+                        console.log(jResp);
+                        // act on the results
+                    }
+                });
+                jQuery('.create-ticket-button-submit').html('Thank You!');
+                jQuery('.create-ticket-button-submit').attr('disabled', 'disabled');;
+                // window.location.href = 'https://mailplus.com.au/support-confirmation-page/';
+            }
+        });
+
         function initAutocomplete() {
             // Create the autocomplete object, restricting the search to geographical location types.
             // types is empty to get all places, not only address. Previously it was types: ['geocode']

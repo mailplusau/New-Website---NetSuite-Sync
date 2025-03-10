@@ -714,6 +714,10 @@
         font-size: 24px !important;
     }
 
+    .page-body-text-left-aligned {
+        font-size: 24px !important;
+    }
+
     /*Heading for the form*/
     .main-text-form {
         font-size: 40px !important;
@@ -1247,6 +1251,11 @@
     .page-body-text {
         font-size: 18px !important;
         text-align: center !important;
+    }
+
+    .page-body-text-left-aligned {
+        font-size: 18px !important;
+        text-align: left !important;
     }
 
     .blog-header {
