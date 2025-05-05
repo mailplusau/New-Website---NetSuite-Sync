@@ -255,8 +255,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
         var from = 112209; // MailPlus team
         var to;
         var cc = ['ankith.ravindran@mailplus.com.au',
-            'michael.mcdaid@mailplus.com.au',
-            'luke.forbes@mailplus.com.au'
+            'michael.mcdaid@mailplus.com.au'
         ];
         var subject = 'Become a Franchisee Lead';
         var body = 'New Franchisee Enquiry from website';
