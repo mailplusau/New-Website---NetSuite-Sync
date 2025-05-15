@@ -640,6 +640,12 @@
 
     }
 
+    .btn-block-perth {
+        display: initial;
+        width: 25% !important;
+
+    }
+
     .btn-block-form {
         display: initial;
         width: 16% !important;
@@ -745,7 +751,9 @@
         margin-left: -100px !important;
     }
 
-
+    .cta-row-hide {
+        display: none !important;
+    }
 
 }
 
@@ -779,6 +787,10 @@
 
     #bio_bag_gif_right {
         margin-left: -100px !important;
+    }
+
+    .cta-row-hide {
+        display: none !important;
     }
 
 }
@@ -905,7 +917,9 @@
     #bio_bag_gif_right{
         margin-left: -100px !important;
     }*/
-
+    /* .cta-row-hide {
+        display: none !important;
+    } */
 
 }
 
@@ -1081,6 +1095,10 @@
         width: 35% !important;
     }
 
+    /* .cta-row-hide {
+        display: none !important;
+    } */
+
     /*    #bio_bag_gif_left{
         margin-right: -100px !important;
     }
@@ -1209,11 +1227,15 @@
     #n2-ss-56 .n2-ss-slide-backgrounds {
         display: none !important;
     }
+
     #n2-ss-56item2 {
         color: #387080 !important;
+        display: none !important;
     }
+
     #n2-ss-56item3 {
         color: #387080 !important;
+        display: none !important;
     }
 
 
@@ -1328,6 +1350,16 @@
     .bio_table_margin_bottom {
         margin-bottom: 0px !important;
     }
+
+    .mobile-center-align-section {
+        text-align: center !important;
+    }
+
+    .perth-bottom-padding {
+        margin-bottom: -100px !important;
+        margin-top: -100px !important;
+    }
+
 }
 
 
@@ -1389,9 +1421,12 @@
 
     #n2-ss-56item2 {
         color: #387080 !important;
+        display: none !important;
     }
+
     #n2-ss-56item3 {
         color: #387080 !important;
+        display: none !important;
     }
 
     .n-uc-y1FxuXfnl2V6 {
@@ -1435,6 +1470,15 @@
 
     .bio_table_margin_bottom {
         margin-bottom: 0px !important;
+    }
+
+    .mobile-center-align-section {
+        text-align: center !important;
+    }
+
+    .perth-bottom-padding {
+        margin-bottom: -100px !important;
+        margin-top: -100px !important;
     }
 
 
