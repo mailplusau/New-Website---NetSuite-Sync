@@ -75,7 +75,7 @@ function emailYourOperator(request, response) {
 
         var headers = {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Basic U0s0ZTgwNTdiNjZkOGYyMGM0M2ExNGI2Y2E4NmY0MjgwZDo0alpGVDB5aDFWbUxRNWNtVDhoNlNUYkVibGZOTTBhYg=="
+            "Authorization": "Basic QUNjNGZiOTNkYzE3NWI4ZjkwNjZlZDgwYmYwY2FlY2RiNzo3ZTFlZjEzNTM1ZjFmNzI1NmVjY2YwNzU4MWIwMWYxMg=="
         };
 
         var postdata = {
@@ -84,7 +84,7 @@ function emailYourOperator(request, response) {
             "From": "+61488883115"
         }
 
-        var smsResponse = nlapiRequestURL("https://api.twilio.com/2010-04-01/Accounts/ACc4fb93dc175b8f9066ed80bf0caecdb7/Messages.json", postdata, headers, "POST");
+        var smsResponse = nlapiRequestURL("https://api.twilio.com/2010-04-01/Accounts/ACc4fb93dc175b8f9066ed80bf0caecdb7/Messages", postdata, headers, "POST");
 
 
         var returnObj = {
