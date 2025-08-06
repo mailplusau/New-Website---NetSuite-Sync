@@ -252,10 +252,8 @@ function leadForm(request, response) {
                     var records = new Array();
                     records['entity'] = customerRecordId;
 
-                    nlapiSendEmail(112209, ['laura.busse@mailplus.com.au'],
-                        email_subject, email_body, ['popie.popie@mailplus.com.au',
-                        'ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'
-                    ], null, records, null, true);
+                    nlapiSendEmail(112209, ['mailplusit@mailplus.com.au'],
+                        email_subject, email_body, null, null, records, null, true);
                 }
 
             }
@@ -356,9 +354,14 @@ function leadForm(request, response) {
                 customer_comm_reg.setFieldValue('custrecord_sale_type', 1);
                 customer_comm_reg.setFieldValue('custrecord_finalised_by', 112209);
                 customer_comm_reg.setFieldValue('custrecord_finalised_on', getDate());
+                customer_comm_reg.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
                 // customer_comm_reg.setFieldValue('custrecord_commreg_sales_record',
                 //     sales_record_id);
 
+                commRegId = nlapiSubmitRecord(customer_comm_reg);
+            } else {
+                customer_comm_reg = nlapiLoadRecord('customrecord_commencement_register', commRegId);
+                customer_comm_reg.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
                 commRegId = nlapiSubmitRecord(customer_comm_reg);
             }
 
@@ -760,6 +763,15 @@ function inside(point, polygon) {
 
     return inside;
 };
+
+function getDateAndTime() {
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date, 'datetimetz');
+    return date;
+}
 
 function getDate() {
     var date = new Date();
