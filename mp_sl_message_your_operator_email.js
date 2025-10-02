@@ -28,15 +28,18 @@ function emailYourOperator(request, response) {
 
         var email = request.getParameter('email');
         var customerInternalId = request.getParameter('customerInternalId');
+        var operatorInternalId = request.getParameter('operatorInternalId');
         var message = request.getParameter('message');
 
         nlapiLogExecution('DEBUG', 'email', email);
         nlapiLogExecution('DEBUG', 'customerInternalId', customerInternalId);
+        nlapiLogExecution('DEBUG', 'operatorInternalId', operatorInternalId);
         nlapiLogExecution('DEBUG', 'message', message);
 
         var params = {
             email: email,
             customerInternalId: customerInternalId,
+            operatorInternalId: operatorInternalId,
             message: message
         };
 
@@ -54,6 +57,18 @@ function emailYourOperator(request, response) {
         partner_phone = partner_phone.replace(/ /g, '');
         partner_phone = partner_phone.slice(1);
         partner_phone = '+61' + partner_phone;
+
+        var operator_email = '';
+        var operator_phone = '';
+        if (!isNullorEmpty(operatorInternalId)) {
+            var operatorRecord = nlapiLoadRecord('customrecord_operator', operatorInternalId);
+            operator_email = operatorRecord.getFieldValue('custrecord_operator_email');
+            operator_phone = operatorRecord.getFieldValue('custrecord_operator_phone');
+
+            operator_phone = operator_phone.replace(/ /g, '');
+            operator_phone = operator_phone.slice(1);
+            operator_phone = '+61' + operator_phone;
+        }
 
         nlapiLogExecution('DEBUG', 'partner_email', partner_email);
         nlapiLogExecution('DEBUG', 'partner_phone', partner_phone);
@@ -78,6 +93,7 @@ function emailYourOperator(request, response) {
             "Authorization": "Basic QUNjNGZiOTNkYzE3NWI4ZjkwNjZlZDgwYmYwY2FlY2RiNzo3ZTFlZjEzNTM1ZjFmNzI1NmVjY2YwNzU4MWIwMWYxMg=="
         };
 
+        //SEND SMS TO FRANCHISEE OWNER
         var postdata = {
             "Body": 'Message from your customer - ' + business_name + '(Franchisee: ' + partner_text + '). Please check your emails for more details.',
             "To": partner_phone,
@@ -86,6 +102,32 @@ function emailYourOperator(request, response) {
 
         var smsResponse = nlapiRequestURL("https://api.twilio.com/2010-04-01/Accounts/ACc4fb93dc175b8f9066ed80bf0caecdb7/Messages", postdata, headers, "POST");
 
+        if (!isNullorEmpty(operatorInternalId)) {
+            if (!isNullorEmpty(operator_phone)) {
+                //SEND SMS TO OPERATOR
+                var postdata = {
+                    "Body": 'Message from your customer - ' + business_name + '(Franchisee: ' + partner_text + '). Please check your emails for more details.',
+                    "To": operator_phone,
+                    "From": "+61488883115"
+                }
+
+                var smsResponse = nlapiRequestURL("https://api.twilio.com/2010-04-01/Accounts/ACc4fb93dc175b8f9066ed80bf0caecdb7/Messages", postdata, headers, "POST");
+            }
+
+            if (!isNullorEmpty(operator_email)) {
+                // Email to be sent out to Corrine about the new LPO Lead.
+                var from = 112209; //MailPlus team
+                var to = operator_email;
+                var bcc = ['dispatcher@mailplus.com.au', 'customerservice@mailplus.com.au'];
+                var emailSubject = 'Message from your Customer - ' + business_name + '(Franchisee: ' + partner_text + ')';
+
+                var emailBody =
+                    'Message : ' + message;
+
+
+                nlapiSendEmail(from, to, emailSubject, emailBody, null, bcc, emailAttach, null, true);
+            }
+        }
 
         var returnObj = {
             success: true,

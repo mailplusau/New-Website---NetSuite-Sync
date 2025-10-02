@@ -41,7 +41,7 @@
         //Write 1300 65 65 95 number in the header section
         document.getElementsByClassName("stack-header-buttons")[0].innerHTML = "<a href='tel:1300656595' style='font-size: 1em; color: #FBEA51 !important; opacity: 1 !important;'><i class='fas fa-phone-alt'></i> 1300 65 65 95</a>" + document.getElementsByClassName("stack-header-buttons")[0].innerHTML;
         //Write privacy & terms in the footer sectin
-        document.getElementsByClassName("footer__lower")[0].innerHTML = '<div class="container" style="width: 95% !important;"><div class="row"><div class="col-sm-6"><div class="footer-stack-copyright"><span class="" style="color: #103D39 !important"><a href="" style="color: #103D39 !important">2024 MailPlus Pty. Ltd. All rights reserved.</a></span></div></div><div class="col-sm-6 text-right text-center-xs"><span class="" style="color: #103D39 !important"><a href="" style="color: #103D39 !important">Privacy Policy.</a><a href="https://mailplus.com.au/terms-conditions/" style="color: #103D39 !important;padding-left:1em;">Terms & Conditions.</a></span></div></div></div>';
+        document.getElementsByClassName("footer__lower")[0].innerHTML = '<div class="container" style="width: 95% !important;"><div class="row"><div class="col-sm-6"><div class="footer-stack-copyright"><span class="" style="color: #103D39 !important"><a href="" style="color: #103D39 !important">2025 MailPlus Pty. Ltd. All rights reserved.</a></span></div></div><div class="col-sm-6 text-right text-center-xs"><span class="" style="color: #103D39 !important"><a href="" style="color: #103D39 !important">Privacy Policy.</a><a href="https://mailplus.com.au/terms-conditions/" style="color: #103D39 !important;padding-left:1em;">Terms & Conditions.</a></span></div></div></div>';
 
         //VAN GIF
         //<div id="media_image-4" class="widget widget_media_image sidebar__element"> <style> .widget.widget_media_image img {height: auto; max-width: 100%; } </style><img width="300" height="300" src="https://mailplus.com.au/wp-content/uploads/2021/10/Nav_Van.gif?resize=150%2C150&ssl=1" class="image wp-image-444  attachment-thumbnail size-thumbnail" alt="" loading="lazy" style="max-width: 100%; height: auto;" > <img src="https://mailplus.com.au/wp-content/uploads/2021/10/Nav_Van.gif"  alt="" loading="lazy" style="max-width: 100%; height: auto;" class="mobile-van-gif"></div>
@@ -1252,101 +1252,6 @@
             }
         });
 
-
-        //On submit of create operation ticket page
-        jQuery('.create-operation-ticket-button-submit').click(function () {
-            var input_error = false;
-            var error_color = '#f4524d';
-            var zee_name = jQuery('#zee_name').val();
-            var first_name = jQuery('#first_name').val();
-
-            var email = jQuery('#email').val();
-            var phone_number = jQuery('#phone_number').val();
-
-            var comments = jQuery('#comments').val();
-            var issues = jQuery('#issues').val();
-
-            if (zee_name == " " || zee_name == "" || zee_name == "Franchisee*") {
-                input_error = true;
-                jQuery('#zee_name').addClass('input-field-error');
-                jQuery('#zee_name').removeClass('input-field-default')
-                setTimeout(function () {
-                    jQuery('#zee_name').removeClass('input-field-error');
-                    jQuery('#zee_name').addClass('input-field-default');
-                }, 5000);
-            }
-
-            if (issues == 0) {
-                input_error = true;
-                jQuery('#issues').addClass('input-field-error');
-                jQuery('#issues').removeClass('input-field-default');
-                setTimeout(function () {
-                    jQuery('#issues').removeClass('input-field-error');
-                    jQuery('#issues').addClass('input-field-default');
-                }, 5000);
-            }
-
-            console.log('After last name ' + input_error);
-            if (email != " " && email != "" && email != "Email Address") {
-                if (IsEmail(email)) {
-                    input_error = true;
-                    jQuery('#email').addClass('input-field-error');
-                    jQuery('#email').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#email').removeClass('input-field-error');
-                        jQuery('#email').addClass('input-field-default');
-                    }, 5000);
-                }
-            }
-            console.log('After email ' + input_error);
-            if (phone_number != " " && phone_number != "" && phone_number != "Phone Number") {
-                if (validatePhone(phone_number) == false) {
-                    input_error = true;
-                    jQuery('#phone_number').addClass('input-field-error');
-                    jQuery('#phone_number').removeClass('input-field-default');
-                    setTimeout(function () {
-                        jQuery('#phone_number').removeClass('input-field-error');
-                        jQuery('#phone_number').addClass('input-field-default');
-                    }, 5000);
-                }
-            }
-            console.log('After phone_number ' + input_error);
-            if (issues == 0) {
-                input_error = true;
-                jQuery('#issues').addClass('input-field-error');
-                jQuery('#issues').removeClass('input-field-default');
-                setTimeout(function () {
-                    jQuery('#issues').removeClass('input-field-error');
-                    jQuery('#issues').addClass('input-field-default');
-                }, 5000);
-            }
-            console.log('After issues ' + input_error);
-
-            if (input_error == false) {
-                var params = {
-                    company_name: company_name,
-                    first_name: first_name,
-                    email: email,
-                    phone_number: phone_number,
-                    issues: issues,
-                    comments: comments
-                };
-                var url = 'https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1250&deploy=1&compid=1048144&ns-at=AAEJ7tMQKbDU37GmGXMY7egpNDHZL4Ys3ArzZlM7X4cHVJ38PpQ'
-                jQuery.ajax({
-                    url: url + "&" + jQuery.param(params) + "&jsoncallback=?",
-                    cache: false,
-                    dataType: 'json',
-                    success: function (jResp) {
-                        console.log(jResp);
-                        // act on the results
-                    }
-                });
-                jQuery('.create-ticket-button-submit').html('Thank You!');
-                jQuery('.create-ticket-button-submit').attr('disabled', 'disabled');;
-                // window.location.href = 'https://mailplus.com.au/support-confirmation-page/';
-            }
-        });
-
         function initAutocomplete() {
             // Create the autocomplete object, restricting the search to geographical location types.
             // types is empty to get all places, not only address. Previously it was types: ['geocode']
@@ -2238,7 +2143,7 @@
             var state = jQuery('#del_state').val();
             // if (pageURL == 'https://mailplus.com.au/about-mailplus/') {
             var postcode = jQuery('#del_postcode').val();
-            var lpo_notes = jQuery('#lpo_notes').val();
+            var lpo_notes = '';
             var pageURL = jQuery(location).attr("href");
             var lat = jQuery('#del_lat').val();
             var lng = jQuery('#del_lng').val();

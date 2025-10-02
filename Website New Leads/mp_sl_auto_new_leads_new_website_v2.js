@@ -559,22 +559,30 @@ function leadForm(request, response) {
 			var postcode = parseInt(postcode);
 
 			var salesRep = 112209;
+			var salesRecordInternalID = null;
+			var cc = null;
+			var to = null;
+			var subject = null;
+			var body = null;
+			var from = 112209; //MailPlus team
+
+			nlapiLogExecution("DEBUG", "zee_id", zee_id);
+			nlapiLogExecution("DEBUG", "zeeCount", zeeCount);
 
 			if (isNullorEmpty(zee_id) || zeeCount > 1) {
 				var emailAttach = new Object();
 				emailAttach["entity"] = customerRecordId;
 
-				var from = 112209; //MailPlus team
-				var to;
+
 				if (pageURL == "https://mailplus.com.au/lpo-partnership/") {
-					var cc = [
+					cc = [
 						"luke.forbes@mailplus.com.au",
 						"lee.russell@mailplus.com.au",
 						"ankith.ravindran@mailplus.com.au",
 						"alexandra.bathman@mailplus.com.au",
 					];
 				} else {
-					var cc = [
+					cc = [
 						"luke.forbes@mailplus.com.au",
 						"lee.russell@mailplus.com.au",
 						"ankith.ravindran@mailplus.com.au",
@@ -582,28 +590,28 @@ function leadForm(request, response) {
 				}
 
 				if (pageURL == "https://mailplus.com.au/lpo-partnership/") {
-					var subject =
+					subject =
 						"Sales LPO - AP Customer HOT Lead - " +
 						entity_id +
 						" " +
 						customer_name +
 						"";
 				} else if (pageURL == "https://mailplus.com.au/lpo-lead-generation/") {
-					var subject =
+					subject =
 						"Sales LPO Generated HOT Lead - " +
 						entity_id +
 						" " +
 						customer_name +
 						"";
 				} else {
-					var subject =
+					subject =
 						"Sales HOT Lead - " + entity_id + " " + customer_name + "";
 				}
 
 				var cust_id_link =
 					"https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=" +
 					customerRecordId;
-				var body =
+				body =
 					"New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: " +
 					entity_id +
 					" " +
@@ -645,9 +653,9 @@ function leadForm(request, response) {
 						"custrecord_sales_callbacktime",
 						nlapiDateToString(date, "timeofday")
 					);
-					nlapiSubmitRecord(salesRecord);
+					salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 
-					nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
+
 				} else {
 					if (
 						pageURL == "https://mailplus.com.au/lpo-lead-generation/" ||
@@ -689,7 +697,7 @@ function leadForm(request, response) {
 							"custrecord_sales_callbacktime",
 							nlapiDateToString(date, "timeofday")
 						);
-						nlapiSubmitRecord(salesRecord);
+						salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 
 						nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
 					} else {
@@ -741,7 +749,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							} else if (postcode == 2481) {
 								//Albury
 								var salesRep = 668712; //Belinda Urbani
@@ -781,7 +789,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							} else {
 								//ACT Post Codes
 								var salesRecord = nlapiCreateRecord("customrecord_sales");
@@ -814,7 +822,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							}
 						} else {
 							//Everything else
@@ -868,7 +876,7 @@ function leadForm(request, response) {
 								"custrecord_sales_callbacktime",
 								nlapiDateToString(date, "timeofday")
 							);
-							nlapiSubmitRecord(salesRecord);
+							salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 						}
 					}
 				}
@@ -876,7 +884,7 @@ function leadForm(request, response) {
 				if (pageURL == "https://mailplus.com.au/lpo-lead-generation/") {
 					body += "\n " + lpo_notes;
 				}
-				nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
+				// nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
 
 				if (isNullorEmpty(zee_id)) {
 					var from = 112209; //MailPlus team
@@ -911,17 +919,15 @@ function leadForm(request, response) {
 			} else if (!isNullorEmpty(zee_id) && zeeCount == 1) {
 				var emailAttach = new Object();
 				emailAttach["entity"] = customerRecordId;
-				var from = 112209; //MailPlus team
-				var to;
 				if (pageURL == "https://mailplus.com.au/lpo-partnership/") {
-					var cc = [
+					cc = [
 						"luke.forbes@mailplus.com.au",
 						"lee.russell@mailplus.com.au",
 						"ankith.ravindran@mailplus.com.au",
 						"alexandra.bathman@mailplus.com.au",
 					];
 				} else {
-					var cc = [
+					cc = [
 						"luke.forbes@mailplus.com.au",
 						"lee.russell@mailplus.com.au",
 						"ankith.ravindran@mailplus.com.au",
@@ -932,27 +938,27 @@ function leadForm(request, response) {
 					pageURL == "https://mailplus.com.au/lpo-partnership/" &&
 					zee_id != 713275
 				) {
-					var subject =
+					subject =
 						"Sales LPO - AP Customer HOT Lead - " +
 						entity_id +
 						" " +
 						customer_name +
 						"";
 				} else if (pageURL == "https://mailplus.com.au/lpo-lead-generation/") {
-					var subject =
+					subject =
 						"Sales LPO Generated HOT Lead - " +
 						entity_id +
 						" " +
 						customer_name +
 						"";
 				} else {
-					var subject =
+					subject =
 						"Sales HOT Lead - " + entity_id + " " + customer_name + "";
 				}
 				var cust_id_link =
 					"https://1048144.app.netsuite.com/app/common/entity/custjob.nl?id=" +
 					customerRecordId;
-				var body =
+				body =
 					"New sales record has been created. \n A HOT Lead has been entered into the System. Please respond in an hour. \n Customer Name: " +
 					entity_id +
 					" " +
@@ -994,7 +1000,7 @@ function leadForm(request, response) {
 						"custrecord_sales_callbacktime",
 						nlapiDateToString(date, "timeofday")
 					);
-					nlapiSubmitRecord(salesRecord);
+					salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 				} else {
 					if (
 						pageURL == "https://mailplus.com.au/lpo-lead-generation/" ||
@@ -1039,9 +1045,9 @@ function leadForm(request, response) {
 							"custrecord_sales_callbacktime",
 							nlapiDateToString(date, "timeofday")
 						);
-						nlapiSubmitRecord(salesRecord);
+						salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 
-						nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
+						// nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
 					} else {
 						if (postcode >= 2000 && postcode <= 2999) {
 							//ACT & NSW Postcodes
@@ -1091,7 +1097,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							} else if (postcode == 2481) {
 								//Albury
 								var salesRep = 668712; //Belinda Urbani
@@ -1132,7 +1138,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							} else {
 								//ACT Post Codes
 								var salesRecord = nlapiCreateRecord("customrecord_sales");
@@ -1166,7 +1172,7 @@ function leadForm(request, response) {
 									"custrecord_sales_callbacktime",
 									nlapiDateToString(date, "timeofday")
 								);
-								nlapiSubmitRecord(salesRecord);
+								salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 							}
 						} else {
 							//Everything else
@@ -1221,7 +1227,7 @@ function leadForm(request, response) {
 								"custrecord_sales_callbacktime",
 								nlapiDateToString(date, "timeofday")
 							);
-							nlapiSubmitRecord(salesRecord);
+							salesRecordInternalID = nlapiSubmitRecord(salesRecord);
 						}
 					}
 				}
@@ -1230,14 +1236,41 @@ function leadForm(request, response) {
 				if (pageURL == "https://mailplus.com.au/lpo-lead-generation/") {
 					body += "\n " + lpo_notes;
 				}
-				nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
+				// nlapiSendEmail(from, to, subject, body, cc, null, emailAttach);
 
 				// }
 			}
 
+			nlapiLogExecution("DEBUG", "customerRecordId", customerRecordId);
+			nlapiLogExecution("DEBUG", "salesRecordInternalID", salesRecordInternalID);
+
+			var leadSalesReppToAssignJSON = {
+				"customerId": parseInt(customerRecordId),
+				"salesRecordId": parseInt(salesRecordInternalID)
+			}
+
+			var salesRepRandomAssignResponse = nlapiRequestURL('https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=2160&deploy=2&compid=1048144&ns-at=AAEJ7tMQ3VfSfXZtokK6wuyERCw4vIJ8YBmkKwc8nxv2kzikwgg&operation=assignCustomerToSalesRepsWithLeastLeads&requestParams=' + JSON.stringify(leadSalesReppToAssignJSON));
+
+			nlapiLogExecution("DEBUG", "salesRepRandomAssignResponse", salesRepRandomAssignResponse);
+
+			leadSalesRepAssignedJSON = JSON.parse(salesRepRandomAssignResponse.body);
+
+			nlapiLogExecution("DEBUG", "New Lead Sales Rep Assigned JSON", leadSalesRepAssignedJSON.internalid);
+
+			salesRep = leadSalesRepAssignedJSON.internalid;
+			var leadSalesRepAssignedName = leadSalesRepAssignedJSON.entityid;
+			var leadSalesRepAssignedEmail = leadSalesRepAssignedJSON.email;
+
 			var customer_record = nlapiLoadRecord("customer", customerRecordId);
 			customer_record.setFieldValue("custentity_mp_toll_salesrep", salesRep);
 			var customerRecordId = nlapiSubmitRecord(customer_record);
+
+			var salesRecord = nlapiLoadRecord("customrecord_sales", salesRecordInternalID);
+			salesRecord.setFieldValue("custrecord_sales_assigned", salesRep);
+			nlapiSubmitRecord(salesRecord);
+
+			//Send Email to Sales Rep
+			nlapiSendEmail(from, salesRep, subject, body, cc, null, emailAttach);
 
 			if (pageURL == "https://mailplus.com.au/lpo-lead-generation/") {
 				var phonecall = nlapiCreateRecord("phonecall");
@@ -1298,16 +1331,16 @@ function leadForm(request, response) {
 			nlapiLogExecution("DEBUG", "nsZoneID", nsZoneID);
 
 			/*
-            5Kg	    1
-            3Kg	    2
-            1Kg	    3
-            500g	4
-            B4	    5
-            10Kg	8
-            25Kg	9
-            250g	10
-            25kg    11
-            */
+			5Kg	    1
+			3Kg	    2
+			1Kg	    3
+			500g	4
+			B4	    5
+			10Kg	8
+			25Kg	9
+			250g	10
+			25kg    11
+			*/
 
 			var std250gGoldItemPricingSearch = nlapiLoadSearch(
 				"noninventoryitem",
@@ -1823,15 +1856,15 @@ function leadForm(request, response) {
 			}
 
 			/*
-            5Kg	    1
-            3Kg	    2
-            1Kg	    3
-            500g	4
-            B4	    5
-            10Kg	8
-            25Kg	9
-            250g	10
-            */
+			5Kg	    1
+			3Kg	    2
+			1Kg	    3
+			500g	4
+			B4	    5
+			10Kg	8
+			25Kg	9
+			250g	10
+			*/
 			// var expB4ItemPricingSearch = nlapiLoadSearch(
 			// 	"noninventoryitem",
 			// 	"customsearch3745"
@@ -2099,15 +2132,15 @@ function leadForm(request, response) {
 			// }
 
 			/*
-           5Kg	    1
-           3Kg	    2
-           1Kg	    3
-           500g	4
-           B4	    5
-           10Kg	8
-           25Kg	9
-           250g	10
-           */
+		   5Kg	    1
+		   3Kg	    2
+		   1Kg	    3
+		   500g	4
+		   B4	    5
+		   10Kg	8
+		   25Kg	9
+		   250g	10
+		   */
 			var premium10kgItemPricingSearch = nlapiLoadSearch(
 				"noninventoryitem",
 				"customsearch3745"
@@ -2391,7 +2424,6 @@ function leadForm(request, response) {
 				result: dataOut,
 			};
 
-			_sendJSResponse(request, response, returnObj);
 
 			if (!isNullorEmpty(zee_id) && zeeCount == 1) {
 				if (services_of_interest == "2") {
@@ -2491,6 +2523,9 @@ function leadForm(request, response) {
 					);
 				}
 			}
+
+			_sendJSResponse(request, response, returnObj);
+
 		}
 	}
 }
