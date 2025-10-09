@@ -140,10 +140,9 @@ function leadForm(request, response) {
 			var lpoLeadRecordID = nlapiSubmitRecord(lpoLeadrecord);
 
 			if (splitPageURL[1] != "lpo-profile-creation/") {
-				// Email to be sent out to Corrine about the new LPO Lead.
+				// Email to be sent out to Kerry about the new LPO Lead.
 				var from = 112209; //MailPlus team
 				var to = [
-					"corinne.jackson@mailplus.com.au",
 					"kerry.oneill@mailplus.com.au",
 				];
 				var cc = [
@@ -155,7 +154,7 @@ function leadForm(request, response) {
 
 				var emailBody = "";
 				var cust_id_link =
-					"https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1844&deploy=1&lpoleadid=" +
+					"https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2134&deploy=1&lpoleadid=" +
 					lpoLeadRecordID;
 				var body =
 					"New LPO Owner lead has been created in NetSuite. \n LPO Name: " +
