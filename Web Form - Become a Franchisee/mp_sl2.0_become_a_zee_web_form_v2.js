@@ -12,7 +12,7 @@
 
 define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 	'N/record', 'N/format', 'N/file'
-], function(runtime, http, https, log,
+], function (runtime, http, https, log,
 	url, email, record, format, file) {
 	function onRequest(context) {
 
@@ -84,248 +84,262 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 			7	WA
 		 */
 
-		//Create Franchisee Sales Leads Record
-		var zeeLeadRecord = record.create({
-			type: 'customrecord_zee_sales_leads'
-		});
+		if (!isNullorEmpty(first_name) && !isNullorEmpty(last_name) && !isNullorEmpty(email_address) && !isNullorEmpty(phone_number)) {
+			//Create Franchisee Sales Leads Record
+			var zeeLeadRecord = record.create({
+				type: 'customrecord_zee_sales_leads'
+			});
 
-		zeeLeadRecord.setValue({
-			fieldId: 'name',
-			value: first_name + ' ' + last_name
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_leads_fname',
-			value: first_name
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_leads_lname',
-			value: last_name
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_lead_mobile',
-			value: phone_number
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_lead_email',
-			value: email_address
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_lead_date_entered',
-			value: getDate()
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_zee_lead_stage',
-			value: 1
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_website_page',
-			value: pathname
-		})
-
-		if (isNullorEmpty(postcode) && !isNullorEmpty(residentialpostcode)) {
-			postcode = residentialpostcode
-		}
-
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_areas_of_interest_postcode',
-			value: postcode
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_areas_of_interest_suburb',
-			value: suburb
-		})
-
-		if (investor_radio == "true") {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_type_of_owner',
-				value: 2
+				fieldId: 'name',
+				value: first_name + ' ' + last_name
 			})
-		} else if (owner_radio == "true") {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_type_of_owner',
-				value: 3
+				fieldId: 'custrecord_zee_leads_fname',
+				value: first_name
 			})
-		} else if (seeking_employment_radio == "true") {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_type_of_owner',
-				value: 4
+				fieldId: 'custrecord_zee_leads_lname',
+				value: last_name
 			})
-		}
-
-		if (vehicle != '0' && !isNullorEmpty(vehicle)) {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_own_a_vehicle',
-				value: vehicle
+				fieldId: 'custrecord_zee_lead_mobile',
+				value: phone_number
 			})
-		}
-
-		if (experience != '0' && !isNullorEmpty(experience)) {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_years_of_experience',
-				value: experience
+				fieldId: 'custrecord_zee_lead_email',
+				value: email_address
 			})
-		}
-
-		if (employment_type != '0' && !isNullorEmpty(employment_type)) {
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_type_of_employement',
-				value: employment_type
+				fieldId: 'custrecord_zee_lead_date_entered',
+				value: getDate()
 			})
-		}
-
-		var sendTo = 'greg.hart@mailplus.com.au';
-
-		if ((parseInt(postcode) >= 2600 && parseInt(postcode) <= 2618) || (parseInt(
-				postcode) >= 2900 && parseInt(postcode) <= 2920)) { //ACT
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 6
-			})
-		} else if ((parseInt(postcode) >= 2000 && parseInt(postcode) <= 2599) || (
-				parseInt(postcode) >= 2619 && parseInt(postcode) <= 2899) || (parseInt(
-				postcode) >= 2921 && parseInt(postcode) <= 2999)) { //NSW
-			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
+				fieldId: 'custrecord_zee_lead_stage',
 				value: 1
 			})
-		} else if (parseInt(postcode) >= 3000 && parseInt(postcode) <= 3999) { //VIC
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 3
+				fieldId: 'custrecord_website_page',
+				value: pathname
 			})
-		} else if (parseInt(postcode) >= 4000 && parseInt(postcode) <= 4999) { //QLD
+
+			if (isNullorEmpty(postcode) && !isNullorEmpty(residentialpostcode)) {
+				postcode = residentialpostcode
+			}
+
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 2
-			});
-			sendTo = 'greg.hart@mailplus.com.au';
-		} else if (parseInt(postcode) >= 5000 && parseInt(postcode) <= 5999) { //SA
-			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 4
+				fieldId: 'custrecord_areas_of_interest_postcode',
+				value: postcode
 			})
-		} else if (parseInt(postcode) >= 6000 && parseInt(postcode) <= 6999) { //WA
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 7
+				fieldId: 'custrecord_areas_of_interest_suburb',
+				value: suburb
 			})
-		} else if (parseInt(postcode) >= 7000 && parseInt(postcode) <= 7999) { //TAS
+
+			if (investor_radio == "true") {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_type_of_owner',
+					value: 2
+				})
+			} else if (owner_radio == "true") {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_type_of_owner',
+					value: 3
+				})
+			} else if (seeking_employment_radio == "true") {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_type_of_owner',
+					value: 4
+				})
+			}
+
+			if (vehicle != '0' && !isNullorEmpty(vehicle)) {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_own_a_vehicle',
+					value: vehicle
+				})
+			}
+
+			if (experience != '0' && !isNullorEmpty(experience)) {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_years_of_experience',
+					value: experience
+				})
+			}
+
+			if (employment_type != '0' && !isNullorEmpty(employment_type)) {
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_type_of_employement',
+					value: employment_type
+				})
+			}
+
+			var sendTo = 'greg.hart@mailplus.com.au';
+
+			if ((parseInt(postcode) >= 2600 && parseInt(postcode) <= 2618) || (parseInt(
+				postcode) >= 2900 && parseInt(postcode) <= 2920)) { //ACT
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 6
+				})
+			} else if ((parseInt(postcode) >= 2000 && parseInt(postcode) <= 2599) || (
+				parseInt(postcode) >= 2619 && parseInt(postcode) <= 2899) || (parseInt(
+					postcode) >= 2921 && parseInt(postcode) <= 2999)) { //NSW
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 1
+				})
+			} else if (parseInt(postcode) >= 3000 && parseInt(postcode) <= 3999) { //VIC
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 3
+				})
+			} else if (parseInt(postcode) >= 4000 && parseInt(postcode) <= 4999) { //QLD
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 2
+				});
+				sendTo = 'greg.hart@mailplus.com.au';
+			} else if (parseInt(postcode) >= 5000 && parseInt(postcode) <= 5999) { //SA
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 4
+				})
+			} else if (parseInt(postcode) >= 6000 && parseInt(postcode) <= 6999) { //WA
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 7
+				})
+			} else if (parseInt(postcode) >= 7000 && parseInt(postcode) <= 7999) { //TAS
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 5
+				})
+			} else if (parseInt(postcode) >= 800 && parseInt(postcode) <= 999) { //NT
+				zeeLeadRecord.setValue({
+					fieldId: 'custrecord_areas_of_interest_state',
+					value: 8
+				})
+			}
 			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
+				fieldId: 'custrecord_comments',
+				value: comments
+			})
+			zeeLeadRecord.setValue({
+				fieldId: 'custrecord_classification',
 				value: 5
 			})
-		} else if (parseInt(postcode) >= 800 && parseInt(postcode) <= 999) { //NT
-			zeeLeadRecord.setValue({
-				fieldId: 'custrecord_areas_of_interest_state',
-				value: 8
-			})
+
+			var newZeeLeadRecordNSID = zeeLeadRecord.save()
+
+			log.debug({
+				title: "params",
+				details: JSON.stringify(params)
+			});
+
+			var from = 112209; // MailPlus team
+			var to;
+			var cc = ['ankith.ravindran@mailplus.com.au',
+				'michael.mcdaid@mailplus.com.au',
+				'luke.forbes@mailplus.com.au'
+			];
+			var subject = 'Become a Franchisee Lead';
+			var body = 'New Franchisee Enquiry from website';
+			body += 'First Name: ' + first_name + '\n';
+			body += 'Last Name: ' + last_name + '\n';
+			body += 'Email Address: ' + email_address + '\n';
+			body += 'Phone Number: ' + phone_number + '\n';
+			body += 'Postcode: ' + postcode + '\n';
+			body += 'Comments: ' + comments + '\n';
+
+			var userid = encodeURIComponent(runtime.getCurrentUser().id);
+
+			email.send({
+				author: 112209,
+				body: body,
+				recipients: sendTo,
+				subject: subject,
+				cc: cc
+			});
+
+			var suiteletUrl = url.resolveScript({
+				scriptId: 'customscript_merge_email',
+				deploymentId: 'customdeploy_merge_email',
+				returnExternalUrl: true
+			});
+
+			if (investor_radio == "true") {
+				suiteletUrl += '&rectype=customer&template=129';
+				suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+					'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
+					newZeeLeadRecordNSID;
+			} else if (owner_radio == "true") {
+				suiteletUrl += '&rectype=customer&template=128';
+				suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+					'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
+					newZeeLeadRecordNSID;
+			} else if (seeking_employment_radio == "true") {
+				suiteletUrl += '&rectype=customer&template=127';
+				suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
+					'&contactid=' + null + '&userid=' + userid;
+			}
+
+			log.debug({
+				title: 'suiteletUrl',
+				details: suiteletUrl
+			});
+
+			var response = https.get({
+				url: suiteletUrl
+			});
+
+			var emailHtml = response.body;
+
+			log.debug({
+				title: 'newZeeLeadRecordNSID',
+				details: newZeeLeadRecordNSID
+			});
+
+			emailHtml.toString().replace("zeeLeadNSID", newZeeLeadRecordNSID);
+
+			log.debug({
+				title: 'emailHtml',
+				details: emailHtml
+			});
+
+			var arrAttachments = [];
+
+			arrAttachments.push(file.load({
+				id: 5543283
+			}));
+
+
+			email.send({
+				author: 112209,
+				body: emailHtml,
+				recipients: email_address,
+				subject: 'Thank you for your MailPlus enquiry!',
+				attachments: arrAttachments
+			});
+
+
+			var returnObj = {
+				success: true,
+				message: '',
+				result: 'Email Sent'
+			};
+		} else {
+			var returnObj = {
+				success: false,
+				message: 'Required fields missing',
+				result: 'Error'
+			};
 		}
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_comments',
-			value: comments
-		})
-		zeeLeadRecord.setValue({
-			fieldId: 'custrecord_classification',
-			value: 5
-		})
-
-		var newZeeLeadRecordNSID = zeeLeadRecord.save()
 
 		log.debug({
-			title: "params",
-			details: JSON.stringify(params)
+			title: "returnObj",
+			details: JSON.stringify(returnObj)
 		});
-
-		var from = 112209; // MailPlus team
-		var to;
-		var cc = ['ankith.ravindran@mailplus.com.au',
-			'michael.mcdaid@mailplus.com.au',
-		];
-		var subject = 'Become a Franchisee Lead';
-		var body = 'New Franchisee Enquiry from website\n';
-		body += 'First Name: ' + first_name + '\n';
-		body += 'Last Name: ' + last_name + '\n';
-		body += 'Email Address: ' + email_address + '\n';
-		body += 'Phone Number: ' + phone_number + '\n';
-		body += 'Postcode: ' + postcode + '\n';
-		body += 'Comments: ' + comments + '\n';
-
-		var userid = encodeURIComponent(runtime.getCurrentUser().id);
-
-		email.send({
-			author: 112209,
-			body: body,
-			recipients: sendTo,
-			subject: subject,
-			cc: cc
-		});
-
-		var suiteletUrl = url.resolveScript({
-			scriptId: 'customscript_merge_email',
-			deploymentId: 'customdeploy_merge_email',
-			returnExternalUrl: true
-		});
-
-		if (investor_radio == "true") {
-			suiteletUrl += '&rectype=customer&template=129';
-			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-				'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
-				newZeeLeadRecordNSID;
-		} else if (owner_radio == "true") {
-			suiteletUrl += '&rectype=customer&template=128';
-			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-				'&contactid=' + null + '&userid=' + userid + '&zeeleadid=' +
-				newZeeLeadRecordNSID;
-		} else if (seeking_employment_radio == "true") {
-			suiteletUrl += '&rectype=customer&template=127';
-			suiteletUrl += '&recid=' + null + '&salesrep=' + null + '&dear=' + '' +
-				'&contactid=' + null + '&userid=' + userid;
-		}
-
-		log.debug({
-			title: 'suiteletUrl',
-			details: suiteletUrl
-		});
-
-		var response = https.get({
-			url: suiteletUrl
-		});
-
-		var emailHtml = response.body;
-
-		log.debug({
-			title: 'newZeeLeadRecordNSID',
-			details: newZeeLeadRecordNSID
-		});
-
-		emailHtml.toString().replace("zeeLeadNSID", newZeeLeadRecordNSID);
-
-		log.debug({
-			title: 'emailHtml',
-			details: emailHtml
-		});
-
-		var arrAttachments = [];
-
-		arrAttachments.push(file.load({
-			id: 5543283
-		}));
-
-
-		email.send({
-			author: 112209,
-			body: emailHtml,
-			recipients: email_address,
-			subject: 'Thank you for your MailPlus enquiry!',
-			attachments: arrAttachments
-		});
-
-
-		var returnObj = {
-			success: true,
-			message: '',
-			result: 'Email Sent'
-		};
 
 		context.response.setHeader({
 			name: 'Content-Type',
@@ -367,7 +381,7 @@ define(['N/runtime', 'N/http', 'N/https', 'N/log', 'N/url', 'N/email',
 		return date;
 	}
 
-	Date.prototype.addHours = function(h) {
+	Date.prototype.addHours = function (h) {
 		this.setHours(this.getHours() + h);
 		return this;
 	}
