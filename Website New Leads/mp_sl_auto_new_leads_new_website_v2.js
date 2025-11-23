@@ -131,6 +131,8 @@ function leadForm(request, response) {
 		//If Post code is empty, do not create a record on NetSuite
 		if (isNullorEmpty(postcode)) {
 			dataOut += '{"ns_id":"ADDRESS ERROR - Empty Post Code"},';
+		} else if (isNullorEmpty(business_name) || isNullorEmpty(email) || isNullorEmpty(phone_number) || isNullorEmpty(first_name) || isNullorEmpty(last_name) || isNullorEmpty(address1) || isNullorEmpty(city) || isNullorEmpty(state) || isNullorEmpty(postcode) || isNullorEmpty(pageURL) || isNullorEmpty(avg_daily_shipments) || isNullorEmpty(services_of_interest) || isNullorEmpty(current_carrier)) {
+			dataOut += '{"ns_id":"DATA ERROR - Missing Required Fields"},';
 		} else {
 			var zee_id;
 			var zeeCount = 0;
