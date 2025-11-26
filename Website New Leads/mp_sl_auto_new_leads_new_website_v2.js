@@ -52,8 +52,8 @@ function leadForm(request, response) {
 
 		nlapiLogExecution("DEBUG", "parent_lpo", parent_lpo);
 		nlapiLogExecution("DEBUG", "business_name", business_name);
-		nlapiLogExecution("DEBUG", "full_name", first_name);
-		nlapiLogExecution("DEBUG", "full_name", last_name);
+		nlapiLogExecution("DEBUG", "first_name", first_name);
+		nlapiLogExecution("DEBUG", "last_name", last_name);
 		nlapiLogExecution("DEBUG", "email_address", email);
 		nlapiLogExecution("DEBUG", "phone_number", phone_number);
 		nlapiLogExecution("DEBUG", "address1", address1);
@@ -130,9 +130,7 @@ function leadForm(request, response) {
 
 		//If Post code is empty, do not create a record on NetSuite
 		if (isNullorEmpty(postcode)) {
-			dataOut += '{"ns_id":"ADDRESS ERROR - Empty Post Code"},';
-		} else if (isNullorEmpty(business_name) || isNullorEmpty(email) || isNullorEmpty(phone_number) || isNullorEmpty(first_name) || isNullorEmpty(last_name) || isNullorEmpty(address1) || isNullorEmpty(city) || isNullorEmpty(state) || isNullorEmpty(postcode) || isNullorEmpty(pageURL) || isNullorEmpty(avg_daily_shipments) || isNullorEmpty(services_of_interest) || isNullorEmpty(current_carrier)) {
-			dataOut += '{"ns_id":"DATA ERROR - Missing Required Fields"},';
+			dataOut += '{"ns_id":"ADDRESS ERROR - Empty Post Code"}]}';
 		} else {
 			var zee_id;
 			var zeeCount = 0;
@@ -2526,9 +2524,12 @@ function leadForm(request, response) {
 				}
 			}
 
-			_sendJSResponse(request, response, returnObj);
+
 
 		}
+
+		nlapiLogExecution("AUDIT", "dataOut", dataOut);
+		_sendJSResponse(request, response, returnObj);
 	}
 }
 
