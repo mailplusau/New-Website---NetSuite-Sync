@@ -3,10 +3,11 @@
  * Created on:           Mon Jan 01 2023
  * Modified on:          Thu Apr 27 2023 12:13:27
  * SuiteScript Version:  1.0
- * Description:          Agree to the Terms & Conditions
+ * Description:          Agree to the Terms & Conditions 
  *
  * Copyright (c) 2023 MailPlus Pty. Ltd.
  */
+
 
 var ctx = nlapiGetContext();
 
@@ -14,182 +15,138 @@ var zee = 0;
 var role = ctx.getRole();
 var row_count = 0;
 var customer_list_page = null;
-if (role == 1000) {
-	//Role is Franchisee
-	zee = ctx.getUser(); //Get Franchisee ID
+if (role == 1000) { //Role is Franchisee
+    zee = ctx.getUser(); //Get Franchisee ID
 } else {
-	zee = 0;
+    zee = 0;
 }
 
 function agreeTersmAndConditions(request, response) {
-	if (request.getMethod() == "GET") {
-		nlapiLogExecution("DEBUG", "request.getParameter", request);
+    if (request.getMethod() == "GET") {
 
-		var customerRecordId = request.getParameter("custinternalid");
-		nlapiLogExecution("DEBUG", "customerRecordId", customerRecordId);
+        nlapiLogExecution('DEBUG', 'request.getParameter', request);
 
-		var customerRecord = nlapiLoadRecord("customer", customerRecordId);
+        var customerRecordId = request.getParameter('custinternalid');
+        nlapiLogExecution('DEBUG', 'customerRecordId', customerRecordId);
 
-		var entityId = customerRecord.getFieldValue("entityid");
-		var compnayName = customerRecord.getFieldValue("companyname");
 
-		var tncaccepted = customerRecord.getFieldValue(
-			"custentity_terms_conditions_agree"
-		);
+        var customerRecord = nlapiLoadRecord('customer', customerRecordId);
 
-		if (tncaccepted != 1 || tncaccepted != "1") {
-			customerRecord.setFieldValue(
-				"custentity_terms_conditions_agree_date",
-				getDate()
-			);
-			customerRecord.setFieldValue("custentity_cust_closed_won", "T");
-			customerRecord.setFieldValue(
-				"custentity_date_prospect_opportunity",
-				getDate()
-			);
-			customerRecord.setFieldValue("custentity_terms_conditions_agree", 1);
-			var customerRecordId = nlapiSubmitRecord(customerRecord);
-		}
+        var entityId = customerRecord.getFieldValue('entityid');
+        var compnayName = customerRecord.getFieldValue('companyname');
 
-		var form = nlapiCreateForm("The Terms & Conditions have been accepted.");
+        var tncaccepted = customerRecord.getFieldValue('custentity_terms_conditions_agree');
 
-		var salesRecordSearch = nlapiLoadSearch(
-			"customrecord_sales",
-			"customsearch_sales_record_auto_signed__2"
-		);
+        if (tncaccepted != 1 || tncaccepted != '1') {
+            customerRecord.setFieldValue('custentity_terms_conditions_agree_date', getDate());
+            customerRecord.setFieldValue('custentity_cust_closed_won', 'T');
+            customerRecord.setFieldValue('custentity_date_prospect_opportunity',
+                getDate());
+            customerRecord.setFieldValue('custentity_terms_conditions_agree', 1);
+            var customerRecordId = nlapiSubmitRecord(customerRecord);
+        }
 
-		var filPo = [];
-		filPo[filPo.length] = new nlobjSearchFilter(
-			"internalid",
-			"custrecord_sales_customer",
-			"anyof",
-			customerRecordId
-		);
+        var form = nlapiCreateForm('The Terms & Conditions have been accepted.');
 
-		salesRecordSearch.addFilters(filPo);
+        var salesRecordSearch = nlapiLoadSearch('customrecord_sales',
+            'customsearch_sales_record_auto_signed__2');
 
-		var resultSetSalesRecord = salesRecordSearch.runSearch();
+        var filPo = [];
+        filPo[filPo.length] = new nlobjSearchFilter('internalid',
+            'custrecord_sales_customer', 'anyof', customerRecordId);
 
-		resultSetSalesRecord.forEachResult(function (searchResult) {
-			var salesRepEmail = searchResult.getValue(
-				"email",
-				"CUSTRECORD_SALES_ASSIGNED",
-				null
-			);
+        salesRecordSearch.addFilters(filPo);
 
-			var email_body =
-				"Customer has agreed to the Terms & Conditions. </br></br>";
-			email_body += "<u><b>Customer Details</b></u> </br>";
-			email_body += "Customer Name: " + entityId + " " + compnayName + "</br>";
+        var resultSetSalesRecord = salesRecordSearch.runSearch();
 
-			var email_subject =
-				"Terms & Conditions Agreed - " + entityId + " " + compnayName;
+        resultSetSalesRecord.forEachResult(function (searchResult) {
 
-			var records = new Array();
-			records["entity"] = customerRecordId;
+            var salesRepEmail = searchResult.getValue('email', 'CUSTRECORD_SALES_ASSIGNED', null);
 
-			nlapiSendEmail(
-				112209,
-				salesRepEmail,
-				email_subject,
-				email_body,
-				[
-					"luke.forbes@mailplus.com.au",
-					"fiona.harrison@mailplus.com.au",
-					"popie.popie@mailplus.com.au",
-				],
-				null,
-				records,
-				null,
-				true
-			);
+            var email_body =
+                'Customer has agreed to the Terms & Conditions. </br></br>';
+            email_body +=
+                '<u><b>Customer Details</b></u> </br>';
+            email_body += 'Customer Name: ' + entityId + ' ' + compnayName +
+                '</br>';
 
-			return true;
-		});
+            var email_subject = 'Terms & Conditions Agreed - ' +
+                entityId + ' ' + compnayName;
 
-		//Search: Commencement Register List - To Update T&C's Agreed Date
-		var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch(
-			"customrecord_commencement_register",
-			"customsearch_comm_reg_upd_tnc_date"
-		);
+            var records = new Array();
+            records['entity'] = customerRecordId;
 
-		var filCommReg = [];
-		filCommReg[filCommReg.length] = new nlobjSearchFilter(
-			"internalid",
-			"custrecord_customer",
-			"anyof",
-			customerRecordId
-		);
+            nlapiSendEmail(112209, salesRepEmail,
+                email_subject, email_body, ['luke.forbes@mailplus.com.au', 'fiona.harrison@mailplus.com.au', 'popie.popie@mailplus.com.au'], null, records, null, true);
 
-		commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
+            return true;
+        });
 
-		var commRegUpdateTnCAgreedDateSearchResult =
-			commRegUpdateTnCAgreedDateSearch.runSearch();
+        //Search: Commencement Register List - To Update T&C's Agreed Date
+        var commRegUpdateTnCAgreedDateSearch = nlapiLoadSearch('customrecord_commencement_register',
+            'customsearch_comm_reg_upd_tnc_date');
 
-		commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (
-			searchResult
-		) {
-			var commRegInternalId = searchResult.getValue("internalId");
-			var trialExpiryDate = searchResult.getValue("custrecord_trial_expiry");
-			var commDate = searchResult.getValue("custrecord_comm_date");
-			nlapiLogExecution("DEBUG", "commRegInternalId", commRegInternalId);
+        var filCommReg = [];
+        filCommReg[filCommReg.length] = new nlobjSearchFilter('internalid',
+            'custrecord_customer', 'anyof', customerRecordId);
 
-			if (isNullorEmpty(trialExpiryDate)) {
-				var commRegRecord = nlapiLoadRecord(
-					"customrecord_commencement_register",
-					commRegInternalId
-				);
-				commRegRecord.setFieldValue("custrecord_trial_status", 9); // Make the Comm Reg status as Scheduled
-				commRegRecord.setFieldValue(
-					"custrecord_tnc_agreement_date",
-					getDateAndTime()
-				);
-				var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
-			} else {
-				const date1 = stringToDate(commDate);
-				const date2 = stringToDate(getDate());
-				// if (date1 >= date2) {
-				var commRegRecord = nlapiLoadRecord(
-					"customrecord_commencement_register",
-					commRegInternalId
-				);
-				commRegRecord.setFieldValue("custrecord_trial_status", 9); // Make the Comm Reg status as Scheduled
-				commRegRecord.setFieldValue(
-					"custrecord_tnc_agreement_date",
-					getDateAndTime()
-				);
-				var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
-				// }
-			}
+        commRegUpdateTnCAgreedDateSearch.addFilters(filCommReg);
 
-			nlapiLogExecution("DEBUG", "comm Reg Update", "");
+        var commRegUpdateTnCAgreedDateSearchResult = commRegUpdateTnCAgreedDateSearch.runSearch();
 
-			return true;
-		});
+        commRegUpdateTnCAgreedDateSearchResult.forEachResult(function (searchResult) {
 
-		response.writePage(form);
-	}
+            var commRegInternalId = searchResult.getValue('internalId');
+            var trialExpiryDate = searchResult.getValue('custrecord_trial_expiry');
+            var commDate = searchResult.getValue('custrecord_comm_date');
+            nlapiLogExecution('DEBUG', 'commRegInternalId', commRegInternalId);
+
+            if (isNullorEmpty(trialExpiryDate)) {
+                var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+            } else {
+                const date1 = stringToDate(commDate);
+                const date2 = stringToDate(getDate());
+                if (date1 >= date2) {
+                    var commRegRecord = nlapiLoadRecord('customrecord_commencement_register', commRegInternalId);
+                    commRegRecord.setFieldValue('custrecord_trial_status', 9); // Make the Comm Reg status as Scheduled
+                    commRegRecord.setFieldValue('custrecord_tnc_agreement_date', getDateAndTime());
+                    var commRegRecordNewInternalId = nlapiSubmitRecord(commRegRecord);
+                }
+            }
+
+            nlapiLogExecution('DEBUG', 'comm Reg Update', '');
+
+            return true;
+        });
+
+        response.writePage(form);
+
+    }
 }
 
 function getDate() {
-	var date = new Date();
-	if (date.getHours() > 6) {
-		date = nlapiAddDays(date, 1);
-	}
-	date = nlapiDateToString(date);
-	return date;
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date);
+    return date;
 }
 
 function getDateAndTime() {
-	var date = new Date();
-	if (date.getHours() > 6) {
-		date = nlapiAddDays(date, 1);
-	}
-	date = nlapiDateToString(date, "datetimetz");
-	return date;
+    var date = new Date();
+    if (date.getHours() > 6) {
+        date = nlapiAddDays(date, 1);
+    }
+    date = nlapiDateToString(date, 'datetimetz');
+    return date;
 }
 
 function stringToDate(str) {
-	const [dd, mm, yyyy] = str.split("/");
-	return new Date(yyyy, mm - 1, dd);
+    const [dd, mm, yyyy] = str.split('/');
+    return new Date(yyyy, mm - 1, dd);
 }
+

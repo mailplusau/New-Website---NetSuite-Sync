@@ -1,0 +1,176 @@
+<h2 class="display-12 text-center text-md-center main-text-form"
+    style="text-align: center; margin-bottom: 20px !important; line-height: 42px !important;">Support enquiry form</h2>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">Enter the tracking number and select whether you are the
+    sender or receiver below, then fill in all fields that appear.</h4>
+<h4 class="mb-6 text-center text-25px color--primary-2 sub-text-form"
+    style="text-align: center; line-height: 27px !important;">This will automatically create a ticket in our system and
+    open an enquiry with our local Customer Service team. Please allow for 48 hours for a response. If the matter is
+    urgent, please call 1300 65 65 95 Mon-Fri, during business hours.</h4>
+<div class="row">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- TRACKING NUMBER -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label" style="display: none;">Tracking Number*</label>
+            <input id="barcode" class="form-control form-control-flush input-field-alignment input-field-default"
+                maxlength="20" required="" type="text" value="Eg: MPEN123456 or MPSD123456 or MPXL123456 or CPBZL*" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- TRACKING NUMBER -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><!-- <label class="input-field-label">Average Daily Shipments*</label> -->
+            <select id="sender_or_receiver"
+                class="form-control form-control-flush dropdown-field-alignment input-field-default" required="">
+                <option selected="selected" value="0">Sender or Receiver*</option>
+                <option value="1">Sender</option>
+                <option value="2">Receiver</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row company_name_row hide">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;">
+        <h4><span
+                style="background-color: #095c7b; border-radius: 5px; height: auto; margin: 0px; padding: 0px; right: 0; position: relative;"
+                class="label label-default col-xs-12">COMPANY INFORMATION.</span></h4>
+        <!-- COMPANY NAME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label" style="display: none;">Company Name*</label>
+            <input id="company_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Company Name*" />
+        </div>
+    </div>
+</div>
+<div class="row name_row hide">
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- COMPANY NAME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label" style="display: none;">First Name*</label>
+            <input id="first_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="First Name*" />
+        </div>
+    </div>
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- FULL NAME -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Last Name*</label> -->
+            <input id="last_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Last Name*" />
+        </div>
+    </div>
+</div>
+<div class="row contact_details_row hide">
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- EMAIL ADDRESS-->
+        <div class="form-label-group"><!-- <label class="input-field-label">Email Address*</label> -->
+            <input id="email" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Email Address*" />
+        </div>
+    </div>
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- PHONE NUMBER -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Phone Number*</label> -->
+            <input id="phone_number" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Phone Number*" />
+        </div>
+    </div>
+</div>
+<div class="row delivery_name_row hide">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;">
+        <h4><span
+                style="background-color: #095c7b; border-radius: 5px; height: auto; margin: 0px; padding: 0px; right: 0; position: relative;"
+                class="label label-default col-xs-12 hide delivery_label">DELIVERY INFORMATION.</span></h4>
+    </div>
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- COMPANY NAME -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><label class="input-field-label" style="display: none;">First Name*</label>
+            <input id="del_first_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="First Name*" />
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- FULL NAME -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Last Name*</label> -->
+            <input id="del_last_name" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Last Name*" />
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- FULL NAME -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Last Name*</label> -->
+            <input id="del_phone_number"
+                class="form-control form-control-flush input-field-alignment input-field-default" required=""
+                type="text" value="Phone Number" />
+        </div>
+    </div>
+</div>
+<div class="row delivery_details_row1 hide">
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- EMAIL ADDRESS-->
+        <div class="form-label-group"><!-- <label class="input-field-label">Email Address*</label> -->
+            <input id="del_add1" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Unit Number/Level" />
+        </div>
+    </div>
+    <div class="col-12 col-md-6" style="padding-right: 0px !important;"><!-- PHONE NUMBER -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Phone Number*</label> -->
+            <input id="del_add2" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Street Address*" />
+        </div>
+    </div>
+</div>
+<div class="row delivery_details_row2 hide">
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- EMAIL ADDRESS-->
+        <div class="form-label-group"><!-- <label class="input-field-label">Email Address*</label> -->
+            <input id="del_city" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="City*" />
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- PHONE NUMBER -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Phone Number*</label> -->
+            <div style="text-align: center;"></div>
+            <div class="form-label-group"><!-- <label class="input-field-label">Average Daily Shipments*</label> -->
+                <select id="del_state"
+                    class="form-control form-control-flush dropdown-field-alignment input-field-default" required="">
+                    <option selected="selected" value="0">Please select state*</option>
+                    <option value="1">ACT</option>
+                    <option value="2">NSW</option>
+                    <option value="3">QLD</option>
+                    <option value="4">SA</option>
+                    <option value="5">TAS</option>
+                    <option value="6">VIC</option>
+                    <option value="7">WA</option>
+                    <option value="8">NT</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="padding-right: 0px !important;"><!-- PHONE NUMBER -->
+        <div class="form-label-group"><!-- <label class="input-field-label">Phone Number*</label> -->
+            <input id="del_postcode" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Postcode*" />
+        </div>
+    </div>
+</div>
+<div class="row issues_row hide">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- TRACKING NUMBER -->
+        <div style="text-align: center;"></div>
+        <div class="form-label-group"><!-- <label class="input-field-label">Average Daily Shipments*</label> -->
+            <select id="issues" class="form-control form-control-flush dropdown-field-alignment input-field-default"
+                required="">
+                <option selected="selected" value="0">Please select enquiry type*</option>
+                <option value="56">Delayed Item</option>
+                <option value="17">Dispute of delivery</option>
+                <option value="59">POD Request</option>
+                <option value="55">On time – ETA requested</option>
+                <option value="19">Other</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row comments_row hide">
+    <div class="col-12 col-md-12" style="padding-right: 0px !important;"><!-- EMAIL ADDRESS-->
+        <div class="form-label-group"><!-- <label class="input-field-label">Email Address*</label> -->
+            <input id="comments" class="form-control form-control-flush input-field-alignment input-field-default"
+                required="" type="text" value="Brief Description" />
+        </div>
+    </div>
+</div>
+<h4 style="text-align: center;"><!-- Submit -->
+    <button class="btn btn-block-form btn-primary mt-3 lift get-in-touch-button create-ticket-button-submit hide"
+        style="margin-top: 0.75rem !important; width: 100%;">Submit
+    </button>
+</h4>

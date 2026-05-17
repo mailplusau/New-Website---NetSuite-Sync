@@ -243,8 +243,15 @@ define([
 				})
 			);
 
-			salesRecordSearch.run().each(function (salesRecordSearchResult) {
-				var salesRepEmail = salesRecordSearchResult.getValue({
+			var salesRecordLength =
+				salesRecordSearch.run().getRange({
+					start: 0,
+					end: 1,
+				});
+
+			if (salesRecordLength != 0) {
+				// for (var i = 0; i < salesRecordLength.length; i++) {
+				var salesRepEmail = salesRecordLength[0].getValue({
 					name: "email",
 					join: "CUSTRECORD_SALES_ASSIGNED",
 				});
@@ -266,7 +273,7 @@ define([
 					cc: [
 						"luke.forbes@mailplus.com.au",
 						"fiona.harrison@mailplus.com.au",
-						"popie.popie@mailplus.com.au",
+						"popie.popie@mailplus.com.au", 'beatriz.lima@mailplus.com.au'
 					],
 					relatedRecords: { entityId: customerInternalId },
 				});
@@ -276,8 +283,44 @@ define([
 					details: "",
 				});
 
-				return true;
-			});
+				// }
+			}
+
+			// salesRecordSearch.run().each(function (salesRecordSearchResult) {
+			// 	var salesRepEmail = salesRecordSearchResult.getValue({
+			// 		name: "email",
+			// 		join: "CUSTRECORD_SALES_ASSIGNED",
+			// 	});
+
+			// 	var email_body =
+			// 		"Customer has agreed to the Terms & Conditions. </br></br>";
+			// 	email_body += "<u><b>Customer Details</b></u> </br>";
+			// 	email_body +=
+			// 		"Customer Name: " + entityId + " " + compnayName + "</br>";
+
+			// 	var email_subject =
+			// 		"Terms & Conditions Agreed - " + entityId + " " + compnayName;
+
+			// 	email.send({
+			// 		author: 112209,
+			// 		body: email_body,
+			// 		recipients: salesRepEmail,
+			// 		subject: email_subject,
+			// 		cc: [
+			// 			"luke.forbes@mailplus.com.au",
+			// 			"fiona.harrison@mailplus.com.au",
+			// 			"popie.popie@mailplus.com.au", 'beatriz.lima@mailplus.com.au'
+			// 		],
+			// 		relatedRecords: { entityId: customerInternalId },
+			// 	});
+
+			// 	log.debug({
+			// 		title: "EMAIL SENT OUT TO SALES REP",
+			// 		details: "",
+			// 	});
+
+			// 	return true;
+			// });
 
 			redirect.redirect({
 				url: "https://1048144.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1963&deploy=1&compid=1048144&ns-at=AAEJ7tMQyzFm1rLjam_UwBnc0EmfHYGGF-79GJswLG6FmJRp650",
