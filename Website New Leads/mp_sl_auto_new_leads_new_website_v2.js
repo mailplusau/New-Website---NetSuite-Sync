@@ -32,7 +32,7 @@ function leadForm(request, response) {
     var email = request.getParameter("email");
     var phone_number = request.getParameter("phone_number");
     var address1 = request.getParameter("address1");
-    var address2 = request.getParameter("address2");
+    var street = request.getParameter("address2");
     var city = request.getParameter("city");
     var state = request.getParameter("state");
     var postcode = request.getParameter("postcode");
@@ -57,7 +57,7 @@ function leadForm(request, response) {
     nlapiLogExecution("DEBUG", "email_address", email);
     nlapiLogExecution("DEBUG", "phone_number", phone_number);
     nlapiLogExecution("DEBUG", "address1", address1);
-    nlapiLogExecution("DEBUG", "address2", address2);
+    nlapiLogExecution("DEBUG", "street", street);
     nlapiLogExecution("DEBUG", "city", city);
     nlapiLogExecution("DEBUG", "state", state);
     nlapiLogExecution("DEBUG", "postcode", postcode);
@@ -116,7 +116,7 @@ function leadForm(request, response) {
       email: email,
       phone_number: phone_number,
       address1: address1,
-      address2: address2,
+      street: street,
       city: city,
       state: state,
       postcode: postcode,
@@ -290,8 +290,10 @@ function leadForm(request, response) {
       business_name +
       "&custentity_leadsource=" +
       "Inbound" +
-      "&billaddr1=" +
+      "&billaddr2=" +
       address1 +
+      "&billaddr1=" +
+      street +
       "&category=" +
       "" +
       "&billcity=" +
